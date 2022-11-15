@@ -21,10 +21,10 @@ module.exports = {
                 .setDescription('Your suggestion is now cancelled!')
                 return message.reply({ embeds: [SuggestCancelEmb], allowedMentions: { repliedUser: false }})
             }
-            client.users.fetch('857352321263337555', false).then((Owner) => {
+            client.users.fetch('920892427412340787', false).then((Owner) => {
                 var currentDateAndTime = new Date().toLocaleString();
                 let SuggestionEmbed = new MessageEmbed()
-                .setTitle(`**Suggestion**`)
+                .setTitle(`**Suggestion:**`)
                 .setColor(randomHexColor())
                 .setDescription(`"${collected.first().content}" \n\n **User** \n ${message.author.tag} (${message.author.id})`)
                 .setFooter(currentDateAndTime)
@@ -38,7 +38,7 @@ module.exports = {
 
 
         }).catch(() => {
-            message.reply({ content: 'No response, cancelling..', allowedMentions: { repliedUser: false }})
+            message.reply({ content: ':no_entry: No response, cancelling..', allowedMentions: { repliedUser: false }})
         });
 	},
 };

@@ -23,25 +23,7 @@ module.exports = {
 			//Interaction
             if(!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) return interaction.reply("You cannot use this command!")
             let channel = interaction.options.getChannel('channel');
-            if(!channel) return interaction.reply({ content: 'Im sorry, I cannot find that channel!', allowedMentions: { repliedUser: true }})
-            confessionchannels[interaction.guild.id] = {
-                confessionchannels: channel.id
-            };
-            fs.writeFile('./Jsons/Confession/ConfessionChannels.json', JSON.stringify(confessionchannels), (err) => {
-                if (err) console.log(err)
-            });
-            let ChannelSet = new MessageEmbed()
-            .setTitle(`**Confession Setup: Confession Channel Set**`)
-            .setColor(randomHexColor())
-            .setDescription(`The confession channel is now set too **${channel}!**`)
-            .setFooter("You can now use confessions!")
-            interaction.reply({ embeds: [ChannelSet], allowedMentions: {repliedUser: false}})    
-            return
-		}else{
-			//Message
-            if(!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) return interaction.reply("You cannot use this command!")
-            let channel = interaction.mentions.channels.first();
-            if(!channel) return interaction.reply({ content: 'Please try that again but mentioning the channel in the command!', allowedMentions: { repliedUser: true }})
+            if(!channel) return interaction.reply({ content: ':no_entry: Im sorry, I cannot find that channel!', allowedMentions: { repliedUser: true }, ephemeral: true })
             confessionchannels[interaction.guild.id] = {
                 confessionchannels: channel.id
             };

@@ -16,38 +16,18 @@ module.exports = {
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             let HugUser = interaction.options.getMember('user');
-            if(HugUser.user.bot) return interaction.reply({ content: "..those damn botsexuals..", allowedMentions: { repliedUser: false }})
-            if(HugUser.id==interaction.member.id) return interaction.reply({ content: `Do you need a hug ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }})
+            if(HugUser.user.bot) return interaction.reply({ content: ":no_entry: ..those damn botsexuals..", allowedMentions: { repliedUser: false }, ephemeral: true })
+            if(HugUser.id==interaction.member.id) return interaction.reply({ content: `:no_entry: Do you need a hug ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, ephemeral: true })
             let HugUserID = HugUser.id
             const HugGif = new MessageEmbed()
-            got('https://waifu.pics/api/sfw/hug').then(response => {
+            got('https://api.waifu.pics/sfw/hug').then(response => {
             let content = response.body;
             let ContentFilter1 = content.replace(/{"url":"/gi, "")
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             HugGif.setTitle(`:hugging:  ${interaction.member.displayName} hugged ${interaction.guild.members.cache.get(HugUserID).displayName}! :hugging: `)
             HugGif.setImage(String(FinalImage))
             HugGif.setFooter(currentDateAndTime)
-            interaction.reply({ embeds: [HugGif], allowedMentions: {repliedUser: false}})
-            })
-            return
-		}else{
-			//Message
-            var currentDateAndTime = new Date().toLocaleString();
-            if(!args[0]) return interaction.reply({ content: "Please mention a user to hug next time!", allowedMentions: { repliedUser: true }})
-            let HugUser = interaction.mentions.users.first()
-            if(!HugUser) return interaction.reply({ content: "Cant find that user!", allowedMentions: { repliedUser: true }});
-            if(HugUser.bot) return interaction.reply({ content: "..those damn botsexuals..", allowedMentions: { repliedUser: false }})
-            if(HugUser.id==interaction.author.id) return interaction.reply({ content: `Do you need a hug ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }})
-            let HugUserID = interaction.mentions.users.first().id
-            const HugGif = new MessageEmbed()
-            got('https://waifu.pics/api/sfw/hug').then(response => {
-            let content = response.body;
-            let ContentFilter1 = content.replace(/{"url":"/gi, "")
-            let FinalImage = ContentFilter1.replace(/"}/gi, "")
-            HugGif.setTitle(`:hugging:  ${interaction.member.displayName} hugged ${interaction.guild.members.cache.get(HugUserID).displayName}! :hugging: `)
-            HugGif.setImage(String(FinalImage))
-            HugGif.setFooter(currentDateAndTime)
-            interaction.reply({ embeds: [HugGif], allowedMentions: {repliedUser: false}})
+            interaction.reply({ embeds: [HugGif], allowedMentions: {repliedUser: true, users: [HugUserID]}, content: `:hugging: ${interaction.guild.members.cache.get(HugUserID)} :hugging:`})
             })
             return
 		}

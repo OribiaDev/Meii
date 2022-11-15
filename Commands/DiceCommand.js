@@ -17,15 +17,6 @@ module.exports = {
             .setDescription(`:game_die: You rolled a **${die}**!`)
             interaction.reply({ embeds: [DiceEmb], allowedMentions: { repliedUser: false }})
             return
-		}else{
-			//Message
-            var die = Math.floor(Math.random() * 6) + 1;
-            let DiceEmb = new MessageEmbed()
-            .setColor(randomHexColor())
-            .setTitle(" **Dice Roll!**")
-            .setDescription(`:game_die: You rolled a **${die}**!`)
-            interaction.reply({ embeds: [DiceEmb], allowedMentions: { repliedUser: false }})
-            return
 		}
 	},
 };

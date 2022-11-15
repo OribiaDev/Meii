@@ -104,7 +104,7 @@ module.exports = {
                             return 
                         }
                         let ConfessionLog = new MessageEmbed()
-                        .setTitle(`**Anonymous Confession**`)
+                        .setTitle(`:love_letter: **Anonymous Confession**`)
                         .setColor(randomHexColor())
                         .setDescription(`"${confessedmessage}" \n\n **User**  \n ||${message.author.tag}  (${message.author})||`)
                         .setFooter(currentDateAndTime)
@@ -208,7 +208,7 @@ module.exports = {
                 }else{
                     //Cannot Find
                     let CannotFindServer = new MessageEmbed()
-                        .setTitle(`**Confession: Cannot Find Server**`)
+                        .setTitle(`:love_letter: **Confession: Cannot Find Server**`)
                         .setColor(randomHexColor())
                         .setDescription(`Im sorry, I cannot find that server! \n Please double check that you have the server name or the server ID correct!`)
                     message.author.send({ embeds: [CannotFindServer], allowedMentions: {repliedUser: false}})

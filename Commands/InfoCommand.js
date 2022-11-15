@@ -12,15 +12,7 @@ module.exports = {
             let InfoEmb = new MessageEmbed()
             .setColor("#ffdac1")
             .setTitle(" **Info:**")
-            .setDescription(`Prefix: **${prefix}** \n Servers: **${client.guilds.cache.size}** \n Ping: **${client.ws.ping}ms** \n Date Created: **10/16/2021** \n Last Updated: **10/16/2021** \n Author: **Thermionic#9046** `)
-            interaction.reply({ embeds: [InfoEmb], allowedMentions: { repliedUser: false }})
-            return
-		}else{
-			//Message
-            let InfoEmb = new MessageEmbed()
-            .setColor("#ffdac1")
-            .setTitle(" **Info:**")
-            .setDescription(`Prefix: **${prefix}** \n Servers: **${client.guilds.cache.size}** \n Ping: **${client.ws.ping}ms** \n Date Created: **10/16/2021** \n Last Updated: **10/16/2021** \n Author: **Thermionic#9046** `)
+            .setDescription(`Servers: **${client.guilds.cache.size}** \n Ping: **${client.ws.ping}ms** \n Date Created: **11/14/2022** \n Last Updated: **11/14/2022** \n Author: **ɴᴇɪᴛᴏ#8770** `)
             interaction.reply({ embeds: [InfoEmb], allowedMentions: { repliedUser: false }})
             return
 		}

@@ -12,11 +12,6 @@ module.exports = {
             interaction.reply(`:ping_pong: Pong! | Latency is ${m.createdTimestamp - interaction.createdTimestamp}ms | API latency is ${client.ws.ping}ms`)
             m.delete()
 			return
-		}else{
-			//Message
-            const m = await interaction.channel.send("Ping?");
-            m.edit(`:ping_pong: Pong! | Latency is ${m.createdTimestamp - interaction.createdTimestamp}ms | API latency is ${client.ws.ping}ms`);
-            return
 		}
 	},
 };

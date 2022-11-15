@@ -6,10 +6,10 @@ const { token } = require('./Jsons/config.json');
 const fs = require('fs');
 
 //Intents
-const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES" ], partials: ["CHANNEL"] });
+const client = new Client({ intents: ["GUILDS", "DIRECT_MESSAGES" ], partials: ["CHANNEL"] });
 
 //Variables
-const prefix = 'm;'
+const prefix = '/'
 
 //Bot Login
 client.login(token);
@@ -18,9 +18,7 @@ client.login(token);
 function CommandRefresh(){
     const slashcommands = [];
     client.commands = new Collection();
-    const testclientId = '899109974083518514';
-    const mainclientId = '899110520202874960'
-    const guildId = '897989560502472714';  
+    const mainclientId = '1041822625535623259' 
     const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js'));
     //Refresh Command List
     for (const file of commandFiles) {
@@ -33,16 +31,13 @@ function CommandRefresh(){
             
         }
     }
-    const rest = new REST({ version: '9' }).setToken(token);
+    const rest = new REST({ version: '10' }).setToken(token);
     //Push Slash Commands to Discord API
     (async () => {
         try {
             console.log('Started refreshing application (/) commands.');
     
             await rest.put(
-                //Testing
-                //Routes.applicationGuildCommands(testclientId, guildId),
-                //{ body: slashcommands }
                 //Global
                 Routes.applicationCommands(mainclientId),
                 { body: slashcommands },
@@ -64,9 +59,7 @@ function CommandRefresh(){
 function ManualCommandRefresh(){
     const slashcommands = [];
     client.commands = new Collection();
-    const testclientId = '890816497604247552';
-    const mainclientId = '890816497604247552'
-    const guildId = '890814791772405760';  
+    const mainclientId = '1041822625535623259'
     const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js'));
     //Refresh Command List
     for (const file of commandFiles) {
@@ -84,21 +77,18 @@ function ManualCommandRefresh(){
     (async () => {
         try {
             console.log('Manually started refreshing application (/) commands.');
-            client.users.fetch('481607837412360203', false).then((Owner) => {
+            client.users.fetch('920892427412340787', false).then((Owner) => {
                 Owner.send({ content: '**Started Refreshing Commands**', allowedMentions: { repliedUser: false }})
             });
     
             await rest.put(
-                //Testing
-                //Routes.applicationGuildCommands(testclientId, guildId),
-                //{ body: slashcommands }
                 //Global
                 Routes.applicationCommands(mainclientId),
                 { body: slashcommands },
             );
                 
             console.log('Successfully reloaded application (/) commands.');
-            client.users.fetch('481607837412360203', false).then((Owner) => {
+            client.users.fetch('920892427412340787', false).then((Owner) => {
                 Owner.send({ content: '**Successfully Reloaded Commands**', allowedMentions: { repliedUser: false }})
             });
         } catch (error) {
@@ -107,6 +97,33 @@ function ManualCommandRefresh(){
     })();
 }
 
+
+//Message Function 
+client.on('messageCreate', message => {
+	if (message.author.bot) return;
+    if(message.guild){
+
+    }else if (!message.guild){
+        //DMs
+        const args = message.content.toLowerCase().trim().split(/ +/g);
+        //Refresh Command
+        if(message.content=='refresh'){
+            if(message.guild) return
+            if(message.author.id=="920892427412340787"){
+                ManualCommandRefresh();
+                return
+            }
+        }
+        if (!client.commands.has(args[0])) return;
+        try {
+            client.commands.get(args[0]).execute(message, args, client);
+        } catch (error) {
+            console.error(error);
+            return message.reply(':no_entry: There was an error while executing this command! :no_entry: ');
+        }
+        
+    }
+});
 
 //Ready Function
 client.once('ready', () => {
@@ -121,57 +138,6 @@ client.once('ready', () => {
     console.log("Launched!")
     client.user.setActivity(`${prefix}help | Watching ${client.guilds.cache.size} servers!`);
 });
-
-//Message Function 
-client.on('messageCreate', message => {
-	if (message.author.bot) return;
-    if(message.guild){
-        //Guild
-        //Permission Check
-        if(message.content.startsWith(prefix)){
-            if(!message.channel.permissionsFor(client.user).has(Permissions.FLAGS.SEND_MESSAGES) || !message.channel.permissionsFor(client.user).has(Permissions.FLAGS.READ_MESSAGE_HISTORY) || !message.channel.permissionsFor(client.user).has(Permissions.FLAGS.EMBED_LINKS)){
-                return message.author.send(`I'm sorry, I do not have enough permissions to send messages in ${message.channel}, in **${message.guild}**! \n I need **Send Messages**, **Read Message History**, and **Embed Links**`).catch(() => {
-                    return;
-                })
-            }
-            if(!message.guild.me.permissions.has(Permissions.FLAGS.SEND_MESSAGES) || !message.guild.me.permissions.has(Permissions.FLAGS.READ_MESSAGE_HISTORY) || !message.guild.me.permissions.has(Permissions.FLAGS.EMBED_LINKS)){
-                return message.author.send(`I'm sorry, I do not have enough permissions to send messages in **${message.guild}**! \n I need **Send Messages**, **Read Message History**, and **Embed Links**`).catch(() => {
-                    return;
-                })
-            }       
-        }
-        if(!message.content.includes('m;')) return
-        const args = message.content.toLowerCase().slice(prefix.length).trim().split(/ +/g);
-        const command = args.shift().toLowerCase();
-    
-        if (!client.commands.has(command)) return;   
-        try {
-            client.commands.get(command).execute(message, args, client, prefix);
-        } catch (error) {
-            console.error(error);
-            return message.reply(':no_entry: There was an error while executing this command! :no_entry: ');
-        }
-    }else if (!message.guild){
-        //DMs
-        const args = message.content.toLowerCase().trim().split(/ +/g);
-        //Refresh Command
-        if(message.content=='refresh'){
-            if(message.guild) return
-            if(!message.author.id=='481607837412360203') return
-            ManualCommandRefresh();
-        }
-        if (!client.commands.has(args[0])) return;
-        try {
-            client.commands.get(args[0]).execute(message, args, client);
-        } catch (error) {
-            console.error(error);
-            return message.reply(':no_entry: There was an error while executing this command! :no_entry: ');
-        }
-        
-    }
-});
-
-
 
 //Slash Command Function
 client.on('interactionCreate', async interaction => {
