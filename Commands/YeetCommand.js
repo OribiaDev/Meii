@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 const got = require('got');
 
 module.exports = {
@@ -20,14 +20,14 @@ module.exports = {
             if(YeetUser.user.bot) return interaction.reply({ content: ":no_entry: Please don't yeet the bots-", allowedMentions: { repliedUser: false }, ephemeral: true })
             if(YeetUser.id==interaction.member.id) return interaction.reply({ content: `:no_entry: p-pls- n-no- ${interaction.member.displayName}`, allowedMentions: { repliedUser: false }, ephemeral: true })
             let YeetUserID = YeetUser.id
-            const yeetgif = new MessageEmbed()
+            const yeetgif = new EmbedBuilder()
             got('https://api.waifu.pics/sfw/yeet').then(response => {
             let content = response.body;
             let ContentFilter1 = content.replace(/{"url":"/gi, "")
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             yeetgif.setTitle(`:smiling_imp: ${interaction.member.displayName} yeeted ${interaction.guild.members.cache.get(YeetUserID).displayName}! :smiling_imp: `)
             yeetgif.setImage(String(FinalImage))
-            yeetgif.setFooter(currentDateAndTime)
+            yeetgif.setFooter({text:`${currentDateAndTime}`})
             interaction.reply({ embeds: [yeetgif], allowedMentions: {repliedUser: true, users: [YeetUserID]}, content: `:smiling_imp: ${interaction.guild.members.cache.get(YeetUserID)} :smiling_imp:`})
             })
             return

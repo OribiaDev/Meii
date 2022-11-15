@@ -1,12 +1,12 @@
 //Imports
-const { Client, Collection, Permissions } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, PermissionFlagsBits } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { token } = require('./Jsons/config.json');
 const fs = require('fs');
 
 //Intents
-const client = new Client({ intents: ["GUILDS", "DIRECT_MESSAGES" ], partials: ["CHANNEL"] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages], partials: [Partials.Channel] });
 
 //Variables
 const prefix = '/'
@@ -143,12 +143,12 @@ client.once('ready', () => {
 client.on('interactionCreate', async interaction => {
     if(!interaction.guild) return
 	if (!interaction.isCommand()) return;
-    if(!interaction.channel.permissionsFor(client.user).has(Permissions.FLAGS.SEND_MESSAGES) || !interaction.channel.permissionsFor(client.user).has(Permissions.FLAGS.READ_MESSAGE_HISTORY) || !interaction.channel.permissionsFor(client.user).has(Permissions.FLAGS.EMBED_LINKS)){
+    if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.ReadMessageHistory) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
         return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need **Send Messages**, **Read Message History**, and **Embed Links**`, ephemeral: true }).catch(() => {
             return; 
         })
     }
-    if(!interaction.guild.me.permissions.has(Permissions.FLAGS.SEND_MESSAGES) || !interaction.guild.me.permissions.has(Permissions.FLAGS.READ_MESSAGE_HISTORY) || !interaction.guild.me.permissions.has(Permissions.FLAGS.EMBED_LINKS)){
+    if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.ReadMessageHistory) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)){
         return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need **Send Messages**, **Read Message History**, and **Embed Links**`, ephemeral: true }).catch(() => {
             return;
         })

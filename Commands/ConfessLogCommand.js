@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed, Permissions } = require('discord.js')
+const { EmbedBuilder, PermissionFlagsBits } = require('discord.js')
 var randomHexColor = require('random-hex-color')
 const fs = require("fs");
 
@@ -21,7 +21,7 @@ module.exports = {
         }
 		if(interaction.content==undefined){
 			//Interaction
-            if(!interaction.member.permissions.has(Permissions.FLAGS.VIEW_AUDIT_LOG)) return interaction.reply("You cannot use this command!")
+            if(!interaction.member.permissions.has(PermissionFlagsBits.ViewAuditLog)) return interaction.reply("You cannot use this command!")
             let channel = interaction.options.getChannel('channel');
             if(!channel) return interaction.reply({ content: ':no_entry: Im sorry, I cannot find that channel!', allowedMentions: { repliedUser: true }, ephemeral: true })
             confessionmodlogs[interaction.guild.id] = {
@@ -30,11 +30,11 @@ module.exports = {
             fs.writeFile("./Jsons/Confession/ConfessionModLog.json", JSON.stringify(confessionmodlogs), (err) => {
                 if (err) console.log(err)
             });
-            let ChannelSet = new MessageEmbed()
+            let ChannelSet = new EmbedBuilder()
             .setTitle(`**Confession Log Setup: Confession Log Channel Set**`)
             .setColor(randomHexColor())
             .setDescription(`The confession log channel is now set too **${channel}!**`)
-            .setFooter(`Confessions will now be logged!`)
+            .setFooter({text:`Confessions will now be logged!`})
             interaction.reply({ embeds: [ChannelSet], allowedMentions: {repliedUser: false}})   
             return
 		}

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 const got = require('got');
 
 module.exports = {
@@ -20,14 +20,14 @@ module.exports = {
             if(CuddleUser.user.bot) return interaction.reply({ content: ":no_entry: ..those damn botsexuals..", allowedMentions: { repliedUser: false }, ephemeral: true })
             if(CuddleUser.id==interaction.member.id) return interaction.reply({ content: `:no_entry: Do you need a cuddle ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }})
             let CuddleUserID = CuddleUser.id
-            const Cuddlegif = new MessageEmbed()
+            const Cuddlegif = new EmbedBuilder()
             got('https://api.waifu.pics/sfw/cuddle').then(response => {
             let content = response.body;
             let ContentFilter1 = content.replace(/{"url":"/gi, "")
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             Cuddlegif.setTitle(`:people_hugging: ${interaction.member.displayName} cuddled ${interaction.guild.members.cache.get(CuddleUserID).displayName}! :people_hugging: `)
             Cuddlegif.setImage(String(FinalImage))
-            Cuddlegif.setFooter(currentDateAndTime)
+            Cuddlegif.setFooter({text:`${currentDateAndTime}`})
             interaction.reply({ embeds: [Cuddlegif], allowedMentions: {repliedUser: false}})
             })
             return

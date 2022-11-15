@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const randomHexColor = require('random-hex-color')
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -11,7 +11,7 @@ module.exports = {
 		if(interaction.content==undefined){
 			//Interaction
             var die = Math.floor(Math.random() * 6) + 1;
-            let DiceEmb = new MessageEmbed()
+            let DiceEmb = new EmbedBuilder()
             .setColor(randomHexColor())
             .setTitle(" **Dice Roll!**")
             .setDescription(`:game_die: You rolled a **${die}**!`)

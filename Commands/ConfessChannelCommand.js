@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { Permissions, MessageEmbed } = require('discord.js')
+const { PermissionFlagsBits, EmbedBuilder } = require('discord.js')
 var randomHexColor = require('random-hex-color')
 const fs = require("fs");
 
@@ -21,7 +21,7 @@ module.exports = {
         }
 		if(interaction.content==undefined){
 			//Interaction
-            if(!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) return interaction.reply("You cannot use this command!")
+            if(!interaction.member.permissions.has(PermissionFlagsBits.ManageChannels)) return interaction.reply("You cannot use this command!")
             let channel = interaction.options.getChannel('channel');
             if(!channel) return interaction.reply({ content: ':no_entry: Im sorry, I cannot find that channel!', allowedMentions: { repliedUser: true }, ephemeral: true })
             confessionchannels[interaction.guild.id] = {
@@ -30,11 +30,11 @@ module.exports = {
             fs.writeFile('./Jsons/Confession/ConfessionChannels.json', JSON.stringify(confessionchannels), (err) => {
                 if (err) console.log(err)
             });
-            let ChannelSet = new MessageEmbed()
+            let ChannelSet = new EmbedBuilder()
             .setTitle(`**Confession Setup: Confession Channel Set**`)
             .setColor(randomHexColor())
             .setDescription(`The confession channel is now set too **${channel}!**`)
-            .setFooter("You can now use confessions!")
+            .setFooter({text:"You can now use confessions!"})
             interaction.reply({ embeds: [ChannelSet], allowedMentions: {repliedUser: false}})    
             return
 		}

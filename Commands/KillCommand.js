@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 const got = require('got');
 
 module.exports = {
@@ -20,14 +20,14 @@ module.exports = {
             if(KillUser.user.bot) return interaction.reply({ content: ":no_entry: p-pls n-no-", allowedMentions: { repliedUser: false }, ephemeral: true })
             if(KillUser.id==interaction.member.id) return interaction.reply({ content: `:no_entry: n-no- don't do that--`, allowedMentions: { repliedUser: false }, ephemeral: true })
             let KillUserID = KillUser.id
-            const Killgif = new MessageEmbed()
+            const Killgif = new EmbedBuilder()
             got('https://api.waifu.pics/sfw/kill').then(response => {
             let content = response.body;
             let ContentFilter1 = content.replace(/{"url":"/gi, "")
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             Killgif.setTitle(`:knife:  ${interaction.member.displayName} killed ${interaction.guild.members.cache.get(KillUserID).displayName}! :knife:  `)
             Killgif.setImage(String(FinalImage))
-            Killgif.setFooter(currentDateAndTime)
+            Killgif.setFooter({text:`${currentDateAndTime}`})
             interaction.reply({ embeds: [Killgif], allowedMentions: {repliedUser: true, users: [KillUserID]}, content: `:knife: ${interaction.guild.members.cache.get(KillUserID)} :knife:`})
             })
             return
