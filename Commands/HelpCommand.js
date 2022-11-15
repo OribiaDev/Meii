@@ -37,7 +37,7 @@ module.exports = {
                         let HelpFun = new EmbedBuilder()
                         .setTitle("**Fun Commands**")
                         .setColor("#ff9aa2")
-                        .setDescription(`:confetti_ball: **${prefix}dice**: Rolls a 6 sided die! \n\n `)
+                        .setDescription(`:confetti_ball: **${prefix}dice**: Rolls a 6 sided die! \n\n :coin: **${prefix}coinflip**: Flips a coin! \n\n`)
                         .setFooter({text:"[something] = required | (something) = optional "})
                         interaction.reply({ embeds: [HelpFun], allowedMentions: {repliedUser: false}})
                         break;
@@ -53,7 +53,7 @@ module.exports = {
                         let HelpUtility = new EmbedBuilder()
                         .setTitle("**Utility Commands**")
                         .setColor("#ff9aa2")
-                        .setDescription(`:ping_pong: **${prefix}ping**: Tells the bots ping \n\n :information_source: **${prefix}info**: Shows the bots info `)
+                        .setDescription(`:ping_pong: **${prefix}ping**: Tells the bots ping \n\n :information_source: **${prefix}info**: Shows the bots info \n\n :sparkles: **${prefix}support**: Sends the invite to the support server \n\n`)
                         .setFooter({text:"[something] = required | (something) = optional "})
                         interaction.reply({ embeds: [HelpUtility], allowedMentions: { repliedUser: false }})
                         break;
