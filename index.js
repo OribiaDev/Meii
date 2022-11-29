@@ -10,6 +10,11 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 
 //Variables
 const prefix = '/'
+const BotDevID = '1046936831427608596'
+const mainclientId = '1041822625535623259' 
+
+// DEV TOGGLE
+const IsDev = false
 
 //Bot Login
 client.login(token);
@@ -18,7 +23,6 @@ client.login(token);
 function CommandRefresh(){
     const slashcommands = [];
     client.commands = new Collection();
-    const mainclientId = '1041822625535623259' 
     const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js'));
     //Refresh Command List
     for (const file of commandFiles) {
@@ -36,13 +40,19 @@ function CommandRefresh(){
     (async () => {
         try {
             console.log('Started refreshing application (/) commands.');
-    
-            await rest.put(
-                //Global
-                Routes.applicationCommands(mainclientId),
-                { body: slashcommands },
-            );
-    
+            if(IsDev){
+                await rest.put(
+                    //Dev Client
+                    Routes.applicationCommands(BotDevID),
+                    { body: slashcommands },
+                );
+            }else{
+                await rest.put(
+                    //Global Client
+                    Routes.applicationCommands(mainclientId),
+                    { body: slashcommands },
+                );
+            }
             console.log('Successfully reloaded application (/) commands.');
         } catch (error) {
             console.error(error);
@@ -79,14 +89,20 @@ function ManualCommandRefresh(){
             console.log('Manually started refreshing application (/) commands.');
             client.users.fetch('920892427412340787', false).then((Owner) => {
                 Owner.send({ content: '**Started Refreshing Commands**', allowedMentions: { repliedUser: false }})
-            });
-    
-            await rest.put(
-                //Global
-                Routes.applicationCommands(mainclientId),
-                { body: slashcommands },
-            );
-                
+            });   
+            if(IsDev){
+                await rest.put(
+                    //Dev Client
+                    Routes.applicationCommands(BotDevID),
+                    { body: slashcommands },
+                );
+            }else{
+                await rest.put(
+                    //Global Client
+                    Routes.applicationCommands(mainclientId),
+                    { body: slashcommands },
+                );
+            }               
             console.log('Successfully reloaded application (/) commands.');
             client.users.fetch('920892427412340787', false).then((Owner) => {
                 Owner.send({ content: '**Successfully Reloaded Commands**', allowedMentions: { repliedUser: false }})
@@ -96,7 +112,6 @@ function ManualCommandRefresh(){
         }
     })();
 }
-
 
 //Message Function 
 client.on('messageCreate', message => {
