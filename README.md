@@ -29,7 +29,7 @@ Miku also has an in-depth and simple anonymous confession system. It also has fr
 
 ## Help
 
-* Run the command /help in a discord text channel to see the list of commands
+* Run the command ```/help``` in a discord text channel to see the list of commands
 
 ## Authors
 
