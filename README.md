@@ -18,13 +18,14 @@ Miku also has an in-depth and simple anonymous confession system. It also has fr
 
 * Invite the bot to your discord using this [invite](https://discord.com/oauth2/authorize?client_id=1041822625535623259&permissions=2147576838&scope=applications.commands%20bot)
 
-### Executing program
+### Initializing Source Code
 
-* How to run the program
-* Step-by-step bullets
-```
-code blocks for commands
-```
+* Install [Node-JS](https://nodejs.org/en/)
+* Install the source code either with git or downloading it at the top right
+* Extract it, open the folder in the command prompt
+* type ```npm install``` to install the nessasary packages
+* insert your bot token into the config file
+* and type ```node .``` to start the bot!
 
 ## Help
 
