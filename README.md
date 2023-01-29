@@ -1,6 +1,6 @@
 <p align="center">
  <h2 align="center">Miku</h2>
- <p align="center">A simple multipurpose, gif action, confession (with free logging), and moderation bot! </p>
+ <p align="center">A simple multipurpose, gif action, confession (with free logging), and moderation Discord bot! </p>
 </p>
 
 ## Description
