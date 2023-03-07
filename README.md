@@ -1,11 +1,11 @@
 <p align="center">
- <h2 align="center">Miku</h2>
- <p align="center">A simple multipurpose, gif action, confession (with free logging), and moderation Discord bot! </p>
+ <h2 align="center">Meii</h2>
+ <p align="center">A powerful multipurpose, gif emote, confession + logging, and moderation Discord bot. </p>
 </p>
 
 ## Description
 
-Miku also has an in-depth and simple anonymous confession system. It also has free logging and is very well-polished and has tons of commands to keep you entertained and keep your server safe. 
+Meii also has an in-depth and simple anonymous confession system. It also has free logging and is very well-polished and has tons of commands to keep you entertained and keep your server safe. 
 
 ## Getting Started
 
@@ -16,7 +16,7 @@ Miku also has an in-depth and simple anonymous confession system. It also has fr
 
 ### Inviting the bot
 
-* Invite the bot to your discord using this [invite](https://discord.com/oauth2/authorize?client_id=1041822625535623259&permissions=2147576838&scope=applications.commands%20bot)
+* Invite the bot to your discord using this [invite](https://discord.com/oauth2/authorize?client_id=1082401009206308945&permissions=2147576838&scope=applications.commands%20bot)
 
 ### Initializing Source Code
 
