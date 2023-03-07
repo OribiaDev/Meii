@@ -5,7 +5,7 @@ const { EmbedBuilder, Permissions } = require('discord.js')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('help')
-		.setDescription('List of all Miku commands!')
+		.setDescription('List of all Meii commands!')
         .addStringOption(option =>
             option.setName('section')
                 .setDescription('Specific section of the help command')
@@ -60,7 +60,7 @@ module.exports = {
                 }
             }else{
                 let Help = new EmbedBuilder()
-                .setTitle("**Miku Command List**")
+                .setTitle("**Meii Command List**")
                 .setColor("ff9aa2")
                 .setDescription(`:scream: **Confessions** \n ${prefix}help confessions \n\n :tools: **Moderation** \n ${prefix}help moderation \n\n :confetti_ball:  **Fun** \n ${prefix}help fun \n\n :kissing_heart: **Actions** \n ${prefix}help actions \n\n :wrench: **Utility** \n ${prefix}help utility `)
                 .setFooter({text:'DM me "suggest" and follow the prompts to suggest something to the dev!'})

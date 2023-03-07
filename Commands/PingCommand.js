@@ -3,7 +3,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ping')
-		.setDescription('Gives the ping of Miku!'),
+		.setDescription('Gives the ping of Meii!'),
 	async execute(interaction, args, client) {
         if(!interaction.guild) return
 		if(interaction.content==undefined){

@@ -10,7 +10,7 @@ module.exports = {
         let SuggestEmb = new EmbedBuilder()
         .setTitle(`**Suggest something to the developer!**`)
         .setColor(randomHexColor())
-        .setDescription(`Please reply with what you want to suggest/tell the developer! \n __Your suggestion will be sent to the developer of Miku__`)
+        .setDescription(`Please reply with what you want to suggest/tell the developer! \n __Your suggestion will be sent to the developer of Meii__`)
         .setFooter({text:'You have 1 minute to respond | type "cancel" to cancel'})
         message.reply({ embeds: [SuggestEmb], allowedMentions: { repliedUser: false }})
         message.channel.awaitMessages({ filter, max: 1, time: 60000, errors: ['time'] }).then(collected =>{

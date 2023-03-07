@@ -4,7 +4,7 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('info')
-		.setDescription(`Shows all of Miku's info!`),
+		.setDescription(`Shows all of Meii's info!`),
 	async execute(interaction, args, client, prefix) {
         if(!interaction.guild) return
 		if(interaction.content==undefined){

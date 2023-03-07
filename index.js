@@ -11,7 +11,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 //Variables
 const prefix = '/'
 const BotDevID = '1046936831427608596'
-const mainclientId = '1041822625535623259' 
+const mainclientId = '1082401009206308945' 
 
 // DEV TOGGLE
 const IsDev = false
@@ -144,11 +144,10 @@ client.on('messageCreate', message => {
 client.once('ready', () => {
     client.user.setActivity(`Starting up... please wait`);
     client.user.setStatus("online");
-    console.log(" _____ _ _       ")
-    console.log("|     |_| |_ _ _ ")
-    console.log("| | | | | '_| | |")
-    console.log("|_|_|_|_|_,_|___|")
-    console.log("                 ")
+    console.log(" _____     _ _ ")
+    console.log("|     |___|_|_|")
+    console.log("| | | | -_| | |")
+    console.log("|_|_|_|___|_|_|")
     CommandRefresh();
     console.log("Launched!")
     client.user.setActivity(`${prefix}help | Watching ${client.guilds.cache.size} servers!`);
