@@ -25,6 +25,7 @@ Meii also has an in-depth and simple anonymous confession system. It also has fr
 * Extract it, open the folder in the command prompt
 * type ```npm install``` to install the nessasary packages
 * insert your bot token into the config file
+* insert your SQL host IP, password, username, and database into the config file (data storing) 
 * and type ```node .``` to start the bot!
 
 ## Help
