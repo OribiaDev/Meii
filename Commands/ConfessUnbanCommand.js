@@ -7,7 +7,7 @@ const { host, user, password, database } = require('../Jsons/config.json');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('confessunban')
-		.setDescription('Unban a user from confessions!')
+		.setDescription('Unbans a user from confessions!')
         .addUserOption(option => 
             option.setName('user')
                   .setDescription('Select a user to unban from confessions!')
@@ -28,7 +28,7 @@ module.exports = {
             let confessbans = JSON.stringify(result[0].confession_userbans_ids);
             if(interaction.content==undefined){
                 //Interaction
-                if(!interaction.member.permissions.has(PermissionFlagsBits.BanMembers)) return interaction.reply("You cannot use this command!")
+                if(!interaction.member.permissions.has(PermissionFlagsBits.BanMembers)) return interaction.reply({ content:":no_entry: You cannot use this command!", ephemeral: true })
                 let bUser = interaction.options.getMember('user');
                 if(!bUser) return interaction.reply({content:":no_entry: Can't find user! please mention the user in the command!", ephemeral: true });
                 if(!confessbans.includes(bUser.id)) return interaction.reply({content:":no_entry: This user isnt banned from confessions!", ephemeral: true })

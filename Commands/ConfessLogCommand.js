@@ -6,8 +6,8 @@ const { host, user, password, database } = require('../Jsons/config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('confesslogs')
-		.setDescription('Set the channel for confession logging')
+		.setName('setconfesslogs')
+		.setDescription('Sets the channel for confession logging')
         .addChannelOption(option => 
             option.setName('channel')
                   .setDescription('Select a channel for the confession logging')
@@ -23,7 +23,7 @@ module.exports = {
         });
 		if(interaction.content==undefined){
 			//Interaction
-            if(!interaction.member.permissions.has(PermissionFlagsBits.ViewAuditLog)) return interaction.reply("You cannot use this command!")
+            if(!interaction.member.permissions.has(PermissionFlagsBits.ViewAuditLog)) return interaction.reply({ content: ':no_entry: You cannot use this command!', allowedMentions: { repliedUser: true }, ephemeral: true })
             let channel = interaction.options.getChannel('channel');
             if(!channel) return interaction.reply({ content: ':no_entry: Im sorry, I cannot find that channel!', allowedMentions: { repliedUser: true }, ephemeral: true })
             //Confession Mod Log Set Channel
@@ -33,7 +33,7 @@ module.exports = {
                 let ChannelSet = new EmbedBuilder()
                 .setTitle(`**Confession Log Setup: Confession Log Channel Set**`)
                 .setColor(randomHexColor())
-                .setDescription(`The confession log channel is now set too **${channel}!**`)
+                .setDescription(`The confession log is now set too **${channel}!**`)
                 .setFooter({text:`Confessions will now be logged!`})
                 interaction.reply({ embeds: [ChannelSet], allowedMentions: {repliedUser: false}})   
                 return

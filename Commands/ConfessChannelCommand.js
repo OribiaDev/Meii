@@ -6,8 +6,8 @@ const { host, user, password, database } = require('../Jsons/config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('confesschannel')
-		.setDescription('Set the channel for confessions')
+		.setName('setconfesschannel')
+		.setDescription('Sets the channel for confessions')
         .addChannelOption(option => 
             option.setName('channel')
                   .setDescription('Select a channel for the confessions')
@@ -23,7 +23,7 @@ module.exports = {
         });
         if(interaction.content==undefined){
             //Interaction
-            if(!interaction.member.permissions.has(PermissionFlagsBits.ManageChannels)) return interaction.reply("You cannot use this command!")
+            if(!interaction.member.permissions.has(PermissionFlagsBits.ViewAuditLog)) return interaction.reply({ content: ':no_entry: You cannot use this command!', allowedMentions: { repliedUser: true }, ephemeral: true })
             let channel = interaction.options.getChannel('channel');
             //Confession Set Channel
             var sql = `UPDATE server_data SET confession_channel_ids = '${channel.id}' WHERE server_id = ${interaction.guild.id};`; 

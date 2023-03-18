@@ -8,7 +8,7 @@ module.exports = {
         if(message.guild) return
         const filter = m => m.author.id == message.author.id
         let SuggestEmb = new EmbedBuilder()
-        .setTitle(`**Suggest something to the developer!**`)
+        .setTitle(`**Suggest something to Oribia (The Dev)**`)
         .setColor(randomHexColor())
         .setDescription(`Please reply with what you want to suggest/tell the developer! \n __Your suggestion will be sent to the developer of Meii__`)
         .setFooter({text:'You have 1 minute to respond | type "cancel" to cancel'})
@@ -21,7 +21,7 @@ module.exports = {
                 .setDescription('Your suggestion is now cancelled!')
                 return message.reply({ embeds: [SuggestCancelEmb], allowedMentions: { repliedUser: false }})
             }
-            client.users.fetch('920892427412340787', false).then((Owner) => {
+            client.users.fetch('946377996414107691', false).then((Owner) => {
                 var currentDateAndTime = new Date().toLocaleString();
                 let SuggestionEmbed = new EmbedBuilder()
                 .setTitle(`**Suggestion:**`)
@@ -33,7 +33,7 @@ module.exports = {
             let SuggestionCompletedEmb = new EmbedBuilder()
             .setTitle(`**Suggestion Sent**`)
             .setColor(randomHexColor())
-            .setDescription(`Your suggestion has now been sent to the bot developer!`)
+            .setDescription(`Your suggestion has now been sent to Oribia (The Dev)!`)
             message.channel.send({ embeds: [SuggestionCompletedEmb] })
 
 

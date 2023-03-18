@@ -1,5 +1,5 @@
 //Imports
-const { Client, GatewayIntentBits, Partials, Collection, PermissionFlagsBits } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, PermissionFlagsBits, Events } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { main_token, dev_token, host, user, password, database } = require('./Jsons/config.json');
@@ -17,7 +17,7 @@ const mainclientId = '1082401009206308945'
 
 // DEV TOGGLE
 var token;
-const IsDev = true
+const IsDev = false
 
 //Token Changer
 if(IsDev){
@@ -125,7 +125,7 @@ function ManualCommandRefresh(){
 }
 
 //Message Function 
-client.on('messageCreate', message => {
+client.on(Events.MessageCreate, message => {
 	if (message.author.bot) return;
     if(message.guild){
 
@@ -170,7 +170,7 @@ client.on('messageCreate', message => {
 });
 
 //Ready Function
-client.once('ready', () => {
+client.once(Events.ClientReady, () => {
     client.user.setActivity(`Starting up... please wait`);
     client.user.setStatus("online");
     console.log(" _____     _ _ ")
@@ -183,7 +183,7 @@ client.once('ready', () => {
 });
 
 //Slash Command Function
-client.on('interactionCreate', async interaction => {
+client.on(Events.InteractionCreate, async interaction => {
     if(!interaction.guild) return
 	if (!interaction.isCommand()) return;
     //Database Login
@@ -260,12 +260,12 @@ client.on('interactionCreate', async interaction => {
 });
 
 //Guild Join Funcion
-client.on("guildCreate", guild => {
+client.on(Events.GuildCreate, guild => {
     client.user.setActivity(`${prefix}help | Helping ${client.guilds.cache.size} servers!`);             
     });
         
     //Guild Leave Function
-    client.on("guildDelete", guild => {
+    client.on(Events.GuildDelete, guild => {
     client.user.setActivity(`${prefix}help | Helping ${client.guilds.cache.size} servers!`); 
     //Database Login
     var con = mysql.createConnection({
