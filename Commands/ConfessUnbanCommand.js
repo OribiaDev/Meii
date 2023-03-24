@@ -8,6 +8,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('confessunban')
 		.setDescription('Unbans a user from confessions!')
+        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
         .addUserOption(option => 
             option.setName('user')
                   .setDescription('Select a user to unban from confessions!')
@@ -25,10 +26,9 @@ module.exports = {
         var sql = `SELECT confession_userbans_ids FROM server_data WHERE server_id = ${interaction.guild.id};`; 
         con.query(sql, function (err, result) {
             if (err) throw err;
-            let confessbans = JSON.stringify(result[0].confession_userbans_ids);
+            let confessbans = result[0].confession_userbans_ids;
             if(interaction.content==undefined){
                 //Interaction
-                if(!interaction.member.permissions.has(PermissionFlagsBits.BanMembers)) return interaction.reply({ content:":no_entry: You cannot use this command!", ephemeral: true })
                 let bUser = interaction.options.getMember('user');
                 if(!bUser) return interaction.reply({content:":no_entry: Can't find user! please mention the user in the command!", ephemeral: true });
                 if(!confessbans.includes(bUser.id)) return interaction.reply({content:":no_entry: This user isnt banned from confessions!", ephemeral: true })

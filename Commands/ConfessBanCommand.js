@@ -8,6 +8,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('confessban')
 		.setDescription('Ban a user from confessions!')
+        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
         .addUserOption(option => 
             option.setName('user')
                   .setDescription('Select a user to ban from confessions!')
@@ -28,7 +29,6 @@ module.exports = {
             let confessbans = JSON.stringify(result[0].confession_userbans_ids);
             if(interaction.content==undefined){
                 //Interaction
-                if(!interaction.member.permissions.has(PermissionFlagsBits.BanMembers)) return interaction.reply({ content:":no_entry: You cannot use this command!", ephemeral: true })
                 let bUser = interaction.options.getMember('user');
                 if(!bUser) return interaction.reply({ content:":no_entry: Can't find user! please mention the user in the command!", ephemeral: true });
                 if(bUser.id=='1082401009206308945' || bUser.id=='1082402034759766016') return interaction.reply({content:":no_entry: You can't ban me silly~!", ephemeral: true })

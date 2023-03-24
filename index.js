@@ -199,7 +199,7 @@ client.on(Events.InteractionCreate, async interaction => {
             const { commandName } = interaction;
             console.log('Database Check: Cannot connect to database!')
             console.log(err)
-            if(commandName == 'confessban' || commandName=='confessunban' || commandName=='confesslogs' || commandName == "confesschannel"){
+            if(commandName == 'confessban' || commandName=='confessunban' || commandName=='setconfesslogs' || commandName == "setconfesschannel"){
                 return interaction.reply({ content: ':no_entry: Cannot connect to database!  Try again in a few minutes! :no_entry:', allowedMentions: { repliedUser: true }, ephemeral: true })   
             }else{
                 if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.ReadMessageHistory) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
@@ -225,36 +225,57 @@ client.on(Events.InteractionCreate, async interaction => {
         }else{
             //Query Database Check Block
             var sql = `SELECT COUNT(*) FROM server_data WHERE server_id = ${interaction.guild.id}`;
-            con.query(sql, function (err, result) {
+            con.query(sql, async function (err, result) {
                 if (err) throw err;
                 strresult = JSON.stringify(result[0]);
                 if(strresult.includes(0)){
                     //Query Update Block
                     var sql = `INSERT INTO server_data (server_id, confession_userbans_ids) VALUES (${interaction.guild.id}, ' ')`;
-                    con.query(sql, function (err, result) {
+                    con.query(sql, async function (err, result) {
                         if (err) throw err;
                         console.log(`New Database Entry Created with GuildID: ${interaction.guild.id}`);
+                        //New Database Command Handler
+                        if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.ReadMessageHistory) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
+                            return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need **Send Messages**, **Read Message History**, and **Embed Links**`, ephemeral: true }).catch(() => {
+                                return; 
+                            })
+                        }
+                        if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.ReadMessageHistory) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)){
+                            return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need **Send Messages**, **Read Message History**, and **Embed Links**`, ephemeral: true }).catch(() => {
+                                return;
+                            })
+                        }      
+                        const { commandName } = interaction;
+                        if (!client.commands.has(commandName)) return;
+                        try {
+                            await client.commands.get(commandName).execute(interaction, null, client, prefix);
+                        } catch (error) {
+                            console.error(error);
+                            return interaction.reply({ content: ':no_entry: There was an error while executing this command! :no_entry: ', ephemeral: true });
+                        }
                     });
+                }else{
+                    //Existing Database Command Handler
+                    if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.ReadMessageHistory) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
+                        return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need **Send Messages**, **Read Message History**, and **Embed Links**`, ephemeral: true }).catch(() => {
+                            return; 
+                        })
+                    }
+                    if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.ReadMessageHistory) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)){
+                        return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need **Send Messages**, **Read Message History**, and **Embed Links**`, ephemeral: true }).catch(() => {
+                            return;
+                        })
+                    }      
+                    const { commandName } = interaction;
+                    if (!client.commands.has(commandName)) return;
+                    try {
+                        await client.commands.get(commandName).execute(interaction, null, client, prefix);
+                    } catch (error) {
+                        console.error(error);
+                        return interaction.reply({ content: ':no_entry: There was an error while executing this command! :no_entry: ', ephemeral: true });
+                    }                   
                 }
             });
-            if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.ReadMessageHistory) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
-                return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need **Send Messages**, **Read Message History**, and **Embed Links**`, ephemeral: true }).catch(() => {
-                    return; 
-                })
-            }
-            if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.ReadMessageHistory) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)){
-                return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need **Send Messages**, **Read Message History**, and **Embed Links**`, ephemeral: true }).catch(() => {
-                    return;
-                })
-            }      
-            const { commandName } = interaction;
-            if (!client.commands.has(commandName)) return;
-            try {
-                await client.commands.get(commandName).execute(interaction, null, client, prefix);
-            } catch (error) {
-                console.error(error);
-                return interaction.reply({ content: ':no_entry: There was an error while executing this command! :no_entry: ', ephemeral: true });
-            }
         }
     });
 });

@@ -8,6 +8,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('setconfesslogs')
 		.setDescription('Sets the channel for confession logging')
+        .setDefaultMemberPermissions(PermissionFlagsBits.ViewAuditLog)
         .addChannelOption(option => 
             option.setName('channel')
                   .setDescription('Select a channel for the confession logging')
@@ -23,7 +24,6 @@ module.exports = {
         });
 		if(interaction.content==undefined){
 			//Interaction
-            if(!interaction.member.permissions.has(PermissionFlagsBits.ViewAuditLog)) return interaction.reply({ content: ':no_entry: You cannot use this command!', allowedMentions: { repliedUser: true }, ephemeral: true })
             let channel = interaction.options.getChannel('channel');
             if(!channel) return interaction.reply({ content: ':no_entry: Im sorry, I cannot find that channel!', allowedMentions: { repliedUser: true }, ephemeral: true })
             //Confession Mod Log Set Channel
