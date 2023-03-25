@@ -43,7 +43,7 @@ module.exports = {
                         .setTitle(`**Confession: Confession Channel Not Set**`)
                         .setColor(randomHexColor())
                         .setDescription(`Im sorry, the confession channel is not setup for this server!`)
-                        .setFooter({text:`You can set it up by doing ${prefix}confesschannel`})
+                        .setFooter({text:`You can set it up by doing ${prefix}setconfesschannel`})
                         return message.author.send({ embeds: [ConfessionNotSet], allowedMentions: {repliedUser: false}})
                     }else{
                         //Check if user is confession banned
@@ -153,7 +153,7 @@ module.exports = {
                             .setTitle(`**Confession: Confession Channel Not Set**`)
                             .setColor(randomHexColor())
                             .setDescription(`Im sorry, the confession channel is not setup for this server!`)
-                            .setFooter({text:`You can set it up by using ${prefix}confesschannel`})
+                            .setFooter({text:`You can set it up by using ${prefix}setconfesschannel`})
                             return message.author.send({ embeds: [ConfessionNotSet], allowedMentions: {repliedUser: false}})
                         }else{
                             //Check if user is banned

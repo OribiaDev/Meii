@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@top-gg/sdk": "^3.1.4",
     "abort-controller": "^3.0.0",
     "asynckit": "^0.4.0",
     "balanced-match": "^1.0.0",
@@ -57,6 +58,7 @@
     "responselike": "^2.0.0",
     "setimmediate": "^1.0.5",
     "string-color": "^0.8.0",
+    "topgg-autoposter": "^2.0.1",
     "tweetnacl": "^1.0.3",
     "wrappy": "^1.0.2",
     "ws": "^7.5.3"

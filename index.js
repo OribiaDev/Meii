@@ -2,7 +2,8 @@
 const { Client, GatewayIntentBits, Partials, Collection, PermissionFlagsBits, Events } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { main_token, dev_token, host, user, password, database } = require('./Jsons/config.json');
+const { main_token, dev_token, host, user, password, database, top_token } = require('./Jsons/config.json');
+const { AutoPoster } = require('topgg-autoposter')
 const mysql = require('mysql');
 const fs = require('fs');
 
@@ -29,6 +30,16 @@ var token;
 
 //Bot Login
 client.login(token)
+
+//Top.GG
+if(!IsDev){
+    //Poster Var
+    const poster = AutoPoster(top_token, client)
+    //Console Log Posted
+    poster.on('posted', (stats) => { // ran when succesfully posted
+        console.log(`Posted stats to Top.gg | ${stats.serverCount} servers`)
+    })
+}
 
 //Command Handler 
 function CommandRefresh(){

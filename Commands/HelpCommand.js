@@ -61,7 +61,7 @@ module.exports = {
             }else{
                 let Help = new EmbedBuilder()
                 .setTitle("**Meii Command List**")
-                .setColor("C3B1E1")
+                .setColor("#C3B1E1")
                 .setDescription(`:scream: **Confessions** \n ${prefix}help confessions \n\n :tools: **Moderation** \n ${prefix}help moderation \n\n :confetti_ball:  **Fun** \n ${prefix}help fun \n\n :kissing_heart: **Emotes** \n ${prefix}help emotes \n\n :wrench: **Utility** \n ${prefix}help utility \n\n _____ \n **Offical Website** \n https://meiibot.xyz `)
                 .setFooter({text:'DM me "suggest" and follow the prompts to suggest something to the dev!'})
                 interaction.reply({ embeds: [Help], allowedMentions: { repliedUser: false }})
