@@ -16,9 +16,7 @@ module.exports = {
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             let KillUser = interaction.options.getMember('user');
-            if(!KillUser) return interaction.reply({ content: ":no_entry: Can't find that user!", allowedMentions: { repliedUser: true }, ephemeral: true });
-            if(KillUser.user.bot) return interaction.reply({ content: ":no_entry: p-pls n-no-", allowedMentions: { repliedUser: false }, ephemeral: true })
-            if(KillUser.id==interaction.member.id) return interaction.reply({ content: `:no_entry: n-no- don't do that--`, allowedMentions: { repliedUser: false }, ephemeral: true })
+            if(KillUser.id==interaction.member.id) return interaction.reply({ content: `\`n-no- don't do that--\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let KillUserID = KillUser.id
             const Killgif = new EmbedBuilder()
             got('https://api.waifu.pics/sfw/kill').then(response => {

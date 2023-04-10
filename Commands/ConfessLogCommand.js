@@ -25,7 +25,6 @@ module.exports = {
 		if(interaction.content==undefined){
 			//Interaction
             let channel = interaction.options.getChannel('channel');
-            if(!channel) return interaction.reply({ content: ':no_entry: Im sorry, I cannot find that channel!', allowedMentions: { repliedUser: true }, ephemeral: true })
             //Confession Mod Log Set Channel
             var sql = `UPDATE server_data SET confession_modlog_ids = '${channel.id}' WHERE server_id = ${interaction.guild.id};`; 
             con.query(sql, function (err, result) {

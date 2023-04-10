@@ -16,9 +16,7 @@ module.exports = {
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             let PokeUser = interaction.options.getMember('user');
-            if(!PokeUser) return interaction.reply({ content: ":no_entry: Can't find that user!", allowedMentions: { repliedUser: true }, ephemeral: true });
-            if(PokeUser.user.bot) return interaction.reply({ content: ":no_entry: don't poke the bots- grr-", allowedMentions: { repliedUser: false }, ephemeral: true })
-            if(PokeUser.id==interaction.member.id) return interaction.reply({ content: `:no_entry: i- don't poke yourself-`, allowedMentions: { repliedUser: false }, ephemeral: true })
+            if(PokeUser.id==interaction.member.id) return interaction.reply({ content: `\`i- don't poke yourself-\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let PokeUserID = PokeUser.id
             const pokegif = new EmbedBuilder()
             got('https://api.waifu.pics/sfw/poke').then(response => {

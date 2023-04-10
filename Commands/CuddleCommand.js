@@ -16,9 +16,7 @@ module.exports = {
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             let CuddleUser = interaction.options.getMember('user');
-            if(!CuddleUser) return interaction.reply({ content: ":no_entry: Can't find that user!", allowedMentions: { repliedUser: true }, ephemeral: true });
-            if(CuddleUser.user.bot) return interaction.reply({ content: ":no_entry: ..those damn botsexuals..", allowedMentions: { repliedUser: false }, ephemeral: true })
-            if(CuddleUser.id==interaction.member.id) return interaction.reply({ content: `:no_entry: Do you need a cuddle ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }})
+            if(CuddleUser.id==interaction.member.id) return interaction.reply({ content: `\`Do you need a cuddle ${interaction.member.displayName}..?\``, allowedMentions: { repliedUser: false }})
             let CuddleUserID = CuddleUser.id
             const Cuddlegif = new EmbedBuilder()
             got('https://api.waifu.pics/sfw/cuddle').then(response => {

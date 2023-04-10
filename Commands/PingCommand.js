@@ -9,7 +9,7 @@ module.exports = {
 		if(interaction.content==undefined){
             //Interaction
             const m = await interaction.channel.send("Ping?");
-            interaction.reply(`:ping_pong: Pong! | Latency is ${m.createdTimestamp - interaction.createdTimestamp}ms | API latency is ${client.ws.ping}ms`)
+            await interaction.reply(`:ping_pong: Pong! | Latency is \`${m.createdTimestamp - interaction.createdTimestamp}ms\` | API latency is \`${client.ws.ping}ms\``)
             m.delete()
 			return
 		}

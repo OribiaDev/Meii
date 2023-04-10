@@ -25,7 +25,7 @@ module.exports = {
                 let CoinEmb = new EmbedBuilder()
                 .setColor(randomHexColor())
                 .setTitle(" **Coin Flip!**")
-                .setDescription(`:coin:  You got.. **${answer}**!`)
+                .setDescription(`:coin:  You got.. \`${answer}\`!`)
                 interaction.reply({ embeds: [CoinEmb], allowedMentions: { repliedUser: false }})
                 return
             }

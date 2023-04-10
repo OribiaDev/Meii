@@ -16,9 +16,7 @@ module.exports = {
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             let HoldUser = interaction.options.getMember('user');
-            if(!HoldUser) return interaction.reply({ content: ":no_entry: Can't find that user!", allowedMentions: { repliedUser: true }, ephemeral: true });
-            if(HoldUser.user.bot) return interaction.reply({ content: ":no_entry: ..those damn botsexuals..", allowedMentions: { repliedUser: false }, ephemeral: true })
-            if(HoldUser.id==interaction.member.id) return interaction.reply({ content: `:no_entry: Do you need some affection ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, ephemeral: true })
+            if(HoldUser.id==interaction.member.id) return interaction.reply({ content: `\`Do you need some affection ${interaction.member.displayName}..?\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let HoldUserID = HoldUser.id
             const holdgif = new EmbedBuilder()
             got('https://api.waifu.pics/sfw/handhold').then(response => {

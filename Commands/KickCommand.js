@@ -23,15 +23,14 @@ module.exports = {
 		if(interaction.content==undefined){
 			//Interaction
 			if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.KickMembers)){
-                return interaction.reply({ content: `I'm sorry, I do not have enough permissions!\nI need the **Kick Members** permission for this command!`, ephemeral: true }).catch(() => {
+                return interaction.reply({ content: `I'm sorry, I do not have enough permissions!\nI need the \`Kick Members\` permission for this command!`, ephemeral: true }).catch(() => {
                     return;
                 })
             }
 			let bUser = interaction.options.getMember('user');
-			if(!bUser) return interaction.reply({ content:":no_entry: Can't find that user! please mention the user in the command!", ephemeral: true });
-			if(bUser.id=='1082401009206308945' || bUser.id=='1082402034759766016') return interaction.reply({content:":no_entry: You can't kick me silly~!", ephemeral: true })
+			if(bUser.id=='1082401009206308945' || bUser.id=='1082402034759766016') return interaction.reply({content:"\`You can't kick me silly~!\`", ephemeral: true })
 			//Kick User
-			if(bUser.permissions.has(PermissionFlagsBits.KickMembers)) return interaction.reply({ content:":no_entry:  I'm unable to kick this person!", ephemeral: true });
+			if(bUser.permissions.has(PermissionFlagsBits.KickMembers)) return interaction.reply({ content:"\`I'm unable to kick this person!\`", ephemeral: true });
 			let reason = interaction.options.getString('reason');
 			//Reason Check
 			if(reason==null){

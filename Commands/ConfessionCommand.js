@@ -127,7 +127,7 @@ module.exports = {
                                             });  
      
                                         }).catch((error) => {
-                                            message.reply("No response, canceling")
+                                            message.reply("\`No response, canceling\`")
                                         });                                        
 
                                        } 
@@ -236,7 +236,7 @@ module.exports = {
                                            
                                                 });  
                                             }).catch(() => {
-                                                message.reply("No response, canceling")
+                                                message.reply("\`No response, canceling\`")
                                             });
 
 
@@ -262,7 +262,7 @@ module.exports = {
 
         }).catch((error) => {
             console.log(error)
-            message.reply("No response, canceling")
+            message.reply("\`No response, canceling\`")
         });   
 	},
 };

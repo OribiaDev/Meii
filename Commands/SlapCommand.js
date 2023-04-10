@@ -16,9 +16,7 @@ module.exports = {
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             let SlapUser = interaction.options.getMember('user');
-            if(!SlapUser) return interaction.reply({ content: ":no_entry: Can't find that user!", allowedMentions: { repliedUser: true }, ephemeral: true });
-            if(SlapUser.user.bot) return interaction.reply({ content: ":no_entry: i- pls no-", allowedMentions: { repliedUser: false }, ephemeral: true })
-            if(SlapUser.id==interaction.member.id) return interaction.reply({ content: `:no_entry: that’s kinda k-kinky..`, allowedMentions: { repliedUser: false }, ephemeral: true })
+            if(SlapUser.id==interaction.member.id) return interaction.reply({ content: `\`that’s kinda k-kinky..\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let SlapUserID = SlapUser.id
             const Slapgif = new EmbedBuilder()
             got('https://api.waifu.pics/sfw/slap').then(response => {

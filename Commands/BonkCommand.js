@@ -16,8 +16,6 @@ module.exports = {
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             let BonkUser = interaction.options.getMember('user');
-            if(!BonkUser) return interaction.reply({ content: ":no_entry: Can't find that user!", allowedMentions: { repliedUser: true }, ephemeral: true });
-            if(BonkUser.user.bot) return interaction.reply({ content: ":no_entry: please don't bonk the bots-", allowedMentions: { repliedUser: false }, ephemeral: true })
             let BonkUserID = BonkUser.id
             const bonkgif = new EmbedBuilder()
             got('https://api.waifu.pics/sfw/bonk').then(response => {

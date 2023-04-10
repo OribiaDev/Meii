@@ -16,8 +16,7 @@ module.exports = {
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             let HugUser = interaction.options.getMember('user');
-            if(HugUser.user.bot) return interaction.reply({ content: ":no_entry: ..those damn botsexuals..", allowedMentions: { repliedUser: false }, ephemeral: true })
-            if(HugUser.id==interaction.member.id) return interaction.reply({ content: `:no_entry: Do you need a hug ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, ephemeral: true })
+            if(HugUser.id==interaction.member.id) return interaction.reply({ content: `\`Do you need a hug ${interaction.member.displayName}..?\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let HugUserID = HugUser.id
             const HugGif = new EmbedBuilder()
             got('https://api.waifu.pics/sfw/hug').then(response => {

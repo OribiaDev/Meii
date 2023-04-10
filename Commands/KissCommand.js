@@ -16,9 +16,7 @@ module.exports = {
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             let KissUser = interaction.options.getMember('user');
-            if(!KissUser) return interaction.reply({ content: ":no_entry: Can't find that user!", allowedMentions: { repliedUser: true }, ephemeral: true });
-            if(KissUser.user.bot) return interaction.reply({ content: ":no_entry: ..those damn botsexuals..", allowedMentions: { repliedUser: false }, ephemeral: true })
-            if(KissUser.id==interaction.member.id) return interaction.reply({ content: `:no_entry: Do you need a kiss ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, ephemeral: true })
+            if(KissUser.id==interaction.member.id) return interaction.reply({ content: `\`Do you need a kiss ${interaction.member.displayName}..?\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let KissUserID = KissUser.id
             const KissGif = new EmbedBuilder()
             got('https://api.waifu.pics/sfw/kiss').then(response => {

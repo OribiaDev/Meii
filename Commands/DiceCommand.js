@@ -10,11 +10,11 @@ module.exports = {
         if(!interaction.guild) return
 		if(interaction.content==undefined){
 			//Interaction
-            var die = Math.floor(Math.random() * 6) + 1;
+            var num = Math.floor(Math.random() * 6) + 1;
             let DiceEmb = new EmbedBuilder()
             .setColor(randomHexColor())
             .setTitle(" **Dice Roll!**")
-            .setDescription(`:game_die: You rolled a **${die}**!`)
+            .setDescription(`:game_die: You rolled a.. **${num}**!`)
             interaction.reply({ embeds: [DiceEmb], allowedMentions: { repliedUser: false }})
             return
 		}

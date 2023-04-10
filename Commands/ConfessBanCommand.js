@@ -30,9 +30,9 @@ module.exports = {
             if(interaction.content==undefined){
                 //Interaction
                 let bUser = interaction.options.getMember('user');
-                if(!bUser) return interaction.reply({ content:":no_entry: Can't find user! please mention the user in the command!", ephemeral: true });
-                if(bUser.id=='1082401009206308945' || bUser.id=='1082402034759766016') return interaction.reply({content:":no_entry: You can't ban me silly~!", ephemeral: true })
-                if(confessbans.includes(bUser.id)) return interaction.reply({ content:":no_entry: This user is already banned from confessions!", ephemeral: true })
+                if(!bUser) return interaction.reply({ content:"\`Can't find user! please mention the user in the command!\`", ephemeral: true });
+                if(bUser.id=='1082401009206308945' || bUser.id=='1082402034759766016') return interaction.reply({content:"\`You can't ban me silly~!\`", ephemeral: true })
+                if(confessbans.includes(bUser.id)) return interaction.reply({ content:"\`This user is already banned from confessions!\`", ephemeral: true })
                 //Confess Ban User
                 var sql = `UPDATE server_data SET confession_userbans_ids = '${bUser.id + " " + result[0].confession_userbans_ids}' WHERE server_id = ${interaction.guild.id};`;
                 con.query(sql, function (err, result) {
