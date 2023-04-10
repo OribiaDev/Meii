@@ -19,6 +19,7 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
         if(!interaction.guild) return
 		if(interaction.content==undefined){
+            await interaction.deferReply();
             var currentDateAndTime = new Date().toLocaleString();
 			//Interaction
             if (interaction.options.getSubcommand() === 'user') {
@@ -40,7 +41,7 @@ module.exports = {
                     )
                     .setThumbnail(taruser.displayAvatarURL())
                     .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-                    await interaction.reply({ embeds: [notowninfoemb], allowedMentions: { repliedUser: false }})                        
+                    await interaction.editReply({ embeds: [notowninfoemb], allowedMentions: { repliedUser: false }})                        
                 } else {
                     //Own Info
                     let owninfoemb = new EmbedBuilder()
@@ -57,7 +58,7 @@ module.exports = {
                     )
                     .setThumbnail(interaction.member.displayAvatarURL())
                     .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-                    await interaction.reply({ embeds: [owninfoemb], allowedMentions: { repliedUser: false }})        
+                    await interaction.editReply({ embeds: [owninfoemb], allowedMentions: { repliedUser: false }})        
                 }
             } else if (interaction.options.getSubcommand() === 'server') {
                 //Server
@@ -76,7 +77,7 @@ module.exports = {
                     { name: '**Region**', value: `${interaction.guild.preferredLocale}`, inline: true },
                 )
                 .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-                await interaction.reply({ embeds: [serverinfoemb], allowedMentions: { repliedUser: false }})      
+                await interaction.editReply({ embeds: [serverinfoemb], allowedMentions: { repliedUser: false }})      
                 
             }
 		}

@@ -26,18 +26,22 @@ module.exports = {
             const binarytext = interaction.options.getString('text');
             //Encode
             if(binaryfunction=="binary_encode"){
+                await interaction.deferReply();
                 fetch(`https://some-random-api.ml/binary?encode=${binarytext}`)
                     .then(res => res.json())
-                    .then(json => {
-                        interaction.reply({ content: `Here you go.. \n \`${json.binary}\``, ephemeral: false });
+                    .then(async json => {
+                        let str = json.binary.slice(0, 1950) //1950 char limit
+                        await interaction.editReply({ content: `Here you go.. \n \`${str}\``, ephemeral: false });
                     });
             }
             //Decode
             if(binaryfunction=="binary_decode"){
+                await interaction.deferReply();
                 fetch(`https://some-random-api.ml/binary?decode=${binarytext}`)
                 .then(res => res.json())
-                .then(json => {
-                    interaction.reply({ content: `Here you go.. \n \`${json.text}\``, ephemeral: false });
+                .then(async json => {
+                    let str = json.text.slice(0, 1950) //1950 char limit
+                    await interaction.editReply({ content: `Here you go.. \n \`${str}\``, ephemeral: false });
                 });
             }
 		}

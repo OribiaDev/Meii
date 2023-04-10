@@ -13,20 +13,21 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
 		if(!interaction.guild) return
 		if(interaction.content==undefined){
+            await interaction.deferReply();
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             let HoldUser = interaction.options.getMember('user');
-            if(HoldUser.id==interaction.member.id) return interaction.reply({ content: `\`Do you need some affection ${interaction.member.displayName}..?\``, allowedMentions: { repliedUser: false }, ephemeral: true })
+            if(HoldUser.id==interaction.member.id) return await interaction.editReply({ content: `\`Do you need some affection ${interaction.member.displayName}..?\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let HoldUserID = HoldUser.id
             const holdgif = new EmbedBuilder()
-            got('https://api.waifu.pics/sfw/handhold').then(response => {
+            got('https://api.waifu.pics/sfw/handhold').then(async response => {
             let content = response.body;
             let ContentFilter1 = content.replace(/{"url":"/gi, "")
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             holdgif.setTitle(`:people_holding_hands:  ${interaction.member.displayName} held ${interaction.guild.members.cache.get(HoldUserID).displayName}'s hand! :people_holding_hands:  `)
             holdgif.setImage(String(FinalImage))
             holdgif.setFooter({text:`${currentDateAndTime}`})
-            interaction.reply({ embeds: [holdgif], allowedMentions: {repliedUser: true, users: [HoldUserID]}, content: `:people_holding_hands: ${interaction.guild.members.cache.get(HoldUserID)} :people_holding_hands:`})
+            await interaction.editReply({ embeds: [holdgif], allowedMentions: {repliedUser: true, users: [HoldUserID]}, content: `:people_holding_hands: ${interaction.guild.members.cache.get(HoldUserID)} :people_holding_hands:`})
             })
             return
 		}

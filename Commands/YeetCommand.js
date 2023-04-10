@@ -13,20 +13,21 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
 		if(!interaction.guild) return
 		if(interaction.content==undefined){
+            await interaction.deferReply();
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             let YeetUser = interaction.options.getMember('user');
-            if(YeetUser.id==interaction.member.id) return interaction.reply({ content: `\`p-pls- n-no- ${interaction.member.displayName}\``, allowedMentions: { repliedUser: false }, ephemeral: true })
+            if(YeetUser.id==interaction.member.id) return await interaction.editReply({ content: `\`p-pls- n-no- ${interaction.member.displayName}\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let YeetUserID = YeetUser.id
             const yeetgif = new EmbedBuilder()
-            got('https://api.waifu.pics/sfw/yeet').then(response => {
+            got('https://api.waifu.pics/sfw/yeet').then(async response => {
             let content = response.body;
             let ContentFilter1 = content.replace(/{"url":"/gi, "")
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             yeetgif.setTitle(`:smiling_imp: ${interaction.member.displayName} yeeted ${interaction.guild.members.cache.get(YeetUserID).displayName}! :smiling_imp: `)
             yeetgif.setImage(String(FinalImage))
             yeetgif.setFooter({text:`${currentDateAndTime}`})
-            interaction.reply({ embeds: [yeetgif], allowedMentions: {repliedUser: true, users: [YeetUserID]}, content: `:smiling_imp: ${interaction.guild.members.cache.get(YeetUserID)} :smiling_imp:`})
+            await interaction.editReply({ embeds: [yeetgif], allowedMentions: {repliedUser: true, users: [YeetUserID]}, content: `:smiling_imp: ${interaction.guild.members.cache.get(YeetUserID)} :smiling_imp:`})
             })
             return
 		}

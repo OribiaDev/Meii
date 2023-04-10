@@ -13,20 +13,21 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
 		if(!interaction.guild) return
 		if(interaction.content==undefined){
+            await interaction.deferReply();
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             let KillUser = interaction.options.getMember('user');
-            if(KillUser.id==interaction.member.id) return interaction.reply({ content: `\`n-no- don't do that--\``, allowedMentions: { repliedUser: false }, ephemeral: true })
+            if(KillUser.id==interaction.member.id) return await interaction.editReply({ content: `\`n-no- don't do that--\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let KillUserID = KillUser.id
             const Killgif = new EmbedBuilder()
-            got('https://api.waifu.pics/sfw/kill').then(response => {
+            got('https://api.waifu.pics/sfw/kill').then(async response => {
             let content = response.body;
             let ContentFilter1 = content.replace(/{"url":"/gi, "")
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             Killgif.setTitle(`:knife:  ${interaction.member.displayName} killed ${interaction.guild.members.cache.get(KillUserID).displayName}! :knife:  `)
             Killgif.setImage(String(FinalImage))
             Killgif.setFooter({text:`${currentDateAndTime}`})
-            interaction.reply({ embeds: [Killgif], allowedMentions: {repliedUser: true, users: [KillUserID]}, content: `:knife: ${interaction.guild.members.cache.get(KillUserID)} :knife:`})
+            await interaction.editReply({ embeds: [Killgif], allowedMentions: {repliedUser: true, users: [KillUserID]}, content: `:knife: ${interaction.guild.members.cache.get(KillUserID)} :knife:`})
             })
             return
 		}

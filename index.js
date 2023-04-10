@@ -41,6 +41,15 @@ if(!IsDev){
     })
 }
 
+//Database Login
+var pool = mysql.createPool({
+    host: host,
+    user: user,
+    password: password,
+    database: database,
+    connectionLimit: 100,
+  });
+
 //Command Handler 
 function CommandRefresh(){
     const slashcommands = [];
@@ -101,7 +110,7 @@ client.on(Events.MessageCreate, message => {
             client.commands.get(args[0]).execute(message, args, client, prefix);
         } catch (error) {
             console.error(error);
-            return message.reply('\`There was an error while executing this command\`');
+            return message.channel.send('\`There was an error while executing this command\`');
         }
         
     }
@@ -124,48 +133,18 @@ client.once(Events.ClientReady, () => {
 client.on(Events.InteractionCreate, async interaction => {
     if(!interaction.guild) return
 	if (!interaction.isCommand()) return;
-    //Database Login
-    var con = mysql.createConnection({
-        host: host,
-        user: user,
-        password: password,
-        database: database
-      });
-    //Database Check
-    con.connect(async function(err) {
-        //Query Database Check Block
-        var sql = `SELECT COUNT(*) FROM server_data WHERE server_id = ${interaction.guild.id}`;
-        con.query(sql, async function (err, result) {
-            if (err) throw err;
-            strresult = JSON.stringify(result[0]);
-            if(strresult.includes(0)){
-                //Query Update Block
-                var sql = `INSERT INTO server_data (server_id, confession_userbans_ids) VALUES (${interaction.guild.id}, ' ')`;
-                con.query(sql, async function (err, result) {
-                    if (err) throw err;
-                    console.log(`New Database Entry Created with GuildID: ${interaction.guild.id}`);
-                    //New Database Command Handler
-                    if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
-                        return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {
-                            return; 
-                        })
-                    }
-                    if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)){
-                        return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {
-                            return;
-                        })
-                    }      
-                    const { commandName } = interaction;
-                    if (!client.commands.has(commandName)) return;
-                    try {
-                        await client.commands.get(commandName).execute(interaction, null, client, prefix);
-                    } catch (error) {
-                        console.error(error);
-                        return interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
-                    }
-                });
-            }else{
-                //Existing Database Command Handler
+    //Query Database Check Block
+    var sql = `SELECT COUNT(*) FROM server_data WHERE server_id = ${interaction.guild.id}`;
+    pool.query(sql, async function (err, result) {
+        if (err) throw err;
+        strresult = JSON.stringify(result[0]);
+        if(strresult.includes(0)){
+            //Query Update Block
+            var sql = `INSERT INTO server_data (server_id, confession_userbans_ids) VALUES (${interaction.guild.id}, ' ')`;
+            pool.query(sql, async function (err, result) {
+                if (err) throw err;
+                console.log(`New Database Entry Created with GuildID: ${interaction.guild.id}`);
+                //New Database Command Handler
                 if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
                     return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {
                         return; 
@@ -183,42 +162,44 @@ client.on(Events.InteractionCreate, async interaction => {
                 } catch (error) {
                     console.error(error);
                     return interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
-                }                   
+                }
+            });
+        }else{
+            //Existing Database Command Handler
+            if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
+                return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {
+                    return; 
+                })
             }
-        });
+            if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)){
+                return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {
+                    return;
+                })
+            }      
+            const { commandName } = interaction;
+            if (!client.commands.has(commandName)) return;
+            try {
+                await client.commands.get(commandName).execute(interaction, null, client, prefix);
+            } catch (error) {
+                console.error(error);
+                return interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
+            }                   
+        }
     });
 });
 
 //Guild Join Funcion
 client.on(Events.GuildCreate, guild => {
     client.user.setActivity(`${prefix}help | Helping ${client.guilds.cache.size} servers!`);             
-    });
-        
+    });        
     //Guild Leave Function
     client.on(Events.GuildDelete, guild => {
     client.user.setActivity(`${prefix}help | Helping ${client.guilds.cache.size} servers!`); 
-    //Database Login
-    var con = mysql.createConnection({
-        host: host,
-        user: user,
-        password: password,
-        database: database
-      });
-    
     //Data Deletion 
-    con.connect(function(err) {
-        if (err){
-          console.log('Data Deletion: Cannot connect to database!')
-          console.log(err)
-        }else{
-          //console.log("Connected!");
-        }
-        //Query Database Deletion Block
-        var sql = `DELETE FROM server_data WHERE server_id ='${guild.id}'`;
-        con.query(sql, function (err, result) {
-            if (err) throw err;
-            console.log(`Deleted Database Entry for GuildID: ${guild.id}`)
-        });
+    var sql = `DELETE FROM server_data WHERE server_id ='${guild.id}'`;
+    pool.query(sql, function (err, result) {
+        if (err) throw err;
+        console.log(`Deleted Database Entry for GuildID: ${guild.id}`)
     });
 });
 

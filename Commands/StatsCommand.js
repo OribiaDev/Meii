@@ -10,13 +10,14 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
         if(!interaction.guild) return
 		if(interaction.content==undefined){
+			await interaction.deferReply();
 			//Interaction
 			const uptime = moment.duration(client.uptime).format(" D [days], H [hrs], m [mins], s [secs]");
             let InfoEmb = new EmbedBuilder()
             .setColor("#C3B1E1")
             .setTitle(" **Stats:**")
             .setDescription(`Servers: **${client.guilds.cache.size}** \n Ping: \`${client.ws.ping}ms\` \n Date Created: **3/8/2023** \n Last Updated: **4/10/2023** \n Author: **ᴏʀɪʙɪᴀ#8440** \n Website: https://meiibot.xyz \n\n **Uptime**: \`${uptime}\``)
-            await interaction.reply({ embeds: [InfoEmb], allowedMentions: { repliedUser: false }})
+            await interaction.editReply({ embeds: [InfoEmb], allowedMentions: { repliedUser: false }})
             return
 		}
 	},

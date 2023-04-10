@@ -2,8 +2,6 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { EmbedBuilder } = require('discord.js')
 const { api } = require('some-random-api');
  
-const got = require('got');
-
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('animal')
@@ -31,109 +29,118 @@ module.exports = {
 		//Bird
 		//Using Web API
 		if(category=='animal_bird'){
+			await interaction.deferReply();
 			fetch('https://some-random-api.ml/animal/bird')
     		.then(res => res.json())
-    		.then(json => {
+    		.then(async json => {
 				let animalemb = new EmbedBuilder()
 				 .setImage(json.image)
 				 .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				 interaction.reply({ embeds: [animalemb], allowedMentions: { repliedUser: false }})
+				 await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
     			});		
 		}
 		//Cat
 		if(category=='animal_cat'){
-			api.img.cat().then(res => {
+			await interaction.deferReply();
+			api.img.cat().then(async res => {
 				let content = res.link;
 				let ContentFilter1 = content.replace(/{ link: '/gi, "")
 				let FinalImage = ContentFilter1.replace(/' }/gi, "")
 				let animalemb = new EmbedBuilder()
 				.setImage(FinalImage)
 				.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				interaction.reply({ embeds: [animalemb], allowedMentions: { repliedUser: false }})
+				await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
 			});	
 		}
 		//Dog
 		if(category=='animal_dog'){
-			api.img.dog().then(res => {
+			await interaction.deferReply();
+			api.img.dog().then(async res => {
 				let content = res.link;
 				let ContentFilter1 = content.replace(/{ link: '/gi, "")
 				let FinalImage = ContentFilter1.replace(/' }/gi, "")
 				let animalemb = new EmbedBuilder()
 				.setImage(FinalImage)
 				.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				interaction.reply({ embeds: [animalemb], allowedMentions: { repliedUser: false }})
+				await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
 			});	
 		}
 		//Fox
 		if(category=='animal_fox'){
-			api.img.fox().then(res => {
+			await interaction.deferReply();
+			api.img.fox().then(async res => {
 				let content = res.link;
 				let ContentFilter1 = content.replace(/{ link: '/gi, "")
 				let FinalImage = ContentFilter1.replace(/' }/gi, "")
 				let animalemb = new EmbedBuilder()
 				.setImage(FinalImage)
 				.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				interaction.reply({ embeds: [animalemb], allowedMentions: { repliedUser: false }})
+				await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
 			});	
 		}
 		//Kangaroo
 		//Using Web API
 		if(category=='animal_kangaroo'){
-		fetch('https://some-random-api.ml/animal/kangaroo')
-    		.then(res => res.json())
-    		.then(json => {
-				let animalemb = new EmbedBuilder()
-				 .setImage(json.image)
-				 .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				 interaction.reply({ embeds: [animalemb], allowedMentions: { repliedUser: false }})
-    			});
+			await interaction.deferReply();
+			fetch('https://some-random-api.ml/animal/kangaroo')
+    			.then(res => res.json())
+    			.then(async json => {
+					let animalemb = new EmbedBuilder()
+				 	.setImage(json.image)
+				 	.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
+				 	await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
+    				});
 		}
 		//Kola
 		if(category=='animal_koala'){
-			api.img.koala().then(res => {
+			await interaction.deferReply();
+			api.img.koala().then(async res => {
 				let content = res.link;
 				let ContentFilter1 = content.replace(/{ link: '/gi, "")
 				let FinalImage = ContentFilter1.replace(/' }/gi, "")
 				let animalemb = new EmbedBuilder()
 				.setImage(FinalImage)
 				.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				interaction.reply({ embeds: [animalemb], allowedMentions: { repliedUser: false }})
+				await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
 			});	
 		}
 		//Panda
 		if(category=='animal_panda'){
-			api.img.panda().then(res => {
+			await interaction.deferReply();
+			api.img.panda().then(async res => {
 				let content = res.link;
 				let ContentFilter1 = content.replace(/{ link: '/gi, "")
 				let FinalImage = ContentFilter1.replace(/' }/gi, "")
 				let animalemb = new EmbedBuilder()
 				.setImage(FinalImage)
 				.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				interaction.reply({ embeds: [animalemb], allowedMentions: { repliedUser: false }})
+				await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
 			});		
 		}
 		//Raccoon
 		//Using Web API 
 		if(category=='animal_racoon'){
+			await interaction.deferReply();
 			fetch('https://some-random-api.ml/animal/raccoon')
     		.then(res => res.json())
-    		.then(json => {
+    		.then(async json => {
 				let animalemb = new EmbedBuilder()
 				 .setImage(json.image)
 				 .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				 interaction.reply({ embeds: [animalemb], allowedMentions: { repliedUser: false }})
+				 await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
     			});		
 		}
 		//Red Panda
 		if(category=='animal_red_panda'){
-			api.img.redpanda().then(res => {
+			await interaction.deferReply();
+			api.img.redpanda().then(async res => {
 				let content = res.link;
 				let ContentFilter1 = content.replace(/{ link: '/gi, "")
 				let FinalImage = ContentFilter1.replace(/' }/gi, "")
 				let animalemb = new EmbedBuilder()
 				.setImage(FinalImage)
 				.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				interaction.reply({ embeds: [animalemb], allowedMentions: { repliedUser: false }})
+				await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
 			});	
 		}
 		}

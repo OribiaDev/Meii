@@ -10,12 +10,14 @@ module.exports = {
         //DM Message
         if(message.guild) return
         //Database Login
-        var con = mysql.createConnection({
+        const pool = mysql.createPool({
             host: host,
             user: user,
             password: password,
-            database: database
+            database: database,
+            connectionLimit: 100,
         });
+        
         const filter = m => m.author.id == message.author.id
         let ServerSelect = new EmbedBuilder()
         .setTitle(`**Server Select**`)
@@ -36,7 +38,7 @@ module.exports = {
                 let server = client.guilds.cache.find(guild => guild.name === collected.first().content)
                 //Database Confession Channel Check
                 var sql = `SELECT confession_channel_ids FROM server_data WHERE server_id = ${server.id};`; 
-                con.query(sql, function (err, result) {
+                pool.query(sql, function (err, result) {
                     if (err) throw err;
                     if(JSON.stringify(result[0].confession_channel_ids)=='null'){
                         let ConfessionNotSet = new EmbedBuilder()
@@ -48,7 +50,7 @@ module.exports = {
                     }else{
                         //Check if user is confession banned
                         var sql = `SELECT confession_userbans_ids FROM server_data WHERE server_id = ${server.id};`; 
-                        con.query(sql, function (err, result) {
+                        pool.query(sql, function (err, result) {
                             if (err) throw err;
                             if(JSON.stringify(result[0].confession_userbans_ids).includes(message.author.id)){
                                 let ConfessionIsBanned = new EmbedBuilder()
@@ -61,7 +63,7 @@ module.exports = {
                             }else{
                                 //Confession Channel Error
                                 var sql = `SELECT confession_channel_ids FROM server_data WHERE server_id = ${server.id};`; 
-                                con.query(sql, function (err, result) {
+                                pool.query(sql, function (err, result) {
                                        if (err) throw err;
                                        let ConfessionError = new EmbedBuilder()
                                        .setTitle(`**Confession: Confession Channel Error**`)
@@ -87,8 +89,8 @@ module.exports = {
                                                 .setDescription(`Your confession is now canceled`)
                                                 return message.reply({ embeds: [CancelEmbed], allowedMentions: {repliedUser: false}})
                                             }
-                                            if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ReadMessageHistory)){
-                                                message.reply('Im sorry, I dont have enough permissions to send messages in the set confession channel!')
+                                            if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
+                                                message.channel.send('\`Im sorry, I dont have enough permissions to send messages in the set confession channel\`')
                                                 return
                                             }
                                             var currentDateAndTime = new Date().toLocaleString();
@@ -101,7 +103,7 @@ module.exports = {
                                             message.author.send(`:thumbsup: Your confession has now been added to **${confessionchannel}** in **${server.name}**`);
                                             //Mod Log Send
                                             var sql = `SELECT confession_modlog_ids FROM server_data WHERE server_id = ${server.id};`; 
-                                            con.query(sql, function (err, result) {
+                                            pool.query(sql, function (err, result) {
                                                 if (err) throw err;
                                                 if(JSON.stringify(result[0].confession_modlog_ids)=='null'){
                                                     return
@@ -112,7 +114,7 @@ module.exports = {
                                                     }else{
                                                         //Mod Log Send
                                                         let confessionmodchannel = client.channels.cache.get(result[0].confession_modlog_ids)
-                                                        if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ReadMessageHistory)){
+                                                        if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
                                                             return 
                                                         }
                                                         let ConfessionLog = new EmbedBuilder()
@@ -146,7 +148,7 @@ module.exports = {
                     let server = client.guilds.cache.find(guild => guild.id === collected.first().content)
                     //Confession Channel Check
                     var sql = `SELECT confession_channel_ids FROM server_data WHERE server_id = ${server.id};`; 
-                    con.query(sql, function (err, result) {
+                    pool.query(sql, function (err, result) {
                         if (err) throw err;
                         if(JSON.stringify(result[0].confession_channel_ids)=='null'){
                             let ConfessionNotSet = new EmbedBuilder()
@@ -158,7 +160,7 @@ module.exports = {
                         }else{
                             //Check if user is banned
                             var sql = `SELECT confession_userbans_ids FROM server_data WHERE server_id = ${server.id};`; 
-                            con.query(sql, function (err, result) {
+                            pool.query(sql, function (err, result) {
                                 if (err) throw err;
                                 if(JSON.stringify(result[0].confession_userbans_ids).includes(message.author.id)){
                                     let ConfessionIsBanned = new EmbedBuilder()
@@ -171,7 +173,7 @@ module.exports = {
                                 }else{
                                     //Confession Channel Error
                                     var sql = `SELECT confession_channel_ids FROM server_data WHERE server_id = ${server.id};`; 
-                                    con.query(sql, function (err, result) {
+                                    pool.query(sql, function (err, result) {
                                         if (err) throw err;
                                         if(!client.channels.cache.get(result[0].confession_channel_ids)){
                                             let ConfessionError = new EmbedBuilder()
@@ -197,8 +199,8 @@ module.exports = {
                                                     .setDescription(`Your confession is now canceled`)
                                                     return message.reply({ embeds: [CancelEmbed], allowedMentions: {repliedUser: false}})
                                                 }
-                                                if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ReadMessageHistory)){
-                                                    message.reply('Im sorry, I dont have enough permissions to send messages in the set confession channel!')
+                                                if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
+                                                    message.channel.send('\`Im sorry, I dont have enough permissions to send messages in the set confession channel\`')
                                                     return
                                                 }
                                                 var currentDateAndTime = new Date().toLocaleString();
@@ -211,7 +213,7 @@ module.exports = {
                                                 message.author.send(`:thumbsup: Your confession has now been added to **${confessionchannel}** in **${server.name}**`);
                                                 //Mod Log Check
                                                 var sql = `SELECT confession_modlog_ids FROM server_data WHERE server_id = ${server.id};`; 
-                                                con.query(sql, function (err, result) {
+                                                pool.query(sql, function (err, result) {
                                                     if (err) throw err;
                                                     if(JSON.stringify(result[0].confession_modlog_ids)=='null'){
                                                         return
@@ -222,7 +224,7 @@ module.exports = {
                                                         }else{
                                                             //Mod Log Send
                                                             let confessionmodchannel = client.channels.cache.get(result[0].confession_modlog_ids)
-                                                            if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ReadMessageHistory)){
+                                                            if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
                                                                 return 
                                                             }
                                                             let ConfessionLog = new EmbedBuilder()

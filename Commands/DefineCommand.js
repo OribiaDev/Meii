@@ -14,11 +14,12 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
         if(!interaction.guild) return
 		if(interaction.content==undefined){
+            await interaction.deferReply();
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             const word = interaction.options.getString('word');
                 let data = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)        
-                if(data.statusText == 'Not Found') return interaction.reply({ content: `\`I cannot find that word!\``, allowedMentions: { repliedUser: false }, ephemeral: true })     
+                if(data.statusText == 'Not Found') return await interaction.editReply({ content: `\`I cannot find that word!\``, allowedMentions: { repliedUser: false }, ephemeral: true })     
                 let info = await data.json();
                 let result = info[0];         
                 //Embed Data
@@ -47,7 +48,7 @@ module.exports = {
                     { name: '\n\n\n', value: ' ' },
                 )
                 .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-                interaction.reply({ embeds: [dicembed], allowedMentions: { repliedUser: false }})
+                await interaction.editReply({ embeds: [dicembed], allowedMentions: { repliedUser: false }})
 		}
 	},
 };
