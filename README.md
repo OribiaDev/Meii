@@ -5,7 +5,7 @@
 
 ## Description
 
-Meii also has an in-depth and simple anonymous confession system. It also has free logging and is very well-polished and has tons of commands to keep you entertained and keep your server safe. 
+Meii has an in-depth and simple anonymous confession system with logging. It is very well-polished and has tons of commands to keep you entertained while keeping your server safe. 
 
 ## Getting Started
 
