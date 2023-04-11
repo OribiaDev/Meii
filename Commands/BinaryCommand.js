@@ -26,7 +26,7 @@ module.exports = {
             const binarytext = interaction.options.getString('text');
             //Encode
             if(binaryfunction=="binary_encode"){
-                await interaction.deferReply();
+                
                 fetch(`https://some-random-api.ml/binary?encode=${binarytext}`)
                     .then(res => res.json())
                     .then(async json => {
@@ -36,7 +36,7 @@ module.exports = {
             }
             //Decode
             if(binaryfunction=="binary_decode"){
-                await interaction.deferReply();
+                
                 fetch(`https://some-random-api.ml/binary?decode=${binarytext}`)
                 .then(res => res.json())
                 .then(async json => {

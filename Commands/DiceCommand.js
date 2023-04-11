@@ -15,7 +15,7 @@ module.exports = {
             .setColor(randomHexColor())
             .setTitle(" **Dice Roll!**")
             .setDescription(`:game_die: You rolled a.. **${num}**!`)
-            interaction.reply({ embeds: [DiceEmb], allowedMentions: { repliedUser: false }})
+            await interaction.editReply({ embeds: [DiceEmb], allowedMentions: { repliedUser: false }})
             return
 		}
 	},

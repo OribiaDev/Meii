@@ -21,7 +21,7 @@ module.exports = {
         if(!interaction.guild) return
 		if(interaction.content==undefined){
 			//Interaction
-            await interaction.deferReply();
+            
             const section = interaction.options.getString('section');
             if(section){
                 if(section=="help_confessions"){

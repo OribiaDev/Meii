@@ -19,7 +19,7 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
         if(!interaction.guild) return
 		if(interaction.content==undefined){
-            await interaction.deferReply();
+            
             var currentDateAndTime = new Date().toLocaleString();
 			//Interaction
             if (interaction.options.getSubcommand() === 'user') {

@@ -12,7 +12,7 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction, args, client, prefix) {
 		if(!interaction.guild) return
-        await interaction.deferReply();
+        
 		if(interaction.content==undefined){
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();

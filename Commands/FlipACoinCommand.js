@@ -17,7 +17,7 @@ module.exports = {
                 .setColor(randomHexColor())
                 .setTitle(" **Coin Flip!**")
                 .setDescription(`:coin:  You got.. **${answer}**!`)
-                interaction.reply({ embeds: [CoinEmb], allowedMentions: { repliedUser: false }})
+                await interaction.editReply({ embeds: [CoinEmb], allowedMentions: { repliedUser: false }})
                 return
             }
             if(headortail==2){
@@ -26,7 +26,7 @@ module.exports = {
                 .setColor(randomHexColor())
                 .setTitle(" **Coin Flip!**")
                 .setDescription(`:coin:  You got.. \`${answer}\`!`)
-                interaction.reply({ embeds: [CoinEmb], allowedMentions: { repliedUser: false }})
+                await interaction.editReply({ embeds: [CoinEmb], allowedMentions: { repliedUser: false }})
                 return
             }
 		}

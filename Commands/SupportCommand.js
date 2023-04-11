@@ -13,7 +13,7 @@ module.exports = {
             .setColor("#ffdac1")
             .setTitle("**Support Server:**")
             .setDescription(`:sparkles:  [Click Me](https://discord.gg/J7QehvdDMq) to join the Support Server! :sparkles: `)
-            interaction.reply({ embeds: [SupportEmb], allowedMentions: { repliedUser: false }})
+            await interaction.editReply({ embeds: [SupportEmb], allowedMentions: { repliedUser: false }})
             return
 		}
 	},

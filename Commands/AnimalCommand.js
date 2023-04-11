@@ -29,7 +29,7 @@ module.exports = {
 		//Bird
 		//Using Web API
 		if(category=='animal_bird'){
-			await interaction.deferReply();
+			
 			fetch('https://some-random-api.ml/animal/bird')
     		.then(res => res.json())
     		.then(async json => {
@@ -41,7 +41,7 @@ module.exports = {
 		}
 		//Cat
 		if(category=='animal_cat'){
-			await interaction.deferReply();
+			
 			api.img.cat().then(async res => {
 				let content = res.link;
 				let ContentFilter1 = content.replace(/{ link: '/gi, "")
@@ -54,7 +54,7 @@ module.exports = {
 		}
 		//Dog
 		if(category=='animal_dog'){
-			await interaction.deferReply();
+			
 			api.img.dog().then(async res => {
 				let content = res.link;
 				let ContentFilter1 = content.replace(/{ link: '/gi, "")
@@ -67,7 +67,7 @@ module.exports = {
 		}
 		//Fox
 		if(category=='animal_fox'){
-			await interaction.deferReply();
+			
 			api.img.fox().then(async res => {
 				let content = res.link;
 				let ContentFilter1 = content.replace(/{ link: '/gi, "")
@@ -81,7 +81,7 @@ module.exports = {
 		//Kangaroo
 		//Using Web API
 		if(category=='animal_kangaroo'){
-			await interaction.deferReply();
+			
 			fetch('https://some-random-api.ml/animal/kangaroo')
     			.then(res => res.json())
     			.then(async json => {
@@ -93,7 +93,7 @@ module.exports = {
 		}
 		//Kola
 		if(category=='animal_koala'){
-			await interaction.deferReply();
+			
 			api.img.koala().then(async res => {
 				let content = res.link;
 				let ContentFilter1 = content.replace(/{ link: '/gi, "")
@@ -106,7 +106,7 @@ module.exports = {
 		}
 		//Panda
 		if(category=='animal_panda'){
-			await interaction.deferReply();
+			
 			api.img.panda().then(async res => {
 				let content = res.link;
 				let ContentFilter1 = content.replace(/{ link: '/gi, "")
@@ -120,7 +120,7 @@ module.exports = {
 		//Raccoon
 		//Using Web API 
 		if(category=='animal_racoon'){
-			await interaction.deferReply();
+			
 			fetch('https://some-random-api.ml/animal/raccoon')
     		.then(res => res.json())
     		.then(async json => {
@@ -132,7 +132,7 @@ module.exports = {
 		}
 		//Red Panda
 		if(category=='animal_red_panda'){
-			await interaction.deferReply();
+			
 			api.img.redpanda().then(async res => {
 				let content = res.link;
 				let ContentFilter1 = content.replace(/{ link: '/gi, "")

@@ -20,11 +20,11 @@ module.exports = {
             let channel = interaction.options.getChannel('channel');
             //Permission Check
             if(!channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
-                return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages in that channel! \n I need \`Send Messages\`, \`Embed Links\`, and \`View Channel\``, ephemeral: true }).catch(() => {
+                return await interaction.editReply({ content: `I'm sorry, I do not have enough permissions to send messages in that channel! \n I need \`Send Messages\`, \`Embed Links\`, and \`View Channel\``, ephemeral: true }).catch(() => {
                     return;
                 })
             }
-            await interaction.deferReply();
+            
             //Database Login
             var con = mysql.createConnection({
                 host: host,

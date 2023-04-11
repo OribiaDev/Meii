@@ -10,7 +10,7 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
         if(!interaction.guild) return
 		if(interaction.content==undefined){
-			await interaction.deferReply();
+			
 			//Interaction
 			const uptime = moment.duration(client.uptime).format(" D [days], H [hrs], m [mins], s [secs]");
             let InfoEmb = new EmbedBuilder()

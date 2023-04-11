@@ -15,7 +15,7 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction, args, client, prefix) {
 		if(!interaction.guild) return
-        await interaction.deferReply();
+        
         //Database Login
         var pool = mysql.createPool({
             host: host,

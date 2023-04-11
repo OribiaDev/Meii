@@ -11,12 +11,12 @@ module.exports = {
             //Interaction
 			//Permission Check
 			if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)){
-				return interaction.reply({ content: `I'm sorry, I do not have enough permissions for this command! \n I need \`Send Messages\`, and \`Read Message History\``, ephemeral: true }).catch(() => {
+				return await interaction.editReply({ content: `I'm sorry, I do not have enough permissions for this command! \n I need \`Send Messages\`, and \`Read Message History\``, ephemeral: true }).catch(() => {
 					return; 
 				})
 			}
             const m = await interaction.channel.send("Ping?");
-            await interaction.reply(`:ping_pong: Pong! | Latency is \`${m.createdTimestamp - interaction.createdTimestamp}ms\` | API latency is \`${client.ws.ping}ms\``)
+            await interaction.editReply(`:ping_pong: Pong! | Latency is \`${m.createdTimestamp - interaction.createdTimestamp}ms\` | API latency is \`${client.ws.ping}ms\``)
             m.delete()
 			return
 		}

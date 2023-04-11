@@ -133,6 +133,8 @@ client.once(Events.ClientReady, () => {
 client.on(Events.InteractionCreate, async interaction => {
     if(!interaction.guild) return
 	if (!interaction.isCommand()) return;
+    await interaction.deferReply();
+
     //Query Database Check Block
     var sql = `SELECT COUNT(*) FROM server_data WHERE server_id = ${interaction.guild.id}`;
     pool.query(sql, async function (err, result) {
@@ -146,12 +148,12 @@ client.on(Events.InteractionCreate, async interaction => {
                 console.log(`New Database Entry Created with GuildID: ${interaction.guild.id}`);
                 //New Database Command Handler
                 if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
-                    return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {
+                    return await interaction.editReply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {
                         return; 
                     })
                 }
                 if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)){
-                    return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {
+                    return await interaction.editReply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {
                         return;
                     })
                 }      
@@ -161,18 +163,18 @@ client.on(Events.InteractionCreate, async interaction => {
                     await client.commands.get(commandName).execute(interaction, null, client, prefix);
                 } catch (error) {
                     console.error(error);
-                    return interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
+                    return await interaction.editReply({ content: '\`There was an error while executing this command\`', ephemeral: true });
                 }
             });
         }else{
             //Existing Database Command Handler
             if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
-                return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {
+                return await interaction.editReply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {
                     return; 
                 })
             }
             if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)){
-                return interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {
+                return await interaction.editReply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {
                     return;
                 })
             }      
@@ -182,7 +184,7 @@ client.on(Events.InteractionCreate, async interaction => {
                 await client.commands.get(commandName).execute(interaction, null, client, prefix);
             } catch (error) {
                 console.error(error);
-                return interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
+                return await interaction.editReply({ content: '\`There was an error while executing this command\`', ephemeral: true });
             }                   
         }
     });

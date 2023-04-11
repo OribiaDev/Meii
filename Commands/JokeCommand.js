@@ -8,7 +8,7 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
         if(!interaction.guild) return
 		if(interaction.content==undefined){
-			await interaction.deferReply();
+			
 			//Interaction
             fetch('https://some-random-api.ml/joke')
     		.then(res => res.json())

@@ -13,7 +13,7 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
 		if(!interaction.guild) return
 		if(interaction.content==undefined){
-            await interaction.deferReply();
+            
 			//Interaction
             var currentDateAndTime = new Date().toLocaleString();
             let PokeUser = interaction.options.getMember('user');
