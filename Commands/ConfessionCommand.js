@@ -74,7 +74,6 @@ module.exports = {
                                             return message.author.send({ embeds: [ConfessionError] })
                                        }else{
                                         let confessionchannel = client.channels.cache.get(result[0].confession_channel_ids)
-                                        console.log(confessionchannel)
                                         let ConfessionStart = new EmbedBuilder()
                                         .setTitle(`**Confession: ${server.name}**`)
                                         .setColor(randomHexColor())
