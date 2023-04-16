@@ -74,6 +74,7 @@ module.exports = {
                                             return message.author.send({ embeds: [ConfessionError] })
                                        }else{
                                         let confessionchannel = client.channels.cache.get(result[0].confession_channel_ids)
+                                        console.log(confessionchannel)
                                         let ConfessionStart = new EmbedBuilder()
                                         .setTitle(`**Confession: ${server.name}**`)
                                         .setColor(randomHexColor())
@@ -89,7 +90,7 @@ module.exports = {
                                                 .setDescription(`Your confession is now canceled`)
                                                 return message.reply({ embeds: [CancelEmbed], allowedMentions: {repliedUser: false}})
                                             }
-                                            if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
+                                            if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
                                                 message.channel.send('\`Im sorry, I dont have enough permissions to send messages in the set confession channel\`')
                                                 return
                                             }
@@ -114,7 +115,7 @@ module.exports = {
                                                     }else{
                                                         //Mod Log Send
                                                         let confessionmodchannel = client.channels.cache.get(result[0].confession_modlog_ids)
-                                                        if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
+                                                        if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
                                                             return 
                                                         }
                                                         let ConfessionLog = new EmbedBuilder()
@@ -199,7 +200,7 @@ module.exports = {
                                                     .setDescription(`Your confession is now canceled`)
                                                     return message.reply({ embeds: [CancelEmbed], allowedMentions: {repliedUser: false}})
                                                 }
-                                                if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
+                                                if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
                                                     message.channel.send('\`Im sorry, I dont have enough permissions to send messages in the set confession channel\`')
                                                     return
                                                 }
@@ -224,7 +225,7 @@ module.exports = {
                                                         }else{
                                                             //Mod Log Send
                                                             let confessionmodchannel = client.channels.cache.get(result[0].confession_modlog_ids)
-                                                            if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
+                                                            if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
                                                                 return 
                                                             }
                                                             let ConfessionLog = new EmbedBuilder()
@@ -263,7 +264,6 @@ module.exports = {
             
 
         }).catch((error) => {
-            console.log(error)
             message.reply("\`No response, canceling\`")
         });   
 	},
