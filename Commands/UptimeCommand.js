@@ -10,9 +10,8 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
         if(!interaction.guild) return
 		if(interaction.content==undefined){
-			
 			//Interaction
-            const uptime = moment.duration(client.uptime).format(" D [days], H [hrs], m [mins], s [secs]");
+			const uptime = moment.duration(client.uptime).format(" D [days], H [hrs], m [mins], s [secs]");
             await interaction.editReply({ content: `My Uptime: \`${uptime}\``, ephemeral: false });
             return
 		}

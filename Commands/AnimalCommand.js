@@ -24,6 +24,8 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
 		if(!interaction.guild) return
 		if(interaction.content==undefined){
+		await interaction.editReply({ content: `\`The API for this command is currently unavailable, try again later.\``, ephemeral: true });
+		return
         const category = interaction.options.getString('category');
 		var currentDateAndTime = new Date().toLocaleString();
 		//Bird

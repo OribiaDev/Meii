@@ -26,15 +26,16 @@ module.exports = {
             }
             
             //Database Login
-            var con = mysql.createConnection({
+            var pool = mysql.createPool({
                 host: host,
                 user: user,
                 password: password,
-                database: database
+                database: database,
+                connectionLimit: 100,
             });
             //Confession Mod Log Set Channel
             var sql = `UPDATE server_data SET confession_modlog_ids = '${channel.id}' WHERE server_id = ${interaction.guild.id};`; 
-            con.query(sql, async function (err, result) {
+            pool.query(sql, async function (err, result) {
                 if (err) throw err;
                 let ChannelSet = new EmbedBuilder()
                 .setTitle(`**Confession Log Setup: Confession Log Channel Set**`)

@@ -21,6 +21,8 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
         if(!interaction.guild) return
 		if(interaction.content==undefined){
+            await interaction.editReply({ content: `\`The API for this command is currently unavailable, try again later.\``, ephemeral: true });
+            return
 			//Interaction
             const binaryfunction = interaction.options.getString('function');
             const binarytext = interaction.options.getString('text');
