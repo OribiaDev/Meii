@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { EmbedBuilder } = require('discord.js')
-const { api } = require('some-random-api');
  
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -24,15 +23,11 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
 		if(!interaction.guild) return
 		if(interaction.content==undefined){
-		await interaction.editReply({ content: `\`The API for this command is currently unavailable, try again later.\``, ephemeral: true });
-		return
         const category = interaction.options.getString('category');
 		var currentDateAndTime = new Date().toLocaleString();
 		//Bird
-		//Using Web API
-		if(category=='animal_bird'){
-			
-			fetch('https://some-random-api.ml/animal/bird')
+		if(category=='animal_bird'){			
+			fetch('https://some-random-api.com/animal/bird')
     		.then(res => res.json())
     		.then(async json => {
 				let animalemb = new EmbedBuilder()
@@ -43,87 +38,73 @@ module.exports = {
 		}
 		//Cat
 		if(category=='animal_cat'){
-			
-			api.img.cat().then(async res => {
-				let content = res.link;
-				let ContentFilter1 = content.replace(/{ link: '/gi, "")
-				let FinalImage = ContentFilter1.replace(/' }/gi, "")
+			fetch('https://some-random-api.com/animal/cat')
+    		.then(res => res.json())
+    		.then(async json => {
 				let animalemb = new EmbedBuilder()
-				.setImage(FinalImage)
-				.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
-			});	
+				 .setImage(json.image)
+				 .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
+				 await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
+    			});	
 		}
 		//Dog
 		if(category=='animal_dog'){
-			
-			api.img.dog().then(async res => {
-				let content = res.link;
-				let ContentFilter1 = content.replace(/{ link: '/gi, "")
-				let FinalImage = ContentFilter1.replace(/' }/gi, "")
+			fetch('https://some-random-api.com/animal/dog')
+    		.then(res => res.json())
+    		.then(async json => {
 				let animalemb = new EmbedBuilder()
-				.setImage(FinalImage)
-				.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
-			});	
+				 .setImage(json.image)
+				 .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
+				 await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
+    			});	
 		}
 		//Fox
 		if(category=='animal_fox'){
-			
-			api.img.fox().then(async res => {
-				let content = res.link;
-				let ContentFilter1 = content.replace(/{ link: '/gi, "")
-				let FinalImage = ContentFilter1.replace(/' }/gi, "")
+			fetch('https://some-random-api.com/animal/fox')
+    		.then(res => res.json())
+    		.then(async json => {
 				let animalemb = new EmbedBuilder()
-				.setImage(FinalImage)
-				.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
-			});	
+				 .setImage(json.image)
+				 .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
+				 await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
+    			});	
 		}
 		//Kangaroo
-		//Using Web API
 		if(category=='animal_kangaroo'){
-			
-			fetch('https://some-random-api.ml/animal/kangaroo')
-    			.then(res => res.json())
-    			.then(async json => {
-					let animalemb = new EmbedBuilder()
-				 	.setImage(json.image)
-				 	.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				 	await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
-    				});
+			fetch('https://some-random-api.com/animal/kangaroo')
+    		.then(res => res.json())
+    		.then(async json => {
+				let animalemb = new EmbedBuilder()
+				 .setImage(json.image)
+				 .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
+				 await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
+    			});	
 		}
 		//Kola
 		if(category=='animal_koala'){
-			
-			api.img.koala().then(async res => {
-				let content = res.link;
-				let ContentFilter1 = content.replace(/{ link: '/gi, "")
-				let FinalImage = ContentFilter1.replace(/' }/gi, "")
+			fetch('https://some-random-api.com/animal/koala')
+    		.then(res => res.json())
+    		.then(async json => {
 				let animalemb = new EmbedBuilder()
-				.setImage(FinalImage)
-				.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
-			});	
+				 .setImage(json.image)
+				 .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
+				 await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
+    			});	
 		}
 		//Panda
 		if(category=='animal_panda'){
-			
-			api.img.panda().then(async res => {
-				let content = res.link;
-				let ContentFilter1 = content.replace(/{ link: '/gi, "")
-				let FinalImage = ContentFilter1.replace(/' }/gi, "")
+			fetch('https://some-random-api.com/animal/panda')
+    		.then(res => res.json())
+    		.then(async json => {
 				let animalemb = new EmbedBuilder()
-				.setImage(FinalImage)
-				.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
-			});		
+				 .setImage(json.image)
+				 .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
+				 await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
+    			});	
 		}
 		//Raccoon
-		//Using Web API 
 		if(category=='animal_racoon'){
-			
-			fetch('https://some-random-api.ml/animal/raccoon')
+			fetch('https://some-random-api.com/animal/racoon')
     		.then(res => res.json())
     		.then(async json => {
 				let animalemb = new EmbedBuilder()
@@ -134,16 +115,14 @@ module.exports = {
 		}
 		//Red Panda
 		if(category=='animal_red_panda'){
-			
-			api.img.redpanda().then(async res => {
-				let content = res.link;
-				let ContentFilter1 = content.replace(/{ link: '/gi, "")
-				let FinalImage = ContentFilter1.replace(/' }/gi, "")
+			fetch('https://some-random-api.com/animal/red_panda')
+    		.then(res => res.json())
+    		.then(async json => {
 				let animalemb = new EmbedBuilder()
-				.setImage(FinalImage)
-				.setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
-				await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
-			});	
+				 .setImage(json.image)
+				 .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
+				 await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
+    			});	
 		}
 		}
 	},

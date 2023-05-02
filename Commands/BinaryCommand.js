@@ -21,15 +21,13 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
         if(!interaction.guild) return
 		if(interaction.content==undefined){
-            await interaction.editReply({ content: `\`The API for this command is currently unavailable, try again later.\``, ephemeral: true });
-            return
 			//Interaction
             const binaryfunction = interaction.options.getString('function');
             const binarytext = interaction.options.getString('text');
             //Encode
             if(binaryfunction=="binary_encode"){
                 
-                fetch(`https://some-random-api.ml/binary?encode=${binarytext}`)
+                fetch(`https://some-random-api.com/binary?encode=${binarytext}`)
                     .then(res => res.json())
                     .then(async json => {
                         let str = json.binary.slice(0, 1950) //1950 char limit
@@ -39,7 +37,7 @@ module.exports = {
             //Decode
             if(binaryfunction=="binary_decode"){
                 
-                fetch(`https://some-random-api.ml/binary?decode=${binarytext}`)
+                fetch(`https://some-random-api.com/binary?decode=${binarytext}`)
                 .then(res => res.json())
                 .then(async json => {
                     let str = json.text.slice(0, 1950) //1950 char limit
