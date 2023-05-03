@@ -15,7 +15,6 @@ module.exports = {
 		if(interaction.content==undefined){
             
 			//Interaction
-            var currentDateAndTime = new Date().toLocaleString();
             let KissUser = interaction.options.getMember('user');
             if(KissUser.id==interaction.member.id) return await interaction.editReply({ content: `\`Do you need a kiss ${interaction.member.displayName}..?\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let KissUserID = KissUser.id
@@ -26,7 +25,8 @@ module.exports = {
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             KissGif.setTitle(`:sparkling_heart: ${interaction.member.displayName} kissed ${interaction.guild.members.cache.get(KissUserID).displayName}! :sparkling_heart: `)
             KissGif.setImage(String(FinalImage))
-            KissGif.setFooter({text:`${currentDateAndTime}`})
+            KissGif.setFooter({text:`Requested by ${interaction.member.user.tag}`})
+            KissGif.setTimestamp()
             await interaction.editReply({ embeds: [KissGif], allowedMentions: {repliedUser: true, users: [KissUserID]}, content: `:sparkling_heart: ${interaction.guild.members.cache.get(KissUserID)} :sparkling_heart:`})
             })
             return

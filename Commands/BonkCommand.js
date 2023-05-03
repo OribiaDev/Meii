@@ -15,7 +15,6 @@ module.exports = {
 		if(interaction.content==undefined){
             
 			//Interaction
-            var currentDateAndTime = new Date().toLocaleString();
             let BonkUser = interaction.options.getMember('user');
             let BonkUserID = BonkUser.id
             const bonkgif = new EmbedBuilder()
@@ -25,7 +24,8 @@ module.exports = {
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             bonkgif.setTitle(`:hammer:  ${interaction.member.displayName} bonked ${interaction.guild.members.cache.get(BonkUserID).displayName}! :hammer:  `)
             bonkgif.setImage(String(FinalImage))
-            bonkgif.setFooter({text:`${currentDateAndTime}`})
+            bonkgif.setFooter({text:`Requested by ${interaction.member.user.tag}`})
+            bonkgif.setTimestamp()
             await interaction.editReply({ embeds: [bonkgif], allowedMentions: {repliedUser: true, users: [BonkUserID]}, content:`:hammer: ${interaction.guild.members.cache.get(BonkUserID)} :hammer:`})
             })
             return

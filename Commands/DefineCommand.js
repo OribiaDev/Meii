@@ -16,7 +16,6 @@ module.exports = {
 		if(interaction.content==undefined){
             
 			//Interaction
-            var currentDateAndTime = new Date().toLocaleString();
             const word = interaction.options.getString('word');
                 let data = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)        
                 if(data.statusText == 'Not Found') return await interaction.editReply({ content: `\`I cannot find that word!\``, allowedMentions: { repliedUser: false }, ephemeral: true })     
@@ -47,7 +46,8 @@ module.exports = {
                 .addFields(
                     { name: '\n\n\n', value: ' ' },
                 )
-                .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
+                .setFooter({text:`Requested by ${interaction.member.user.tag}`})
+                .setTimestamp()
                 await interaction.editReply({ embeds: [dicembed], allowedMentions: { repliedUser: false }})
 		}
 	},

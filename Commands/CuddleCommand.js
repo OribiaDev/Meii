@@ -15,7 +15,6 @@ module.exports = {
         
 		if(interaction.content==undefined){
 			//Interaction
-            var currentDateAndTime = new Date().toLocaleString();
             let CuddleUser = interaction.options.getMember('user');
             if(CuddleUser.id==interaction.member.id) return await interaction.editReply({ content: `\`Do you need a cuddle ${interaction.member.displayName}..?\``, allowedMentions: { repliedUser: false }})
             let CuddleUserID = CuddleUser.id
@@ -26,7 +25,8 @@ module.exports = {
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             Cuddlegif.setTitle(`:people_hugging: ${interaction.member.displayName} cuddled ${interaction.guild.members.cache.get(CuddleUserID).displayName}! :people_hugging: `)
             Cuddlegif.setImage(String(FinalImage))
-            Cuddlegif.setFooter({text:`${currentDateAndTime}`})
+            Cuddlegif.setFooter({text:`Requested by ${interaction.member.user.tag}`})
+            Cuddlegif.setTimestamp()
             await interaction.editReply({ embeds: [Cuddlegif], allowedMentions: {repliedUser: false}})
             })
             return

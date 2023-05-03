@@ -19,14 +19,13 @@ module.exports = {
 	async execute(interaction, args, client, prefix) {
         if(!interaction.guild) return
 		if(interaction.content==undefined){
-            
-            var currentDateAndTime = new Date().toLocaleString();
 			//Interaction
             if (interaction.options.getSubcommand() === 'user') {
                 //User
                 const taruser = interaction.options.getUser('user');
                 if (taruser) {
                     //Target User Info
+                    let GuildMemberObject = interaction.guild.members.cache.get(taruser.id)
                     let notowninfoemb = new EmbedBuilder()
                     .setAuthor({ name: `User information for ${taruser.tag}`, iconURL: taruser.displayAvatarURL()})
                     .setColor(randomHexColor())
@@ -34,16 +33,17 @@ module.exports = {
                         { name: '**User Tag**', value: `${taruser.tag}`, inline: true },
                         { name: '**User ID**', value: `${taruser.id}`, inline: true },
                         { name: '\u200B', value: ' ' },
-                        { name: '**Server Joined**', value: `${moment(taruser.joinedAt)}`, inline: true },
+                        { name: '**Server Joined**', value: `${moment(GuildMemberObject.joinedAt)}`, inline: true },
                         { name: '\u200B', value: ' ' },
                         { name: '**Discord Registerd**', value: `${moment(taruser.createdAt)}`, inline: true },
                         { name: '\u200B', value: ' ' },
                     )
                     .setThumbnail(taruser.displayAvatarURL())
-                    .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
+                    .setFooter({text:`Requested by ${interaction.member.user.tag}`})
+                    .setTimestamp()
                     await interaction.editReply({ embeds: [notowninfoemb], allowedMentions: { repliedUser: false }})                        
                 } else {
-                    //Own Info
+                    //Own Info)
                     let owninfoemb = new EmbedBuilder()
                     .setAuthor({ name: `User information for ${interaction.member.user.tag}`, iconURL: interaction.member.displayAvatarURL()})
                     .setColor(randomHexColor())
@@ -57,7 +57,8 @@ module.exports = {
                         { name: '\u200B', value: ' ' },
                     )
                     .setThumbnail(interaction.member.displayAvatarURL())
-                    .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
+                    .setFooter({text:`Requested by ${interaction.member.user.tag}`})
+                    .setTimestamp()
                     await interaction.editReply({ embeds: [owninfoemb], allowedMentions: { repliedUser: false }})        
                 }
             } else if (interaction.options.getSubcommand() === 'server') {
@@ -76,7 +77,9 @@ module.exports = {
                     { name: '\u200B', value: ' ' },
                     { name: '**Region**', value: `${interaction.guild.preferredLocale}`, inline: true },
                 )
-                .setFooter({text:`Requested by ${interaction.member.user.tag}   •   ${currentDateAndTime}`})
+                .setThumbnail(interaction.guild.iconURL())
+                .setFooter({text:`Requested by ${interaction.member.user.tag}`})
+                .setTimestamp()
                 await interaction.editReply({ embeds: [serverinfoemb], allowedMentions: { repliedUser: false }})      
                 
             }

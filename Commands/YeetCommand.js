@@ -15,7 +15,6 @@ module.exports = {
 		if(interaction.content==undefined){
             
 			//Interaction
-            var currentDateAndTime = new Date().toLocaleString();
             let YeetUser = interaction.options.getMember('user');
             if(YeetUser.id==interaction.member.id) return await interaction.editReply({ content: `\`p-pls- n-no- ${interaction.member.displayName}\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let YeetUserID = YeetUser.id
@@ -26,7 +25,8 @@ module.exports = {
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             yeetgif.setTitle(`:smiling_imp: ${interaction.member.displayName} yeeted ${interaction.guild.members.cache.get(YeetUserID).displayName}! :smiling_imp: `)
             yeetgif.setImage(String(FinalImage))
-            yeetgif.setFooter({text:`${currentDateAndTime}`})
+            yeetgif.setFooter({text:`Requested by ${interaction.member.user.tag}`})
+            yeetgif.setTimestamp()
             await interaction.editReply({ embeds: [yeetgif], allowedMentions: {repliedUser: true, users: [YeetUserID]}, content: `:smiling_imp: ${interaction.guild.members.cache.get(YeetUserID)} :smiling_imp:`})
             })
             return

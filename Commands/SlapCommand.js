@@ -12,10 +12,8 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction, args, client, prefix) {
 		if(!interaction.guild) return
-		if(interaction.content==undefined){
-            
+		if(interaction.content==undefined){    
 			//Interaction
-            var currentDateAndTime = new Date().toLocaleString();
             let SlapUser = interaction.options.getMember('user');
             if(SlapUser.id==interaction.member.id) return await interaction.editReply({ content: `\`that’s kinda k-kinky..\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let SlapUserID = SlapUser.id
@@ -26,7 +24,8 @@ module.exports = {
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             Slapgif.setTitle(`:raised_hand:  ${interaction.member.displayName} slapped ${interaction.guild.members.cache.get(SlapUserID).displayName}! :raised_hand:  `)
             Slapgif.setImage(String(FinalImage))
-            Slapgif.setFooter({text:`${currentDateAndTime}`})
+            Slapgif.setFooter({text:`Requested by ${interaction.member.user.tag}`})
+            Slapgif.setTimestamp()
             await interaction.editReply({ embeds: [Slapgif], allowedMentions: {repliedUser: true, users: [SlapUserID]}, content: `:raised_hand: ${interaction.guild.members.cache.get(SlapUserID)} :raised_hand:`})
             })
             return

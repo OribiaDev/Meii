@@ -15,7 +15,6 @@ module.exports = {
 		if(interaction.content==undefined){
             
 			//Interaction
-            var currentDateAndTime = new Date().toLocaleString();
             let PokeUser = interaction.options.getMember('user');
             if(PokeUser.id==interaction.member.id) return await interaction.editReply({ content: `\`i- don't poke yourself-\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let PokeUserID = PokeUser.id
@@ -26,7 +25,8 @@ module.exports = {
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             pokegif.setTitle(`:point_right:   ${interaction.member.displayName} poked ${interaction.guild.members.cache.get(PokeUserID).displayName}! :point_left:   `)
             pokegif.setImage(String(FinalImage))
-            pokegif.setFooter({text:`${currentDateAndTime}`})
+            pokegif.setFooter({text:`Requested by ${interaction.member.user.tag}`})
+            pokegif.setTimestamp()
             await interaction.editReply({ embeds: [pokegif], allowedMentions: {repliedUser: true, users: [PokeUserID]}, content: `:point_right: ${interaction.guild.members.cache.get(PokeUserID)} :point_left:`})
         })
             return

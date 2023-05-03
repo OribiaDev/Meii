@@ -40,6 +40,16 @@ module.exports = {
                 var sql = `SELECT confession_channel_ids FROM server_data WHERE server_id = ${server.id};`; 
                 pool.query(sql, function (err, result) {
                     if (err) throw err;
+                    //No Database for guild (Thus no confess channel)
+                    if(result[0]==undefined){
+                        let ConfessionNotSet = new EmbedBuilder()
+                        .setTitle(`**Confession: Confession Channel Not Set**`)
+                        .setColor(randomHexColor())
+                        .setDescription(`Im sorry, the confession channel is not setup for this server!`)
+                        .setFooter({text:`You can set it up by doing ${prefix}setconfesschannel`})
+                        return message.author.send({ embeds: [ConfessionNotSet], allowedMentions: {repliedUser: false}})  
+                    }
+                    //No Confess Channel
                     if(JSON.stringify(result[0].confession_channel_ids)=='null'){
                         let ConfessionNotSet = new EmbedBuilder()
                         .setTitle(`**Confession: Confession Channel Not Set**`)
@@ -93,12 +103,11 @@ module.exports = {
                                                 message.channel.send('\`Im sorry, I dont have enough permissions to send messages in the set confession channel\`')
                                                 return
                                             }
-                                            var currentDateAndTime = new Date().toLocaleString();
                                             let Confession = new EmbedBuilder()
                                             .setTitle(`**:love_letter: Anonymous Confession**`)
                                             .setColor(randomHexColor())
                                             .setDescription(`> ${confessedmessage}`)
-                                            .setFooter({text:`${currentDateAndTime}`})
+                                            .setTimestamp()
                                             confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}})
                                             message.author.send(`:thumbsup: Your confession has now been added to **${confessionchannel}** in **${server.name}**`);
                                             //Mod Log Send
@@ -121,7 +130,7 @@ module.exports = {
                                                         .setTitle(`:love_letter: **Anonymous Confession**`)
                                                         .setColor(randomHexColor())
                                                         .setDescription(`"${confessedmessage}" \n\n **User**  \n ||${message.author.tag}  (${message.author})||`)
-                                                        .setFooter({text:`${currentDateAndTime}`})
+                                                        .setTimestamp()
                                                         confessionmodchannel.send({ embeds: [ConfessionLog], allowedMentions: {repliedUser: false}})    
                                                     }
                                                 }
@@ -150,6 +159,16 @@ module.exports = {
                     var sql = `SELECT confession_channel_ids FROM server_data WHERE server_id = ${server.id};`; 
                     pool.query(sql, function (err, result) {
                         if (err) throw err;
+                        //No Database for guild (Thus no confess channel)
+                        if(result[0]==undefined){
+                            let ConfessionNotSet = new EmbedBuilder()
+                            .setTitle(`**Confession: Confession Channel Not Set**`)
+                            .setColor(randomHexColor())
+                            .setDescription(`Im sorry, the confession channel is not setup for this server!`)
+                            .setFooter({text:`You can set it up by doing ${prefix}setconfesschannel`})
+                            return message.author.send({ embeds: [ConfessionNotSet], allowedMentions: {repliedUser: false}})  
+                        }
+                        //No Confess Channel
                         if(JSON.stringify(result[0].confession_channel_ids)=='null'){
                             let ConfessionNotSet = new EmbedBuilder()
                             .setTitle(`**Confession: Confession Channel Not Set**`)
@@ -203,12 +222,11 @@ module.exports = {
                                                     message.channel.send('\`Im sorry, I dont have enough permissions to send messages in the set confession channel\`')
                                                     return
                                                 }
-                                                var currentDateAndTime = new Date().toLocaleString();
                                                 let Confession = new EmbedBuilder()
                                                 .setTitle(`**:love_letter: Anonymous Confession**`)
                                                 .setColor(randomHexColor())
                                                 .setDescription(`> ${confessedmessage}`)
-                                                .setFooter({text:`${currentDateAndTime}`})
+                                                .setTimestamp()
                                                 confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}})
                                                 message.author.send(`:thumbsup: Your confession has now been added to **${confessionchannel}** in **${server.name}**`);
                                                 //Mod Log Check
@@ -231,7 +249,7 @@ module.exports = {
                                                             .setTitle(`:love_letter: **Anonymous Confession**`)
                                                             .setColor(randomHexColor())
                                                             .setDescription(`"${confessedmessage}" \n\n **User**  \n ||${message.author.tag}  (${message.author})||`)
-                                                            .setFooter({text:`${currentDateAndTime}`})
+                                                            .setTimestamp()
                                                             confessionmodchannel.send({ embeds: [ConfessionLog], allowedMentions: {repliedUser: false}})    
                                                         }
                                                     }

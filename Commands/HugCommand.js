@@ -15,7 +15,6 @@ module.exports = {
 		if(interaction.content==undefined){
             
 			//Interaction
-            var currentDateAndTime = new Date().toLocaleString();
             let HugUser = interaction.options.getMember('user');
             if(HugUser.id==interaction.member.id) return await interaction.editReply({ content: `\`Do you need a hug ${interaction.member.displayName}..?\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let HugUserID = HugUser.id
@@ -26,7 +25,8 @@ module.exports = {
             let FinalImage = ContentFilter1.replace(/"}/gi, "")
             HugGif.setTitle(`:hugging:  ${interaction.member.displayName} hugged ${interaction.guild.members.cache.get(HugUserID).displayName}! :hugging: `)
             HugGif.setImage(String(FinalImage))
-            HugGif.setFooter({text:`${currentDateAndTime}`})
+            HugGif.setFooter({text:`Requested by ${interaction.member.user.tag}`})
+            HugGif.setTimestamp()
             await interaction.editReply({ embeds: [HugGif], allowedMentions: {repliedUser: true, users: [HugUserID]}, content: `:hugging: ${interaction.guild.members.cache.get(HugUserID)} :hugging:`})
             })
             return

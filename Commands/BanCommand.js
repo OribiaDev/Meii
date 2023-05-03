@@ -1,8 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { PermissionFlagsBits, EmbedBuilder } = require('discord.js')
-var randomHexColor = require('random-hex-color')
-const mysql = require('mysql');
-const { host, user, password, database } = require('../Jsons/config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
