@@ -17,22 +17,20 @@ module.exports = {
 					{ name: 'Kangaroo', value: 'kangaroo' },
 					{ name: 'Koala', value: 'koala' },
 					{ name: 'Panda', value: 'panda' },
-					{ name: 'Raccoon', value: 'racoon' },
+					{ name: 'Raccoon', value: 'raccoon' },
 					{ name: 'Red Panda', value: 'red_panda' },
 				)),
-	async execute(interaction, args, client, prefix) {
-		if(!interaction.guild) return
-		if(interaction.content==undefined){
+	async execute(interaction) {
+		await interaction.deferReply();
         const category = interaction.options.getString('category');
 		fetch(`https://some-random-api.com/animal/${category}`)
 		.then(res => res.json())
 		.then(async json => {
 			let animalemb = new EmbedBuilder()
-				.setImage(json.image)
-				.setFooter({text:`Requested by ${interaction.member.user.tag}`})
-				.setTimestamp()
-				await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
-			});		
-		}
+			.setImage(json.image)
+			.setFooter({text:`Requested by ${interaction.member.user.username}`})
+			.setTimestamp()
+			await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
+		});		
 	},
 };

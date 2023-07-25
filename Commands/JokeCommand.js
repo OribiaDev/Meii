@@ -4,15 +4,16 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('joke')
 		.setDescription('Sends a joke'),
-	async execute(interaction, args, client, prefix) {
-        if(!interaction.guild) return
-		if(interaction.content==undefined){
-            fetch('https://some-random-api.com/joke')
-    		.then(res => res.json())
-    		.then(async json => {
-                await interaction.editReply({ content: `${json.joke}`, ephemeral: false });
-                return
-    		});		
-		}
+	async execute(interaction) {
+		fetch('https://icanhazdadjoke.com/', {
+			headers: {
+				"Accept": "application/json",
+				},
+		})
+		.then(res => res.json())
+		.then(async json => {
+			await interaction.reply({ content: `${json.joke}`, ephemeral: false });
+			return
+		});		
 	},
 };

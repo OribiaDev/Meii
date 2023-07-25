@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { EmbedBuilder } = require('discord.js')
-const got = require('got');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -8,28 +7,22 @@ module.exports = {
 		.setDescription('Kills said user')
         .addUserOption(option => 
             option.setName('user')
-                  .setDescription('Select a user to kill!')
+                  .setDescription('Select a user to kill')
                   .setRequired(true)),
-	async execute(interaction, args, client, prefix) {
-		if(!interaction.guild) return
-		if(interaction.content==undefined){
-            
-			//Interaction
-            let KillUser = interaction.options.getMember('user');
-            if(KillUser.id==interaction.member.id) return await interaction.editReply({ content: `\`n-no- don't do that--\``, allowedMentions: { repliedUser: false }, ephemeral: true })
-            let KillUserID = KillUser.id
-            const Killgif = new EmbedBuilder()
-            got('https://api.waifu.pics/sfw/kill').then(async response => {
-            let content = response.body;
-            let ContentFilter1 = content.replace(/{"url":"/gi, "")
-            let FinalImage = ContentFilter1.replace(/"}/gi, "")
+	async execute(interaction) {     
+        let KillUser = interaction.options.getMember('user');
+        if(KillUser.id==interaction.member.id) return await interaction.reply({ content: `\`n-no- don't do that--\``, allowedMentions: { repliedUser: false }, ephemeral: true })
+        let KillUserID = KillUser.id
+        const Killgif = new EmbedBuilder()
+        fetch(`https://api.waifu.pics/sfw/kill`)
+        .then(res => res.json())
+        .then(async json => {
+            let image = json.url;
             Killgif.setTitle(`:knife:  ${interaction.member.displayName} killed ${interaction.guild.members.cache.get(KillUserID).displayName}! :knife:  `)
-            Killgif.setImage(String(FinalImage))
-            Killgif.setFooter({text:`Requested by ${interaction.member.user.tag}`})
+            Killgif.setImage(String(image))
+            Killgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             Killgif.setTimestamp()
-            await interaction.editReply({ embeds: [Killgif], allowedMentions: {repliedUser: true, users: [KillUserID]}, content: `:knife: ${interaction.guild.members.cache.get(KillUserID)} :knife:`})
-            })
-            return
-		}
+            await interaction.reply({ embeds: [Killgif], allowedMentions: {repliedUser: true, users: [KillUserID]}, content: `:knife: ${interaction.guild.members.cache.get(KillUserID)} :knife:`})
+        });		
 	},
 };

@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { EmbedBuilder } = require('discord.js')
-const got = require('got');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -8,28 +7,22 @@ module.exports = {
 		.setDescription('Yeets said person')
         .addUserOption(option => 
             option.setName('user')
-                  .setDescription('Select a user to yeet!')
+                  .setDescription('Select a user to yeet')
                   .setRequired(true)),
-	async execute(interaction, args, client, prefix) {
-		if(!interaction.guild) return
-		if(interaction.content==undefined){
-            
-			//Interaction
+	async execute(interaction) {
             let YeetUser = interaction.options.getMember('user');
-            if(YeetUser.id==interaction.member.id) return await interaction.editReply({ content: `\`p-pls- n-no- ${interaction.member.displayName}\``, allowedMentions: { repliedUser: false }, ephemeral: true })
+            if(YeetUser.id==interaction.member.id) return await interaction.reply({ content: `\`p-pls- n-no- ${interaction.member.displayName}\``, allowedMentions: { repliedUser: false }, ephemeral: true })
             let YeetUserID = YeetUser.id
             const yeetgif = new EmbedBuilder()
-            got('https://api.waifu.pics/sfw/yeet').then(async response => {
-            let content = response.body;
-            let ContentFilter1 = content.replace(/{"url":"/gi, "")
-            let FinalImage = ContentFilter1.replace(/"}/gi, "")
-            yeetgif.setTitle(`:smiling_imp: ${interaction.member.displayName} yeeted ${interaction.guild.members.cache.get(YeetUserID).displayName}! :smiling_imp: `)
-            yeetgif.setImage(String(FinalImage))
-            yeetgif.setFooter({text:`Requested by ${interaction.member.user.tag}`})
-            yeetgif.setTimestamp()
-            await interaction.editReply({ embeds: [yeetgif], allowedMentions: {repliedUser: true, users: [YeetUserID]}, content: `:smiling_imp: ${interaction.guild.members.cache.get(YeetUserID)} :smiling_imp:`})
-            })
-            return
-		}
+            fetch(`https://api.waifu.pics/sfw/yeet`)
+            .then(res => res.json())
+            .then(async json => {
+                let image = json.url;
+                yeetgif.setTitle(`:smiling_imp: ${interaction.member.displayName} yeeted ${interaction.guild.members.cache.get(YeetUserID).displayName}! :smiling_imp: `)
+                yeetgif.setImage(String(image))
+                yeetgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
+                yeetgif.setTimestamp()
+                await interaction.reply({ embeds: [yeetgif], allowedMentions: {repliedUser: true, users: [YeetUserID]}, content: `:smiling_imp: ${interaction.guild.members.cache.get(YeetUserID)} :smiling_imp:`})
+            });	
 	},
 };
