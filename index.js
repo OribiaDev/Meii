@@ -19,7 +19,7 @@ const BotDevID = '1082402034759766016'
 const mainclientId = '1082401009206308945' 
 
 //Dev Toggle
-const IsDev = false
+const IsDev = true
 
 //Token Changer
 var token;
@@ -100,15 +100,17 @@ function CommandRefresh(){
 client.on(Events.MessageCreate, message => {
 	if (message.author.bot) return;
     if(message.guild) return
-    //DMs
-    const args = message.content.toLowerCase().trim().split(/ +/g);
-    if (!client.commands.has(args[0])) return;
-    try {
-        //Send to command handler
-        client.commands.get(args[0]).execute(message, args, client, prefix);
-    } catch (error) {
-        console.error(error);
-        return message.channel.send('\`There was an error while executing this command\`');
+    if(message.content.toLocaleLowerCase()=="confess"){
+        //DMs
+        const args = message.content.toLowerCase().trim().split(/ +/g);
+        if (!client.commands.has(args[0])) return;
+        try {
+            //Send to command handler
+            client.commands.get('confession_command_dms').execute(message, args, client, prefix);
+        } catch (error) {
+            console.error(error);
+            return message.channel.send('\`There was an error while executing this command\`');
+        }
     }
 });
 

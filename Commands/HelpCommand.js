@@ -24,7 +24,7 @@ module.exports = {
                 let HelpConfessions = new EmbedBuilder()
                 .setTitle(":scream:  **Confession Commands**")
                 .setColor("#C3B1E1")
-                .setDescription(`**Confession Tutorial:** \n To submit a confession, simply message Meii with the word 'confess' and reply with the number next to the server you wish to confess too in the provided server list. \n\n **Commands:**\n :speech_left: \`${prefix}set confession_channel [#channel]\`: \n Sets the confession channel \n\n :hammer_pick: \`${prefix}set confession_log_channel [#channel]\`: \n Sets the logging channel for confessions \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
+                .setDescription(`**Confession Tutorial:** \n To submit a confession, simply use the command \`/confess\` along with the message in the server you wish to confess too. \n\n **Commands:**\n :grey_question: \`${prefix}confess [message]\` \n Sends an anonymous confession \n\n :speech_left: \`${prefix}set confession_channel [#channel]\`: \n Sets the confession channel \n\n :hammer_pick: \`${prefix}set confession_log_channel [#channel]\`: \n Sets the logging channel for confessions \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
                 await interaction.reply({ embeds: [HelpConfessions], allowedMentions: { repliedUser: false }})
             }
             if(section=="help_moderation"){
