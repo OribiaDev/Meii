@@ -5,6 +5,7 @@ module.exports = {
 		.setName('joke')
 		.setDescription('Sends a joke'),
 	async execute(interaction) {
+		await interaction.deferReply();
 		fetch('https://icanhazdadjoke.com/', {
 			headers: {
 				"Accept": "application/json",
@@ -12,7 +13,7 @@ module.exports = {
 		})
 		.then(res => res.json())
 		.then(async json => {
-			await interaction.reply({ content: `${json.joke}`, ephemeral: false });
+			await interaction.editReply({ content: `${json.joke}`, ephemeral: false });
 			return
 		});		
 	},

@@ -13,6 +13,7 @@ module.exports = {
                 .setRequired(true)
                 .setDescription('The message you want to confess')),
 	async execute(interaction, args, client, prefix) {
+        await interaction.deferReply({ ephemeral: true });
         //Database Login
         var pool = mysql.createPool({
             host: host,
@@ -34,7 +35,7 @@ module.exports = {
                 .setColor('#ff6961')
                 .setDescription(`Im sorry, the confession channel is not setup for **${server.name}**.`)
                 .setFooter({text:`Ask a staff member to set it up with ${prefix}setconfesschannel`})
-                return interaction.reply({ embeds: [ConfessionNotSet], ephemeral: true, allowedMentions: {repliedUser: false}})  
+                return interaction.editReply({ embeds: [ConfessionNotSet], ephemeral: true, allowedMentions: {repliedUser: false}})  
             }
             //No Confess Channel
             if(JSON.stringify(result[0].confession_channel_ids)=='null'){
@@ -43,7 +44,7 @@ module.exports = {
                 .setColor('#ff6961')
                 .setDescription(`Im sorry, the confession channel is not setup for **${server.name}**.`)
                 .setFooter({text:`Ask a staff member to set it up with ${prefix}setconfesschannel`})
-                return interaction.reply({ embeds: [ConfessionNotSet], ephemeral: true, allowedMentions: {repliedUser: false}})
+                return interaction.editReply({ embeds: [ConfessionNotSet], ephemeral: true, allowedMentions: {repliedUser: false}})
             }else{
                 //Check if user is confession banned
                 var sql = `SELECT confession_userbans_ids FROM server_data WHERE server_id = ${server.id};`; 
@@ -55,7 +56,7 @@ module.exports = {
                         .setColor("#ff6961")
                         .setDescription(`Im sorry, you're banned from using confessions in **${server.name}**.`)
                         .setFooter({text:`If you think this is a mistake, please contact a staff member.`})
-                        interaction.reply({ embeds: [ConfessionIsBanned], ephemeral: true, allowedMentions: {repliedUser: false}})
+                        interaction.editReply({ embeds: [ConfessionIsBanned], ephemeral: true, allowedMentions: {repliedUser: false}})
                         return
                     }else{
                         //Confession Channel Error
@@ -68,18 +69,18 @@ module.exports = {
                             .setDescription(`Im sorry, im having trouble finding the confession channel in **${server.name}**.`)
                             .setFooter({text:`Tell a staff member to re-set the confession channel!`})
                             if(!client.channels.cache.get(result[0].confession_channel_ids)){
-                                return interaction.reply({ embeds: [ConfessionError], ephemeral: true,})
+                                return interaction.editReply({ embeds: [ConfessionError], ephemeral: true,})
                             }else{
                                 let confessionchannel = client.channels.cache.get(result[0].confession_channel_ids)
                                 let confessedmessage = interaction.options.getString('message');
-                                if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return interaction.reply({ content: `\`Im sorry, I dont have enough permissions to send messages in the set confession channel\``, ephemeral: true })
+                                if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return interaction.editReply({ content: `\`Im sorry, I dont have enough permissions to send messages in the set confession channel\``, ephemeral: true })
                                 let Confession = new EmbedBuilder()
                                 .setTitle(`**:love_letter: Anonymous Confession**`)
                                 .setColor(randomHexColor())
                                 .setDescription(`> ${confessedmessage}`)
                                 .setTimestamp()
                                 confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}})
-                                interaction.reply({ content: `Your confession has now been added to **${confessionchannel}**  :thumbsup: `, ephemeral: true });
+                                interaction.editReply({ content: `Your confession has now been added to **${confessionchannel}**  :thumbsup: `, ephemeral: true });
                                 //Mod Log Send
                                 var sql = `SELECT confession_modlog_ids FROM server_data WHERE server_id = ${server.id};`; 
                                 pool.query(sql, function (err, result) {
