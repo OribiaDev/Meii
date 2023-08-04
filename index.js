@@ -48,7 +48,7 @@ var pool = mysql.createPool({
     user: user,
     password: password,
     database: database,
-    connectionLimit: 90,
+    connectionLimit: 30,
 });
 
 //Command Handler 
