@@ -1,7 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { PermissionFlagsBits, EmbedBuilder } = require('discord.js')
-const mysql = require('mysql');
-const { host, user, password, database } = require('../Jsons/config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -24,15 +22,7 @@ module.exports = {
                     option.setName('channel')
                             .setDescription('Select a channel for the confession logging')
                             .setRequired(true))),
-	async execute(interaction, args, client, prefix) {
-        //Database Login
-        var pool = mysql.createPool({
-            host: host,
-            user: user,
-            password: password,
-            database: database,
-            connectionLimit: 100,
-        });
+	async execute(interaction, pool, args, client, prefix) {
         //Sets Confession Channel
         if (interaction.options.getSubcommand() === 'confession_channel') {
             let channel = interaction.options.getChannel('channel');

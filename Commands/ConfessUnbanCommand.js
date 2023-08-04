@@ -1,7 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { PermissionFlagsBits, EmbedBuilder } = require('discord.js')
-const mysql = require('mysql');
-const { host, user, password, database } = require('../Jsons/config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,15 +10,7 @@ module.exports = {
             option.setName('user')
                   .setDescription('Select a user to unban from confessions!')
                   .setRequired(true)),
-	async execute(interaction, args, client, prefix) {
-        //Database Login
-        var pool = mysql.createPool({
-            host: host,
-            user: user,
-            password: password,
-            database: database,
-            connectionLimit: 100,
-        });
+	async execute(interaction, pool, args, client, prefix) {
         //Database Block
         var sql = `SELECT confession_userbans_ids FROM server_data WHERE server_id = ${interaction.guild.id};`; 
         pool.query(sql, async function (err, result) {

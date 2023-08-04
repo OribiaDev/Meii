@@ -1,8 +1,3 @@
-const { EmbedBuilder, PermissionFlagsBits} = require('discord.js')
-const randomHexColor = require('random-hex-color')
-const mysql = require('mysql');
-const { host, user, password, database } = require('../Jsons/config.json');
-
 module.exports = {
 	name: 'confession_command_dms',
 	description: 'Submit a confession!',

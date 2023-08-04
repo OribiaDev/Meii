@@ -16,7 +16,7 @@ module.exports = {
                     { name: 'Emotes', value: 'help_emotes' },
                     { name: 'Utilitys', value: 'help_utilitys' },
                 )),
-	async execute(interaction, args, client, prefix) {
+	async execute(interaction, pool, args, client, prefix) {
         const section = interaction.options.getString('section');
         if(section){
             if(section=="help_confessions"){

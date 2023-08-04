@@ -1,7 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits} = require('discord.js')
 const randomHexColor = require('random-hex-color')
-const mysql = require('mysql');
-const { host, user, password, database } = require('../Jsons/config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,16 +10,8 @@ module.exports = {
                 .setName('message')
                 .setRequired(true)
                 .setDescription('The message you want to confess')),
-	async execute(interaction, args, client, prefix) {
+	async execute(interaction, pool, args, client, prefix) {
         await interaction.deferReply({ ephemeral: true });
-        //Database Login
-        var pool = mysql.createPool({
-            host: host,
-            user: user,
-            password: password,
-            database: database,
-            connectionLimit: 100,
-        });
         //Guild Var
         const server = interaction.guild;
         //Database Confession Channel Check
@@ -72,6 +62,7 @@ module.exports = {
                                 return interaction.editReply({ embeds: [ConfessionError], ephemeral: true,})
                             }else{
                                 let confessionchannel = client.channels.cache.get(result[0].confession_channel_ids)
+                                if(!confessionchannel) return interaction.editReply({ embeds: [ConfessionError], ephemeral: true,})
                                 let confessedmessage = interaction.options.getString('message');
                                 if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return interaction.editReply({ content: `\`Im sorry, I dont have enough permissions to send messages in the set confession channel\``, ephemeral: true })
                                 let Confession = new EmbedBuilder()

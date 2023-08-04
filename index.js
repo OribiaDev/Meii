@@ -42,14 +42,14 @@ if(!IsDev){
     })
 }
 
-//Database Login
+//Database Login (Passed through database commands)
 var pool = mysql.createPool({
     host: host,
     user: user,
     password: password,
     database: database,
-    connectionLimit: 100,
-  });
+    connectionLimit: 90,
+});
 
 //Command Handler 
 function CommandRefresh(){
@@ -152,7 +152,7 @@ client.on(Events.InteractionCreate, async interaction => {
                     const { commandName } = interaction;
                     if (!client.commands.has(commandName)) return;
                     try {
-                        await client.commands.get(commandName).execute(interaction, null, client, prefix);
+                        await client.commands.get(commandName).execute(interaction, pool, null, client, prefix);
                     } catch (error) {
                         console.error(error);
                         return await interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
@@ -166,7 +166,7 @@ client.on(Events.InteractionCreate, async interaction => {
                 const { commandName } = interaction;
                 if (!client.commands.has(commandName)) return;
                 try {
-                    await client.commands.get(commandName).execute(interaction, null, client, prefix);
+                    await client.commands.get(commandName).execute(interaction, pool, null, client, prefix);
                 } catch (error) {
                     console.error(error);
                     return await interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
@@ -180,7 +180,7 @@ client.on(Events.InteractionCreate, async interaction => {
             const { commandName } = interaction;
             if (!client.commands.has(commandName)) return;
             try {
-                await client.commands.get(commandName).execute(interaction, null, client, prefix);
+                await client.commands.get(commandName).execute(interaction, pool, null, client, prefix);
             } catch (error) {
                 console.error(error);
                 return await interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
