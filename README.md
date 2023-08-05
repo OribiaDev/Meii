@@ -1,4 +1,5 @@
 <p align="center">
+ ![image](https://meiibot.xyz/Img/MeiiLogoRounded.png)
  <h2 align="center">Meii</h2>
  <p align="center">A powerful multipurpose, gif emote, confession + logging, and moderation Discord bot. </p>
 </p>
