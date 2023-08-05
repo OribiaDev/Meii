@@ -1,9 +1,9 @@
 <p align="center">
  <img src="https://meiibot.xyz/Img/MeiiLogoRoundedPurpleNew.png" width="200" alt="Meii Logo">
- <h2 align="center">Meii</h2>
- <p align="center">A powerful multipurpose, gif emote, confession + logging, and moderation Discord bot. </p>
- <br>
 </p>
+
+## Meii
+A powerful multipurpose, gif emote, confession + logging, and moderation Discord bot. 
 
 ## Description
 
