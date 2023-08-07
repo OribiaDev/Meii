@@ -2,7 +2,7 @@
 //If you see this, have a great day :3 - OribiaDev
 
 //Imports
-const { Client, GatewayIntentBits, Partials, Collection, PermissionFlagsBits, Events } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, PermissionFlagsBits, Events, ActivityType } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { main_token, dev_token, host, user, password, database, top_token } = require('./Jsons/config.json');
@@ -124,7 +124,7 @@ client.once(Events.ClientReady, () => {
     console.log("|_|_|_|___|_|_|")
     CommandRefresh();
     console.log("Launched!")
-    client.user.setActivity(`${prefix}help | ${client.guilds.cache.size} Servers`);
+    client.user.setActivity(`${prefix}help`, { type: ActivityType.Listening })
 });
 
 //Slash Command Function
@@ -189,14 +189,8 @@ client.on(Events.InteractionCreate, async interaction => {
     });
 });
 
-//Guild Join Funcion
-client.on(Events.GuildCreate, guild => {
-    client.user.setActivity(`${prefix}help | ${client.guilds.cache.size} Servers`);             
-});        
-
 //Guild Leave Function
 client.on(Events.GuildDelete, guild => {
-    client.user.setActivity(`${prefix}help | ${client.guilds.cache.size} Servers`); 
     //Data Deletion 
     var sql = `SELECT COUNT(*) FROM server_data WHERE server_id = ${guild.id}`;
     pool.query(sql, function (err, result) {

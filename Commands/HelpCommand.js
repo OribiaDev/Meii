@@ -64,7 +64,7 @@ module.exports = {
             let Help = new EmbedBuilder()
             .setTitle("**Meii Command List**")
             .setColor("#C3B1E1")
-            .setDescription(`:scream: **Confessions** \n \`${prefix}help confessions\` \n\n :tools: **Moderation** \n \`${prefix}help moderation\` \n\n :confetti_ball:  **Fun** \n \`${prefix}help fun\` \n\n :kissing_heart: **Emotes** \n \`${prefix}help emotes\` \n\n:money_with_wings: **Economy**\n \`Coming Soon!\` \n\n:wrench: **Utility** \n \`${prefix}help utility\` \n\n _____ \n **Website:** \n https://meiibot.xyz \n\n Need help? Join the [support server.](https://discord.gg/E23tPPTwSc)`)
+            .setDescription(`:scream: **Confessions** \n \`${prefix}help confessions\` \n\n :tools: **Moderation** \n \`${prefix}help moderation\` \n\n :confetti_ball:  **Fun** \n \`${prefix}help fun\` \n\n :kissing_heart: **Emotes** \n \`${prefix}help emotes\` \n\n:wrench: **Utility** \n \`${prefix}help utility\` \n\n _____ \n **Website:** \n https://meiibot.xyz \n\n Need help? Join the [support server.](https://discord.gg/E23tPPTwSc)`)
             await interaction.reply({ embeds: [Help], allowedMentions: { repliedUser: false }})
         }
 	},
