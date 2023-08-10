@@ -139,7 +139,7 @@ client.on(Events.InteractionCreate, async interaction => {
         if(strresult.includes(0)){
             const { commandName } = interaction;
             //Database Create Only For Database Commands
-            if(commandName=="set" || commandName=="confessban" || commandName=="confessunban" || commandName=="checklogs"){
+            if(commandName=="set" || commandName=="confessban" || commandName=="confessunban"){
                 //Query Update Block
                 var sql = `INSERT INTO server_data (server_id, confession_userbans_ids) VALUES (${interaction.guild.id}, ' ')`;
                 pool.query(sql, async function (err, result) {

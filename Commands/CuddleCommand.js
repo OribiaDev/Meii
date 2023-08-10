@@ -22,7 +22,7 @@ module.exports = {
             Cuddlegif.setImage(String(image))
             Cuddlegif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             Cuddlegif.setTimestamp()
-            await interaction.reply({ embeds: [Cuddlegif], allowedMentions: {repliedUser: false}})
+            await interaction.reply({ embeds: [Cuddlegif], allowedMentions: {repliedUser: true, users: [CuddleUserID]}, content:`:people_hugging: ${interaction.guild.members.cache.get(CuddleUserID)} :people_hugging:`})
         });	
 	},
 };
