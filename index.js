@@ -5,10 +5,11 @@
 const { Client, GatewayIntentBits, Partials, Collection, PermissionFlagsBits, Events, ActivityType } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { main_token, dev_token, host, user, password, database, top_token } = require('./Jsons/config.json');
+const { main_token, dev_token, host, user, password, database, server_ip, top_token } = require('./Jsons/config.json');
 const { AutoPoster } = require('topgg-autoposter')
 const mysql = require('mysql');
 const fs = require('fs');
+var ip = require("ip");
 
 //Intents
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages], partials: [Partials.Channel] });
@@ -19,14 +20,16 @@ const BotDevID = '1082402034759766016'
 const mainclientId = '1082401009206308945' 
 
 //Dev Toggle
-const IsDev = true
-
-//Token Changer
+var IsDev = null;
 var token;
-if(IsDev){
-    token = dev_token;
-}else{
+if(ip.address()==server_ip){
+    //Server IP
+    IsDev = false
     token = main_token;
+}else {
+    //Any Other IP
+    IsDev = true
+    token = dev_token;
 }
 
 //Bot Login
@@ -131,62 +134,18 @@ client.once(Events.ClientReady, () => {
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isCommand()) return;
     if(!interaction.guild) return interaction.reply({content:"\`Im sorry, this command can only be ran in a server!\`", ephemeral: true })
-    //Query Database Check Block
-    var sql = `SELECT COUNT(*) FROM server_data WHERE server_id = ${interaction.guild.id}`;
-    pool.query(sql, async function (err, result) {
-        if (err) throw err;
-        strresult = JSON.stringify(result[0]);
-        if(strresult.includes(0)){
-            const { commandName } = interaction;
-            //Database Create Only For Database Commands
-            if(commandName=="set" || commandName=="confessban" || commandName=="confessunban"){
-                //Query Update Block
-                var sql = `INSERT INTO server_data (server_id, confession_userbans_ids) VALUES (${interaction.guild.id}, ' ')`;
-                pool.query(sql, async function (err, result) {
-                    if (err) throw err;
-                    console.log(`New Database Entry Created with GuildID: ${interaction.guild.id}`);
-                    //Permissions Check
-                    if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks))return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return;})
-                    if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks))return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return;})
-                    //New Database Command Handler      
-                    const { commandName } = interaction;
-                    if (!client.commands.has(commandName)) return;
-                    try {
-                        await client.commands.get(commandName).execute(interaction, pool, null, client, prefix);
-                    } catch (error) {
-                        console.error(error);
-                        return await interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
-                    }
-                });
-            }else{
-                //Permissions Check
-                if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return; })  
-                if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)){return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return;})}
-                //No Database Command Handler      
-                const { commandName } = interaction;
-                if (!client.commands.has(commandName)) return;
-                try {
-                    await client.commands.get(commandName).execute(interaction, pool, null, client, prefix);
-                } catch (error) {
-                    console.error(error);
-                    return await interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
-                }
-            }
-        }else{
-            //Permissions Check
-            if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return; })
-            if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return;})
-            //Existing Database Command Handler      
-            const { commandName } = interaction;
-            if (!client.commands.has(commandName)) return;
-            try {
-                await client.commands.get(commandName).execute(interaction, pool, null, client, prefix);
-            } catch (error) {
-                console.error(error);
-                return await interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
-            }                   
-        }
-    });
+    //Permissions Check
+    if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return; })
+    if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return;})
+    //Existing Database Command Handler      
+    const { commandName } = interaction;
+    if (!client.commands.has(commandName)) return;
+    try {
+        await client.commands.get(commandName).execute(interaction, pool, null, client, prefix);
+    } catch (error) {
+        console.error(error);
+        return await interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
+    }  
 });
 
 //Guild Leave Function

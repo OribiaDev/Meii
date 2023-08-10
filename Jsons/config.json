@@ -3,6 +3,7 @@
     "user": "HOST_USERNAME",   
     "password": "HOST_PASSWORD",   
     "database": "HOST_DATABASE",
+    "server_ip": "SERVER_IP", 
     "main_token": "BOT_TOKEN",
     "dev_token": "BOT_DEV-VERSION_TOKEN",
     "top_token": "TOP.GG_TOKEN"

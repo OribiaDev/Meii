@@ -18,7 +18,7 @@ module.exports = {
         .then(res => res.json())
         .then(async json => {
             let image = json.url;
-            Killgif.setTitle(`:knife:  ${interaction.member.displayName} killed ${interaction.guild.members.cache.get(KillUserID).displayName}! :knife:  `)
+            Killgif.setTitle(`:knife: ${interaction.member.displayName} killed ${interaction.guild.members.cache.get(KillUserID).displayName}! :knife:  `)
             Killgif.setImage(String(image))
             Killgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             Killgif.setTimestamp()

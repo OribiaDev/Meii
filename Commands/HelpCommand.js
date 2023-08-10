@@ -32,7 +32,7 @@ module.exports = {
                 let HelpModeration = new EmbedBuilder()
                 .setTitle(":tools:  **Moderation Commands**")
                 .setColor("#C3B1E1")
-                .setDescription(`**Commands:**\n :hammer: \`${prefix}confessban [@someone]\`: \n Bans someone from using confessions \n\n :no_entry_sign: \`${prefix}confessunban [@someone]\`: \n Unbans someone from using confessions \n\n :hammer: \`${prefix}ban [@someone]\`: \n Bans mentioned user from the server \n\n :leg: \`${prefix}kick [@someone]\`: \n kicks mentioned user from the server \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
+                .setDescription(`**Commands:**\n :hammer: \`${prefix}confession ban [@someone]\`: \n Bans someone from using confessions \n\n :no_entry_sign: \`${prefix}confession unban [@someone]\`: \n Unbans someone from using confessions \n\n :hammer: \`${prefix}ban [@someone]\`: \n Bans mentioned user from the server \n\n :leg: \`${prefix}kick [@someone]\`: \n kicks mentioned user from the server \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
                 await interaction.reply({ embeds: [HelpModeration], allowedMentions: {repliedUser: false}})
             }
             if(section=="help_fun"){

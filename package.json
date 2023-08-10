@@ -34,6 +34,7 @@
     "http2-wrapper": "^1.0.3",
     "inflight": "^1.0.6",
     "inherits": "^2.0.4",
+    "ip": "^1.1.8",
     "js": "^0.1.0",
     "json-buffer": "^3.0.1",
     "keypress": "^0.1.0",

@@ -11,7 +11,7 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {   
         let CuddleUser = interaction.options.getMember('user');
-        if(CuddleUser.id==interaction.member.id) return await interaction.reply({ content: `\`Do you need a cuddle ${interaction.member.displayName}..?\``, allowedMentions: { repliedUser: false }})
+        if(CuddleUser.id==interaction.member.id) return await interaction.reply({ content: `\`Do you need a cuddle ${interaction.member.displayName}..?\``, ephemeral: true, allowedMentions: { repliedUser: false }})
         let CuddleUserID = CuddleUser.id
         const Cuddlegif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/cuddle`)
