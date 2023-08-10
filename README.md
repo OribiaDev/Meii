@@ -7,13 +7,14 @@ A powerful multipurpose, gif emote, confession + logging, and moderation Discord
 
 ## Description
 
-Meii has an in-depth and simple anonymous confession system with logging. It is very well-polished and has tons of commands to keep you entertained while keeping your server safe. 
+Meii has an in-depth and straightforward anonymous confession system with logging. It is very well-polished and has many commands to keep you entertained while keeping your server safe. 
 
 ## Getting Started
 
 ### Dependencies
 
 * Node-JS
+* MySQL
 * Various node-js packages (see in packages file)
 
 ### Inviting the bot
@@ -25,9 +26,9 @@ Meii has an in-depth and simple anonymous confession system with logging. It is 
 * Install [Node-JS](https://nodejs.org/en/)
 * Install the source code either with git or downloading it at the top right
 * Extract it, open the folder in the command prompt
-* type ```npm install``` to install the nessasary packages
-* insert your bot token into the config file
-* insert your SQL host IP, password, username, and database into the config file (data storing) 
+* type ```npm install``` to install the necessary packages
+* setup MySQL, make a database with a table named ```sever_data``` with columns (server_id(varchar), confession_channel_ids(varchar), confession_modlog_ids(varchar) and confession_userban_ids(longtext)) 
+* insert the various values in the config file (MySQL, Tokens, and IPs)
 * and type ```node .``` to start the bot!
 
 ## Help
