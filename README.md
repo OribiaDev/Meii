@@ -14,7 +14,7 @@ Meii has an in-depth and straightforward anonymous confession system with loggin
 ### Dependencies
 
 * Node-JS
-* MySQL
+* MongoDB
 * Various node-js packages (see in packages file)
 
 ### Inviting the bot
@@ -27,8 +27,8 @@ Meii has an in-depth and straightforward anonymous confession system with loggin
 * Install the source code either with git or downloading it at the top right
 * Extract it, open the folder in the command prompt
 * type ```npm install``` to install the necessary packages
-* setup MySQL, make a database with a table named ```sever_data``` with columns (server_id(varchar), confession_channel_ids(varchar), confession_modlog_ids(varchar) and confession_userban_ids(longtext)) 
-* insert the various values in the config file (MySQL, Tokens, and IPs)
+* Install and setup a [MongoDB](https://www.mongodb.com/try/download/community) database using Atlas or MongoDB Server
+* insert the various values in the config file (MongoDB Values, Bot Tokens, and IPs)
 * and type ```node .``` to start the bot!
 
 ## Help
@@ -37,7 +37,7 @@ Meii has an in-depth and straightforward anonymous confession system with loggin
 
 ## Authors
 
-* [@Oribia_Dev](https://twitter.com/Oribia_Dev)
+* [@Oribia_Dev](https://oribia.dev)
 
 ## License
 
