@@ -14,7 +14,7 @@ module.exports = {
 			option.setName('reason')
 				  .setDescription('State the reasoning for this ban')
 				  .setRequired(false)),
-	async execute(interaction, pool, args, client, prefix) {
+	async execute(interaction, db, server_data, client) {
 		if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions!\nI need the \`Ban Members\` permission for this command!`, ephemeral: true }).catch(() => {return;})
 		let bUser = interaction.options.getMember('user');
 		if(bUser.id==client.user.id) return await interaction.reply({content:"\`You can't ban me silly~!\`", ephemeral: true })

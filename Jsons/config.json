@@ -1,8 +1,7 @@
 {
-    "host": "HOST_IP",   
-    "user": "HOST_USERNAME",   
-    "password": "HOST_PASSWORD",   
-    "database": "HOST_DATABASE",
+    "db_url": "MONGODB_CONNECTION_URL", 
+    "db_name": "DATABASE_NAME", 
+    "db_collection_name": "DATABASE_COLLECTION_NAME",
     "server_ip": "SERVER_IP", 
     "main_token": "BOT_TOKEN",
     "dev_token": "BOT_DEV-VERSION_TOKEN",

@@ -5,19 +5,22 @@
 const { Client, GatewayIntentBits, Partials, Collection, PermissionFlagsBits, Events, ActivityType } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { main_token, dev_token, host, user, password, database, server_ip, top_token } = require('./Jsons/config.json');
+const { main_token, dev_token, db_url, db_name, db_collection_name, server_ip, top_token } = require('./Jsons/config.json');
+const { MongoClient } = require('mongodb');
 const { AutoPoster } = require('topgg-autoposter')
-const mysql = require('mysql');
 const fs = require('fs');
 var ip = require("ip");
 
 //Intents
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages], partials: [Partials.Channel] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
 
 //Variables
 const prefix = '/'
 const BotDevID = '1082402034759766016'
 const mainclientId = '1082401009206308945' 
+
+//MongoDB Client
+const mongoClient = new MongoClient(db_url)
 
 //Dev Toggle
 var IsDev = null;
@@ -44,15 +47,6 @@ if(!IsDev){
         console.log(`Posted stats to Top.gg | ${stats.serverCount} servers`)
     })
 }
-
-//Database Login (Passed through database commands)
-var pool = mysql.createPool({
-    host: host,
-    user: user,
-    password: password,
-    database: database,
-    connectionLimit: 30,
-});
 
 //Command Handler 
 function CommandRefresh(){
@@ -99,33 +93,17 @@ function CommandRefresh(){
       }, 60000 * 60);
 }
 
-//Message Function 
-client.on(Events.MessageCreate, message => {
-	if (message.author.bot) return;
-    if(message.guild) return
-    if(message.content.toLocaleLowerCase()=="confess"){
-        //DMs
-        const args = message.content.toLowerCase().trim().split(/ +/g);
-        if (!client.commands.has(args[0])) return;
-        try {
-            //Send to command handler
-            client.commands.get('confession_command_dms').execute(message, args, client, prefix);
-        } catch (error) {
-            console.error(error);
-            return message.channel.send('\`There was an error while executing this command\`');
-        }
-    }
-});
-
 //Ready Function
-client.once(Events.ClientReady, () => {
+client.once(Events.ClientReady, async () => {
     client.user.setActivity(`Starting up... please wait`);
     client.user.setStatus("online");
     console.log(" _____     _ _ ")
     console.log("|     |___|_|_|")
     console.log("| | | | -_| | |")
     console.log("|_|_|_|___|_|_|")
-    CommandRefresh();
+    await mongoClient.connect();
+    console.log('Connected successfully to the database.');
+    await CommandRefresh();
     console.log("Launched!")
     client.user.setActivity(`${prefix}help`, { type: ActivityType.Listening })
 });
@@ -134,6 +112,9 @@ client.once(Events.ClientReady, () => {
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isCommand()) return;
     if(!interaction.guild) return interaction.reply({content:"\`Im sorry, this command can only be ran in a server!\`", ephemeral: true })
+    //Database Variables
+    const db = mongoClient.db(db_name)
+    const server_data = db.collection(db_collection_name)
     //Permissions Check
     if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return; })
     if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return;})
@@ -141,7 +122,7 @@ client.on(Events.InteractionCreate, async interaction => {
     const { commandName } = interaction;
     if (!client.commands.has(commandName)) return;
     try {
-        await client.commands.get(commandName).execute(interaction, pool, null, client, prefix);
+        await client.commands.get(commandName).execute(interaction, db, server_data, client, prefix);
     } catch (error) {
         console.error(error);
         return await interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
@@ -149,31 +130,28 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 //Guild Leave Function
-client.on(Events.GuildDelete, guild => {
+client.on(Events.GuildDelete, async guild => {
+    //Database Variables
+    const db = mongoClient.db(db_name)
+    const server_data = db.collection(db_collection_name)
     //Data Deletion 
-    var sql = `SELECT COUNT(*) FROM server_data WHERE server_id = ${guild.id}`;
-    pool.query(sql, function (err, result) {
-        if (err) throw err;
-        strresult = JSON.stringify(result[0]);
-        if(strresult.includes(1)){
-            var sql = `DELETE FROM server_data WHERE server_id ='${guild.id}'`;
-            pool.query(sql, function (err, result) {
-                if (err) throw err;
-                console.log(`Deleted Database Entry for GuildID: ${guild.id}`)
-            });
-        }    
-    });
+    const guildDocument = await server_data.find({ server_id: guild.id }).toArray();
+    if(guildDocument[0]==undefined) return
+    await server_data.deleteOne({ _id: guildDocument[0]._id });
+    console.log(`Deleted Database Document for GuildID: ${guild.id}`)
 });
 
 //Error Logging
 client.on("warn", function (info) {
     console.log(`Warn: ${info}`);
 });
+
 client.on("error", function (error) {
     console.error(
         `Error: ${error}`
     );
 })
+
 client.on('unhandledRejection', error => {
 	console.error('Unhandled promise rejection:', error);
 });

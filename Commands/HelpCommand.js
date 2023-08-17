@@ -16,7 +16,7 @@ module.exports = {
                     { name: 'Emotes', value: 'help_emotes' },
                     { name: 'Utilitys', value: 'help_utilitys' },
                 )),
-	async execute(interaction, pool, args, client, prefix) {
+	async execute(interaction, db, server_data, client, prefix) {
         const section = interaction.options.getString('section');
         if(section){
             if(section=="help_confessions"){
@@ -56,7 +56,7 @@ module.exports = {
                 let HelpUtility = new EmbedBuilder()
                 .setTitle(":wrench:  **Utility Commands**")
                 .setColor("#C3B1E1")
-                .setDescription(`**Commands:**\n :information_source: \`${prefix}info [user/server]\`: \n Gets information about a person or server \n\n :ping_pong: \`${prefix}ping\`: \n Tells the bots ping \n\n :robot: \`${prefix}stats\`: \n Shows the bots stats \n\n :timer: \`${prefix}uptime\`: \n Shows the uptime of Meii \n\n :sparkles: \`${prefix}support\`: \n Sends the invite to the support server \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
+                .setDescription(`**Commands:**\n:information_source: \`${prefix}info [user/server]\`: \n Gets information about a person or server \n\n :x: \`${prefix}delete_data\`: \n Deletes all data for the current server \n (Only usable by owner) \n\n :ping_pong: \`${prefix}ping\`: \n Tells the bots ping \n\n :robot: \`${prefix}stats\`: \n Shows the bots stats \n\n :timer: \`${prefix}uptime\`: \n Shows the uptime of Meii \n\n :sparkles: \`${prefix}support\`: \n Sends the invite to the support server \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
                 await interaction.reply({ embeds: [HelpUtility], allowedMentions: { repliedUser: false }})
             }
         }else{

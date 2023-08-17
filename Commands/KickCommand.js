@@ -14,7 +14,7 @@ module.exports = {
 			option.setName('reason')
 				  .setDescription('State the reasoning for this kick')
 				  .setRequired(false)),
-	async execute(interaction, pool, args, client, prefix) {
+	async execute(interaction, db, server_data, client) {
         //Kick Block
 		if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.KickMembers)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions!\nI need the \`Kick Members\` permission for this command!`, ephemeral: true }).catch(() => {return;})
 		let bUser = interaction.options.getMember('user');
