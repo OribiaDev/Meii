@@ -52,10 +52,11 @@ module.exports = {
         //Check if server has Confession Logging 
         if(guildDocument[0].confession_modlog_id==undefined) return
         if(!client.channels.cache.get(guildDocument[0].confession_modlog_id)) return
+        //Getting the channel
+        let confessionmodchannel = client.channels.cache.get(guildDocument[0].confession_modlog_id)
         //Permissions Check
         if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return                 
         //Sending the Confession Log
-        let confessionmodchannel = client.channels.cache.get(guildDocument[0].confession_modlog_id)
         let ConfessionLog = new EmbedBuilder()
         .setTitle(`:love_letter: **Anonymous Confession**`)
         .setColor(randomHexColor())
