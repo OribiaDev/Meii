@@ -39,15 +39,20 @@ module.exports = {
         .setFooter({text:`Tell a staff member to re-set the confession channel!`})
         if(!client.channels.cache.get(guildDocument[0].confession_channel_id)) return await interaction.editReply({ embeds: [ConfessionError], ephemeral: true})
         //Sending the Confession
-        let confessionchannel = client.channels.cache.get(guildDocument[0].confession_channel_id)
+        let confessionchannel = interaction.guild.channels.cache.get(guildDocument[0].confession_channel_id)
         let confessedmessage = interaction.options.getString('message');
-        if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.editReply({ content: `\`Im sorry, I dont have enough permissions to send messages in the set confession channel\``, ephemeral: true })
         let Confession = new EmbedBuilder()
         .setTitle(`**:love_letter: Anonymous Confession**`)
         .setColor(randomHexColor())
         .setDescription(`> ${confessedmessage}`)
         .setTimestamp()
-        confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}})
+        try{
+            if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.editReply({ content: `\`Im sorry, I dont have enough permissions to send messages in the set confession channel\``, ephemeral: true })
+            confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}})
+        }catch( error ){
+            console.log(error)
+            return await interaction.editReply({ embeds: [ConfessionError], ephemeral: true})
+        }
         await interaction.editReply({ content: `Your confession has now been added to **${confessionchannel}**  :thumbsup: `, ephemeral: true });
         //Check if server has Confession Logging 
         if(guildDocument[0].confession_modlog_id==undefined) return
