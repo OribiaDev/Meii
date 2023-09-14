@@ -50,7 +50,6 @@ module.exports = {
             if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.editReply({ content: `\`Im sorry, I dont have enough permissions to send messages in the set confession channel\``, ephemeral: true })
             confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}})
         }catch( error ){
-            console.log(error)
             return await interaction.editReply({ embeds: [ConfessionError], ephemeral: true})
         }
         await interaction.editReply({ content: `Your confession has now been added to **${confessionchannel}**  :thumbsup: `, ephemeral: true });
