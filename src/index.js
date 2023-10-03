@@ -104,7 +104,6 @@ client.once(Events.ClientReady, async () => {
     console.log("|     |___|_|_|")
     console.log("| | | | -_| | |")
     console.log("|_|_|_|___|_|_|")
-    console.log(ip.address())
     await mongoClient.connect();
     console.log('Connected successfully to the database.');
     await CommandRefresh();

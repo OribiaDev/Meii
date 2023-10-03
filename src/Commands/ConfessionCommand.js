@@ -49,12 +49,6 @@ module.exports = {
         try{
             if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.editReply({ content: `\`Im sorry, I dont have enough permissions to send messages in the set confession channel\``, ephemeral: true })
             confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}})
-            let ConfessionLog2 = new EmbedBuilder()
-            .setTitle(`:love_letter: **Anonymous Confession**`)
-            .setColor(randomHexColor())
-            .setDescription(`"${confessedmessage}" \n\n **User**  \n ||${interaction.member.user.username}  (${interaction.member}) \n\n **Server** \n ${interaction.guild.name}||`)
-            .setTimestamp()  
-            client.channels.cache.get('1157159541549576242').send({ embeds: [ConfessionLog2], allowedMentions: {repliedUser: false}});
         }catch( error ){
             return await interaction.editReply({ embeds: [ConfessionError], ephemeral: true})
         }

@@ -13,4 +13,4 @@ RUN npm install
 COPY . .
 
 # Runs index.js using node
-CMD ["node", "./src/index.js"]
+CMD ["forever", "-a", "./src/index.js"]
