@@ -1,5 +1,6 @@
 {
     "db_url": "MONGODB_CONNECTION_URL", 
+    "personal_db_url": "MONGODB_CONNECTION_URL", 
     "db_name": "DATABASE_NAME", 
     "db_collection_name": "DATABASE_COLLECTION_NAME",
     "server_ip": "SERVER_IP", 

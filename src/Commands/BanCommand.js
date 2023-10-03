@@ -23,20 +23,28 @@ module.exports = {
 		//Reason Check
 		if(reason==null){
 			//No Reason
-			bUser.ban();
-			let Banned = new EmbedBuilder()
-			.setTitle(`**:hammer_pick: Moderation: User Banned**`)
-			.setColor("#ff6961")
-			.setDescription(`${bUser} has been banned from ${interaction.guild.name}!`)
-			await interaction.reply({ embeds: [Banned], allowedMentions: {repliedUser: false}})   
+			try{
+				bUser.ban();
+				let Banned = new EmbedBuilder()
+				.setTitle(`**:hammer_pick: Moderation: User Banned**`)
+				.setColor("#ff6961")
+				.setDescription(`${bUser} has been banned from ${interaction.guild.name}!`)
+				await interaction.reply({ embeds: [Banned], allowedMentions: {repliedUser: false}})   
+			}catch{
+				return await interaction.reply({ content:"\`I'm sorry, im unable to ban this person, please check permissions!\`", ephemeral: true });
+			}
 		}else{
 			//Reason
-			bUser.ban({ reason: `${reason}` });
-			let Banned = new EmbedBuilder()
-			.setTitle(`:hammer_pick: **Moderation: User Banned**`)
-			.setColor("#ff6961")
-			.setDescription(`${bUser} has been banned from ${interaction.guild.name}! \n\n **Reason** \n ${reason}`)
-			await interaction.reply({ embeds: [Banned], allowedMentions: {repliedUser: false}})  
+			try{
+				bUser.ban({ reason: `${reason}` });
+				let Banned = new EmbedBuilder()
+				.setTitle(`:hammer_pick: **Moderation: User Banned**`)
+				.setColor("#ff6961")
+				.setDescription(`${bUser} has been banned from ${interaction.guild.name}! \n\n **Reason** \n ${reason}`)
+				await interaction.reply({ embeds: [Banned], allowedMentions: {repliedUser: false}})  
+			}catch{
+				return await interaction.reply({ content:"\`I'm sorry, im unable to ban this person, please check permissions!\`", ephemeral: true });
+			}
 		}
 	},
 };

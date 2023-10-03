@@ -5,7 +5,7 @@
 const { Client, GatewayIntentBits, Partials, Collection, PermissionFlagsBits, Events, ActivityType } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { main_token, dev_token, db_url, db_name, db_collection_name, server_ip, top_token } = require('./Jsons/config.json');
+const { main_token, dev_token, db_url, personal_db_url, db_name, db_collection_name, server_ip, top_token } = require('./Jsons/config.json');
 const { MongoClient } = require('mongodb');
 const { AutoPoster } = require('topgg-autoposter')
 const fs = require('fs');
@@ -19,21 +19,24 @@ const prefix = '/'
 const BotDevID = '1082402034759766016'
 const mainclientId = '1082401009206308945' 
 
-//MongoDB Client
-const mongoClient = new MongoClient(db_url)
-
 //Dev Toggle
 var IsDev = null;
 var token;
+var database_url;
 if(ip.address()==server_ip){
     //Server IP
     IsDev = false
     token = main_token;
+    database_url = db_url;
 }else {
     //Any Other IP
     IsDev = true
     token = dev_token;
+    database_url = personal_db_url;
 }
+
+//MongoDB Client
+const mongoClient = new MongoClient(database_url)
 
 //Bot Login
 client.login(token)
@@ -52,7 +55,7 @@ if(!IsDev){
 function CommandRefresh(){
     const slashcommands = [];
     client.commands = new Collection();
-    const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js'));
+    const commandFiles = fs.readdirSync('./src/Commands').filter(file => file.endsWith('.js'));
     //Refresh Command List
     for (const file of commandFiles) {
         const command = require(`./Commands/${file}`);
@@ -101,6 +104,7 @@ client.once(Events.ClientReady, async () => {
     console.log("|     |___|_|_|")
     console.log("| | | | -_| | |")
     console.log("|_|_|_|___|_|_|")
+    console.log(ip.address())
     await mongoClient.connect();
     console.log('Connected successfully to the database.');
     await CommandRefresh();
