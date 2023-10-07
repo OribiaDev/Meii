@@ -14,14 +14,16 @@ module.exports = {
         let PokeUserID = PokeUser.id
         const pokegif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/poke`)
-        .then(res => res.json())
-        .then(async json => {
+        .then(async (res) => {
+            if(!res.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+            const responseBody = await res.text();
+            json = JSON.parse(responseBody);
             let image = json.url;
             pokegif.setTitle(`:point_right:  ${interaction.member.displayName} poked ${interaction.guild.members.cache.get(PokeUserID).displayName}! :point_left:   `)
             pokegif.setImage(String(image))
             pokegif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             pokegif.setTimestamp()
-            await interaction.reply({ embeds: [pokegif], allowedMentions: {repliedUser: true, users: [PokeUserID]}, content: `:point_right: ${interaction.guild.members.cache.get(PokeUserID)} :point_left:`})
-        });	
+            await interaction.reply({ embeds: [pokegif], allowedMentions: {repliedUser: true, users: [PokeUserID]}, content: `:point_right: ${interaction.guild.members.cache.get(PokeUserID)} :point_left:`}) 
+        });
 	},
 };

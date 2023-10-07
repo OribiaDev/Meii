@@ -12,5 +12,7 @@ RUN npm install
 # Copys files excluding stuff in dockerignore
 COPY . .
 
-# Runs index.js using node
+# Runs index.js using forever
+# npx is shortcut to node_modules folder
+# -a is for logging
 CMD ["npx", "forever", "-a", "src/index.js"]

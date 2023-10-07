@@ -23,13 +23,15 @@ module.exports = {
 		await interaction.deferReply();
         const category = interaction.options.getString('category');
 		fetch(`https://some-random-api.com/animal/${category}`)
-		.then(res => res.json())
-		.then(async json => {
+		.then(async (res) => {
+			if(!res.ok) return await interaction.editReply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+			const responseBody = await res.text();
+			json = JSON.parse(responseBody);
 			let animalemb = new EmbedBuilder()
 			.setImage(json.image)
 			.setFooter({text:`Requested by ${interaction.member.user.username}`})
 			.setTimestamp()
 			await interaction.editReply({ embeds: [animalemb], allowedMentions: { repliedUser: false }});
-		});		
+		});
 	},
 };

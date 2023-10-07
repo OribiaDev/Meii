@@ -14,15 +14,16 @@ module.exports = {
         let KissUserID = KissUser.id
         const KissGif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/kiss`)
-        .then(res => res.json())
-        .then(async json => {
+        .then(async (res) => {
+            if(!res.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+            const responseBody = await res.text();
+            json = JSON.parse(responseBody);
             let image = json.url;
             KissGif.setTitle(`:sparkling_heart: ${interaction.member.displayName} kissed ${interaction.guild.members.cache.get(KissUserID).displayName}! :sparkling_heart: `)
             KissGif.setImage(String(image))
             KissGif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             KissGif.setTimestamp()
-            await interaction.reply({ embeds: [KissGif], allowedMentions: {repliedUser: true, users: [KissUserID]}, content: `:sparkling_heart: ${interaction.guild.members.cache.get(KissUserID)} :sparkling_heart:`})
+            await interaction.reply({ embeds: [KissGif], allowedMentions: {repliedUser: true, users: [KissUserID]}, content: `:sparkling_heart: ${interaction.guild.members.cache.get(KissUserID)} :sparkling_heart:`})     
         });	
-		
 	},
 };

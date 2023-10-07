@@ -23,7 +23,6 @@ module.exports = {
                             .setRequired(true))),
 	async execute(interaction, db, server_data, client) {
         //Sets Confession Channel
-        //console.log(`New Database Entry Created with GuildID: ${interaction.guild.id}`);
         if (interaction.options.getSubcommand() === 'confession_channel') {
             let channel = interaction.options.getChannel('channel');
             //Channel Permission Check

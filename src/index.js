@@ -47,8 +47,33 @@ if(!IsDev){
     const poster = AutoPoster(top_token, client)
     //Console Log Posted
     poster.on('posted', (stats) => { // ran when succesfully posted
-        console.log(`Posted stats to Top.gg | ${stats.serverCount} servers`)
+        console.log(`Posted stats to Top.gg | ${stats.serverCount} servers.`)
     })
+}
+
+
+//Auto Database Purge (Ran only on startup)
+async function DatabasePurge(){
+    console.log('Started Purge of Database.')
+    //Checks if its in dev mode (Dev bot has different guilds)
+    if(IsDev) return console.log("Cannot do database purge in Dev mode!")
+    //Database Variables
+    const db = mongoClient.db(db_name)
+    const server_data = db.collection(db_collection_name)
+    let counter = 0;
+    //Gets Arrays
+    const guildDocs = await server_data.find().toArray();
+    const guilds = client.guilds.cache.map(guild => guild.id);
+    //Runs for every single database document
+    for await (const guildDoc of guildDocs) {
+        //Checks if database document is in guild array
+        if (!guilds.includes(guildDoc.server_id)) {
+            //Deletes Document
+            await server_data.deleteOne({ server_id: guildDoc.server_id });
+            counter++;
+        }
+    }
+    await console.log(`Successfully purged (${counter}) document(s).`)
 }
 
 //Command Handler 
@@ -90,25 +115,34 @@ function CommandRefresh(){
         }
     })();
     setTimeout(() => {
-        //Refresh every hour
-        console.log('Stared Automatic Refresh of Commands')
+        //Refresh every 6 hours
         CommandRefresh();
-      }, 60000 * 60);
+      }, 60000 * 360);
 }
 
 //Ready Function
 client.once(Events.ClientReady, async () => {
     client.user.setActivity(`Starting up... please wait`);
     client.user.setStatus("online");
-    console.log(" _____     _ _ ")
-    console.log("|     |___|_|_|")
-    console.log("| | | | -_| | |")
-    console.log("|_|_|_|___|_|_|")
+    if(!IsDev){
+        //Not Dev
+        console.log(" _____     _ _ ")
+        console.log("|     |___|_|_|")
+        console.log("| | | | -_| | |")
+        console.log("|_|_|_|___|_|_|")
+    }else{
+        //Dev
+        console.log(" _____     _ _ ____          ")
+        console.log("|     |___|_|_|    \ ___ _ _ ")
+        console.log("| | | | -_| | |  |  | -_| | |")
+        console.log("|_|_|_|___|_|_|____/|___|\_/ ")
+    }
     await mongoClient.connect();
     console.log('Connected successfully to the database.');
     await CommandRefresh();
-    console.log("Launched!")
-    client.user.setActivity(`${prefix}help`, { type: ActivityType.Listening })
+    await DatabasePurge()
+    await console.log("Launched!")
+    await client.user.setActivity(`${prefix}help`, { type: ActivityType.Listening })
 });
 
 //Slash Command Function

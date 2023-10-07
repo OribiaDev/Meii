@@ -14,14 +14,16 @@ module.exports = {
         let SlapUserID = SlapUser.id
         const Slapgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/slap`)
-        .then(res => res.json())
-        .then(async json => {
+        .then(async (res) => {
+            if(!res.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+            const responseBody = await res.text();
+            json = JSON.parse(responseBody);
             let image = json.url;
             Slapgif.setTitle(`:raised_hand:  ${interaction.member.displayName} slapped ${interaction.guild.members.cache.get(SlapUserID).displayName}! :raised_hand:  `)
             Slapgif.setImage(String(image))
             Slapgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             Slapgif.setTimestamp()
             await interaction.reply({ embeds: [Slapgif], allowedMentions: {repliedUser: true, users: [SlapUserID]}, content: `:raised_hand: ${interaction.guild.members.cache.get(SlapUserID)} :raised_hand:`})
-        });	
+        });
 	},
 };

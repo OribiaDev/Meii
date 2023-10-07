@@ -12,7 +12,8 @@ module.exports = {
 				.setDescription('The word to lookup')),
 	async execute(interaction) {
         const word = interaction.options.getString('word');
-        let data = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)        
+        let data = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
+        if(!data.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });        
         if(data.statusText == 'Not Found') return await interaction.reply({ content: `\`I cannot find that word!\``, allowedMentions: { repliedUser: false }, ephemeral: true })     
         let info = await data.json();
         let result = info[0];         

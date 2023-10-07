@@ -14,14 +14,16 @@ module.exports = {
         let KillUserID = KillUser.id
         const Killgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/kill`)
-        .then(res => res.json())
-        .then(async json => {
+        .then(async (res) => {
+            if(!res.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+            const responseBody = await res.text();
+            json = JSON.parse(responseBody);
             let image = json.url;
             Killgif.setTitle(`:knife: ${interaction.member.displayName} killed ${interaction.guild.members.cache.get(KillUserID).displayName}! :knife:  `)
             Killgif.setImage(String(image))
             Killgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             Killgif.setTimestamp()
-            await interaction.reply({ embeds: [Killgif], allowedMentions: {repliedUser: true, users: [KillUserID]}, content: `:knife: ${interaction.guild.members.cache.get(KillUserID)} :knife:`})
-        });		
+            await interaction.reply({ embeds: [Killgif], allowedMentions: {repliedUser: true, users: [KillUserID]}, content: `:knife: ${interaction.guild.members.cache.get(KillUserID)} :knife:`}) 
+        });	
 	},
 };

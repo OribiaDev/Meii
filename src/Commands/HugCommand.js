@@ -14,14 +14,17 @@ module.exports = {
         let HugUserID = HugUser.id
         const HugGif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/hug`)
-        .then(res => res.json())
-        .then(async json => {
+        .then(async (res) => {
+            if(!res.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+            const responseBody = await res.text();
+            json = JSON.parse(responseBody);
             let image = json.url;
             HugGif.setTitle(`:hugging:  ${interaction.member.displayName} hugged ${interaction.guild.members.cache.get(HugUserID).displayName}! :hugging: `)
             HugGif.setImage(String(image))
             HugGif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             HugGif.setTimestamp()
             await interaction.reply({ embeds: [HugGif], allowedMentions: {repliedUser: true, users: [HugUserID]}, content: `:hugging: ${interaction.guild.members.cache.get(HugUserID)} :hugging:`})
-        });	
+            
+        });
 	},
 };

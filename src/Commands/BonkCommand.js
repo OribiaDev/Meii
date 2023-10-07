@@ -13,14 +13,16 @@ module.exports = {
         let BonkUserID = BonkUser.id
         const bonkgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/bonk`)
-        .then(res => res.json())
-        .then(async json => {
+        .then(async (res) => {
+            if(!res.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+            const responseBody = await res.text();
+            json = JSON.parse(responseBody);
             let image = json.url;
             bonkgif.setTitle(`:hammer:  ${interaction.member.displayName} bonked ${interaction.guild.members.cache.get(BonkUserID).displayName}! :hammer:  `)
             bonkgif.setImage(String(image))
             bonkgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             bonkgif.setTimestamp()
             await interaction.reply({ embeds: [bonkgif], allowedMentions: {repliedUser: true, users: [BonkUserID]}, content:`:hammer: ${interaction.guild.members.cache.get(BonkUserID)} :hammer:`})
-        });	
+        });
 	},
 };

@@ -14,14 +14,16 @@ module.exports = {
         let HoldUserID = HoldUser.id
         const holdgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/handhold`)
-        .then(res => res.json())
-        .then(async json => {
+        .then(async (res) => {
+            if(!res.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+            const responseBody = await res.text();
+            json = JSON.parse(responseBody);
             let image = json.url;
             holdgif.setTitle(`:people_holding_hands:  ${interaction.member.displayName} held ${interaction.guild.members.cache.get(HoldUserID).displayName}'s hand! :people_holding_hands:  `)
             holdgif.setImage(String(image))
             holdgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             holdgif.setTimestamp()
             await interaction.reply({ embeds: [holdgif], allowedMentions: {repliedUser: true, users: [HoldUserID]}, content: `:people_holding_hands: ${interaction.guild.members.cache.get(HoldUserID)} :people_holding_hands:`})
-        });	
+        });
 	},
 };
