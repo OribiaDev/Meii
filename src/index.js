@@ -5,34 +5,34 @@
 const { Client, GatewayIntentBits, Partials, Collection, PermissionFlagsBits, Events, ActivityType } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { main_token, dev_token, db_url, personal_db_url, db_name, db_collection_name, server_ip, top_token } = require('./Jsons/config.json');
 const { MongoClient } = require('mongodb');
 const { AutoPoster } = require('topgg-autoposter')
 const fs = require('fs');
 var ip = require("ip");
+
+//Config Import
+const { production_server_ip, tokens, database, settings } = require('./Jsons/config.json');
 
 //Intents
 const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
 
 //Variables
 const prefix = '/'
-const BotDevID = '1082402034759766016'
-const mainclientId = '1082401009206308945' 
+var token;
+var database_url;
 
 //Dev Toggle
 var IsDev = null;
-var token;
-var database_url;
-if(ip.address()==server_ip){
+if(ip.address()==production_server_ip){
     //Server IP
     IsDev = false
-    token = main_token;
-    database_url = db_url;
+    token = tokens.production_token;
+    if(settings.using_docker) { database_url = database.url_docker } else { database_url = database.url }
 }else {
     //Any Other IP
     IsDev = true
-    token = dev_token;
-    database_url = personal_db_url;
+    token = tokens.dev_token;
+    database_url = database.url;
 }
 
 //MongoDB Client
@@ -44,36 +44,28 @@ client.login(token)
 //Top.GG
 if(!IsDev){
     //Poster Var
-    const poster = AutoPoster(top_token, client)
-    //Console Log Posted
+    const poster = AutoPoster(tokens.top_gg_token, client)
     poster.on('posted', (stats) => { // ran when succesfully posted
         console.log(`Posted stats to Top.gg | ${stats.serverCount} servers.`)
     })
 }
 
-
 //Auto Database Purge (Ran only on startup)
 async function DatabasePurge(){
-    console.log('Started Purge of Database.')
-    //Checks if its in dev mode (Dev bot has different guilds)
-    if(IsDev) return console.log("Cannot do database purge in Dev mode!")
-    //Database Variables
-    const db = mongoClient.db(db_name)
-    const server_data = db.collection(db_collection_name)
-    let counter = 0;
-    //Gets Arrays
+    console.log('Attempting to purge the database..')
+    if(IsDev) return console.log("Cannot do database purge in Dev mode! \n")
+    const db = mongoClient.db(database.name)
+    const server_data = db.collection(database.collection_name)
+    let serverCounter = 0;
     const guildDocs = await server_data.find().toArray();
     const guilds = client.guilds.cache.map(guild => guild.id);
-    //Runs for every single database document
     for await (const guildDoc of guildDocs) {
-        //Checks if database document is in guild array
         if (!guilds.includes(guildDoc.server_id)) {
-            //Deletes Document
             await server_data.deleteOne({ server_id: guildDoc.server_id });
-            counter++;
+            serverCounter++;
         }
     }
-    await console.log(`Successfully purged (${counter}) document(s).`)
+    await console.log(`Successfully purged (${serverCounter}) document(s). \n`)
 }
 
 //Command Handler 
@@ -95,21 +87,21 @@ function CommandRefresh(){
     //Push Slash Commands to Discord API
     (async () => {
         try {
-            console.log('Started refreshing application (/) commands.');
+            console.log('Attempting to refresh application (/) commands...');
             if(IsDev){
                 await rest.put(
                     //Dev Client
-                    Routes.applicationCommands(BotDevID),
+                    Routes.applicationCommands(tokens.dev_id),
                     { body: slashcommands },
                 );
             }else{
                 await rest.put(
                     //Global Client
-                    Routes.applicationCommands(mainclientId),
+                    Routes.applicationCommands(tokens.production_id),
                     { body: slashcommands },
                 );
             }
-            console.log('Successfully reloaded application (/) commands.');
+            console.log('Successfully reloaded application (/) commands. \n---- ');
         } catch (error) {
             console.error(error);
         }
@@ -137,8 +129,9 @@ client.once(Events.ClientReady, async () => {
         console.log("| | | | -_| | |  |  | -_| | |")
         console.log("|_|_|_|___|_|_|____/|___|\_/ ")
     }
+    console.log('Attempting to connect to the database...');
     await mongoClient.connect();
-    console.log('Connected successfully to the database.');
+    console.log('Connected successfully to the database. \n');
     await CommandRefresh();
     await DatabasePurge()
     await console.log("Launched!")
@@ -150,8 +143,8 @@ client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isCommand()) return;
     if(!interaction.guild) return interaction.reply({content:"\`Im sorry, this command can only be ran in a server!\`", ephemeral: true })
     //Database Variables
-    const db = mongoClient.db(db_name)
-    const server_data = db.collection(db_collection_name)
+    const db = mongoClient.db(database.name)
+    const server_data = db.collection(database.collection_name)
     //Permissions Check
     if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return; })
     if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return;})
@@ -169,8 +162,8 @@ client.on(Events.InteractionCreate, async interaction => {
 //Guild Leave Function
 client.on(Events.GuildDelete, async guild => {
     //Database Variables
-    const db = mongoClient.db(db_name)
-    const server_data = db.collection(db_collection_name)
+    const db = mongoClient.db(database.name)
+    const server_data = db.collection(database.collection_name)
     //Data Deletion 
     const guildDocument = await server_data.find({ server_id: guild.id }).toArray();
     if(guildDocument[0]==undefined) return
