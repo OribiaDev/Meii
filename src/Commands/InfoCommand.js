@@ -18,29 +18,29 @@ module.exports = {
 	async execute(interaction) {
         if (interaction.options.getSubcommand() === 'user') {
             //User
-            const taruser = interaction.options.getUser('user');
-            if (taruser) {
+            const targetUser = interaction.options.getUser('user');
+            if (targetUser) {
                 //Target User Info
-                let GuildMemberObject = interaction.guild.members.cache.get(taruser.id)
-                let notowninfoemb = new EmbedBuilder()
-                .setAuthor({ name: `User information for ${taruser.username}`, iconURL: taruser.displayAvatarURL()})
+                let GuildMemberObject = interaction.guild.members.cache.get(targetUser.id)
+                let notselfInfoEmbed = new EmbedBuilder()
+                .setAuthor({ name: `User information for ${targetUser.username}`, iconURL: targetUser.displayAvatarURL()})
                 .setColor(randomHexColor())
                 .addFields(
-                    { name: '**Username**', value: `${taruser.username}`, inline: true },
-                    { name: '**User ID**', value: `${taruser.id}`, inline: true },
+                    { name: '**Username**', value: `${targetUser.username}`, inline: true },
+                    { name: '**User ID**', value: `${targetUser.id}`, inline: true },
                     { name: '\u200B', value: ' ' },
                     { name: '**Server Joined**', value: `${moment(GuildMemberObject.joinedAt)}`, inline: true },
                     { name: '\u200B', value: ' ' },
-                    { name: '**Discord Registerd**', value: `${moment(taruser.createdAt)}`, inline: true },
+                    { name: '**Discord Registerd**', value: `${moment(targetUser.createdAt)}`, inline: true },
                     { name: '\u200B', value: ' ' },
                 )
-                .setThumbnail(taruser.displayAvatarURL())
+                .setThumbnail(targetUser.displayAvatarURL())
                 .setFooter({text:`Requested by ${interaction.member.user.username}`})
                 .setTimestamp()
-                await interaction.reply({ embeds: [notowninfoemb], allowedMentions: { repliedUser: false }})                        
+                await interaction.reply({ embeds: [notselfInfoEmbed], allowedMentions: { repliedUser: false }})                        
             } else {
                 //Own Info
-                let owninfoemb = new EmbedBuilder()
+                let selfInfoEmbed = new EmbedBuilder()
                 .setAuthor({ name: `User information for ${interaction.member.user.username}`, iconURL: interaction.member.displayAvatarURL()})
                 .setColor(randomHexColor())
                 .addFields(
@@ -55,12 +55,12 @@ module.exports = {
                 .setThumbnail(interaction.member.displayAvatarURL())
                 .setFooter({text:`Requested by ${interaction.member.user.username}`})
                 .setTimestamp()
-                await interaction.reply({ embeds: [owninfoemb], allowedMentions: { repliedUser: false }})        
+                await interaction.reply({ embeds: [selfInfoEmbed], allowedMentions: { repliedUser: false }})        
             }
         } else if (interaction.options.getSubcommand() === 'server') {
             //Server
-            let serverowner = await interaction.guild.fetchOwner()
-            let serverinfoemb = new EmbedBuilder()
+            let serverOwner = await interaction.guild.fetchOwner()
+            let serverInfoEmbed = new EmbedBuilder()
             .setTitle(`Server Information for ${interaction.guild.name}`)
             .setColor(randomHexColor())
             .addFields(
@@ -69,14 +69,14 @@ module.exports = {
                 { name: '\u200B', value: ' ' },
                 { name: '**Date Created**', value: `${moment(interaction.guild.createdAt)}`, inline: true },
                 { name: '\u200B', value: ' ' },
-                { name: '**Owner**', value: `${serverowner.user.username}`, inline: true },
+                { name: '**Owner**', value: `${serverOwner.user.username}`, inline: true },
                 { name: '\u200B', value: ' ' },
                 { name: '**Region**', value: `${interaction.guild.preferredLocale}`, inline: true },
             )
             .setThumbnail(interaction.guild.iconURL())
             .setFooter({text:`Requested by ${interaction.member.user.username}`})
             .setTimestamp()
-            await interaction.reply({ embeds: [serverinfoemb], allowedMentions: { repliedUser: false }})       
+            await interaction.reply({ embeds: [serverInfoEmbed], allowedMentions: { repliedUser: false }})       
         }
 	},
 };

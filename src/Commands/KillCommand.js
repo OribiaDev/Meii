@@ -10,12 +10,12 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {     
         let KillUser = interaction.options.getMember('user');
-        if(KillUser.id==interaction.member.id) return await interaction.reply({ content: `\`n-no- don't do that--\``, allowedMentions: { repliedUser: false }, ephemeral: true })
+        if(KillUser.id==interaction.member.id) return await interaction.reply({ content: `n-no- don't do that--`, allowedMentions: { repliedUser: false }, ephemeral: true })
         let KillUserID = KillUser.id
         const Killgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/kill`)
         .then(async (res) => {
-            if(!res.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+            if(!res.ok) return await interaction.reply({ content:"I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });
             const responseBody = await res.text();
             json = JSON.parse(responseBody);
             let image = json.url;

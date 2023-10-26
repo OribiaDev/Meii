@@ -35,33 +35,33 @@ module.exports = {
         if (interaction.options.getSubcommand() === 'ban') {
             //Confession Ban Command
             let confessbans = guildDocument[0].confession_userbans_id || []
-            let bUser = interaction.options.getMember('user');
-            if(bUser.id==client.user.id) return await interaction.reply({content:"\`You can't ban me silly~!\`", ephemeral: true })
-            let index = confessbans.indexOf(`${bUser.id}`);
-            if (index !== -1) return await interaction.reply({ content:`\`This user is already banned from confessions on ${interaction.guild.name}.\``, ephemeral: true })
-            confessbans.push(`${bUser.id}`)            
+            let targetUser = interaction.options.getMember('user');
+            if(targetUser.id==client.user.id) return await interaction.reply({content:"You can't ban me silly~!", ephemeral: true })
+            let index = confessbans.indexOf(`${targetUser.id}`);
+            if (index !== -1) return await interaction.reply({ content:`This user is already banned from confessions on ${interaction.guild.name}.`, ephemeral: true })
+            confessbans.push(`${targetUser.id}`)            
             //Update Database
             await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { confession_userbans_id: confessbans } });
             let ConfessBanned = new EmbedBuilder()
             .setTitle(`**Confession: User Banned**`)
             .setColor("#ff6961")
-            .setDescription(`${bUser} (${bUser.user.username}) has now been banned from using confessions on ${interaction.guild.name}.`)
+            .setDescription(`${targetUser} (${targetUser.user.username}) has now been banned from using confessions on ${interaction.guild.name}.`)
             .setFooter({text:`To unban this user please use ${prefix}confession unban`})
             await interaction.reply({ embeds: [ConfessBanned], allowedMentions: {repliedUser: false}})   
             return
         } else if (interaction.options.getSubcommand() === 'unban'){
             //Confession Unban Command
             let confessbans = guildDocument[0].confession_userbans_id || []
-            let bUser = interaction.options.getMember('user');
-            let index = confessbans.indexOf(`${bUser.id}`);
-            if (index == -1) return await interaction.reply({content:`\`This user isnt banned from confessions on ${interaction.guild.name}.\``, ephemeral: true })
+            let targetUser = interaction.options.getMember('user');
+            let index = confessbans.indexOf(`${targetUser.id}`);
+            if (index == -1) return await interaction.reply({content:`This user isnt banned from confessions on ${interaction.guild.name}.`, ephemeral: true })
             confessbans.splice(index, 1);
             //Update Database
             await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { confession_userbans_id: confessbans } });
             let ConfessUnbanned = new EmbedBuilder()
             .setTitle(`**Confession: User Unbanned**`)
             .setColor("#ff6961")
-            .setDescription(`${bUser} (${bUser.user.username}) has now been unbanned from confessions on ${interaction.guild.name}.`)
+            .setDescription(`${targetUser} (${targetUser.user.username}) has now been unbanned from confessions on ${interaction.guild.name}.`)
             .setFooter({text:`To ban this user again please use ${prefix}confession ban`})
             await interaction.reply({ embeds: [ConfessUnbanned], allowedMentions: {repliedUser: false}})   
             return

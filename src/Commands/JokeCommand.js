@@ -12,7 +12,7 @@ module.exports = {
 				},
 		})
 		.then(async (res) => {
-            if(!res.ok) return await interaction.editReply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+            if(!res.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });
             const responseBody = await res.text();
             json = JSON.parse(responseBody);
 			await interaction.editReply({ content: `${json.joke}`, ephemeral: false });

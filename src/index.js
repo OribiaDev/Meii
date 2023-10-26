@@ -101,7 +101,7 @@ function CommandRefresh(){
                     { body: slashcommands },
                 );
             }
-            console.log('Successfully reloaded application (/) commands. \n---- ');
+            console.log('Successfully reloaded application (/) commands.');
         } catch (error) {
             console.error(error);
         }
@@ -136,18 +136,19 @@ client.once(Events.ClientReady, async () => {
     await DatabasePurge()
     await console.log("Launched!")
     await client.user.setActivity(`${prefix}help`, { type: ActivityType.Listening })
+    console.log("----")
 });
 
 //Slash Command Function
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isCommand()) return;
-    if(!interaction.guild) return interaction.reply({content:"\`Im sorry, this command can only be ran in a server!\`", ephemeral: true })
+    if(!interaction.guild) return interaction.reply({content:"Im sorry, this command can only be ran in a server!", ephemeral: true })
     //Database Variables
     const db = mongoClient.db(database.name)
     const server_data = db.collection(database.collection_name)
     //Permissions Check
-    if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return; })
-    if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \n I need \`Send Messages\`, and \`Embed Links\``, ephemeral: true }).catch(() => {return;})
+    if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \nI need \`Send Messages\`, \`Embed Links\`, and \`View Channel\``, ephemeral: true }).catch(() => {return; })
+    if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.ViewChannel) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \nI need \`Send Messages\`, \`Embed Links\, and \`View Channel\``, ephemeral: true }).catch(() => {return;})
     //Existing Database Command Handler      
     const { commandName } = interaction;
     if (!client.commands.has(commandName)) return;
@@ -155,7 +156,7 @@ client.on(Events.InteractionCreate, async interaction => {
         await client.commands.get(commandName).execute(interaction, db, server_data, client, prefix);
     } catch (error) {
         console.error(error);
-        return await interaction.reply({ content: '\`There was an error while executing this command\`', ephemeral: true });
+        return await interaction.reply({ content: 'There was an error while executing this command. Please try again later.', ephemeral: true });
     }  
 });
 

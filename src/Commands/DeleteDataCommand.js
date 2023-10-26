@@ -7,7 +7,7 @@ module.exports = {
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 	async execute(interaction, db, server_data) {
         let serverOwner = await interaction.guild.fetchOwner().catch(err=>err)
-        if(!interaction.member.user.id==serverOwner.id)return await interaction.reply({ content: `\`Only the server owner may use this command.\``, allowedMentions: { repliedUser: false }, ephemeral: true })
+        if(!interaction.member.user.id==serverOwner.id)return await interaction.reply({ content: `Only the server owner may use this command.`, allowedMentions: { repliedUser: false }, ephemeral: true })
 		const confirm = new ButtonBuilder()
 			.setCustomId('confirm')
 			.setLabel('Confirm Deletion')

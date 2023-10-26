@@ -10,12 +10,12 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {
         let HoldUser = interaction.options.getMember('user');
-        if(HoldUser.id==interaction.member.id) return await interaction.reply({ content: `\`Do you need some affection ${interaction.member.displayName}..?\``, allowedMentions: { repliedUser: false }, ephemeral: true })
+        if(HoldUser.id==interaction.member.id) return await interaction.reply({ content: `Do you need some affection ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, ephemeral: true })
         let HoldUserID = HoldUser.id
         const holdgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/handhold`)
         .then(async (res) => {
-            if(!res.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+            if(!res.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });
             const responseBody = await res.text();
             json = JSON.parse(responseBody);
             let image = json.url;

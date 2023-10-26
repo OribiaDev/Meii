@@ -10,12 +10,14 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {   
         let CuddleUser = interaction.options.getMember('user');
-        if(CuddleUser.id==interaction.member.id) return await interaction.reply({ content: `\`Do you need a cuddle ${interaction.member.displayName}..?\``, ephemeral: true, allowedMentions: { repliedUser: false }})
+        if(CuddleUser.id==interaction.member.id) return await interaction.reply({ content: `Do you need a cuddle ${interaction.member.displayName}..?`, ephemeral: true, allowedMentions: { repliedUser: false }})
         let CuddleUserID = CuddleUser.id
         const Cuddlegif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/cuddle`)
-        .then(res => res.json())
-        .then(async json => {
+        .then(async (res) => {
+            if(!res.ok) return await interaction.reply({ content:"I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });
+            const responseBody = await res.text();
+            json = JSON.parse(responseBody);
             let image = json.url;
             Cuddlegif.setTitle(`:people_hugging: ${interaction.member.displayName} cuddled ${interaction.guild.members.cache.get(CuddleUserID).displayName}! :people_hugging: `)
             Cuddlegif.setImage(String(image))

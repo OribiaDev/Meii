@@ -10,12 +10,12 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {
         let YeetUser = interaction.options.getMember('user');
-        if(YeetUser.id==interaction.member.id) return await interaction.reply({ content: `\`p-pls- n-no- ${interaction.member.displayName}\``, allowedMentions: { repliedUser: false }, ephemeral: true })
+        if(YeetUser.id==interaction.member.id) return await interaction.reply({ content: `p-pls- n-no- ${interaction.member.displayName}`, allowedMentions: { repliedUser: false }, ephemeral: true })
         let YeetUserID = YeetUser.id
         const yeetgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/yeet`)
         .then(async (res) => {
-            if(!res.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+            if(!res.ok) return await interaction.reply({ content:"I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });
             const responseBody = await res.text();
             json = JSON.parse(responseBody);
             let image = json.url;

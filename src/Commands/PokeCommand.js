@@ -10,12 +10,12 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {
         let PokeUser = interaction.options.getMember('user');
-        if(PokeUser.id==interaction.member.id) return await interaction.reply({ content: `\`i- don't poke yourself-\``, allowedMentions: { repliedUser: false }, ephemeral: true })
+        if(PokeUser.id==interaction.member.id) return await interaction.reply({ content: `i- don't poke yourself-`, allowedMentions: { repliedUser: false }, ephemeral: true })
         let PokeUserID = PokeUser.id
         const pokegif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/poke`)
         .then(async (res) => {
-            if(!res.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+            if(!res.ok) return await interaction.reply({ content:"I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });
             const responseBody = await res.text();
             json = JSON.parse(responseBody);
             let image = json.url;

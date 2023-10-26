@@ -10,12 +10,12 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {
         let SlapUser = interaction.options.getMember('user');
-        if(SlapUser.id==interaction.member.id) return await interaction.reply({ content: `\`that’s kinda k-kinky..\``, allowedMentions: { repliedUser: false }, ephemeral: true })
+        if(SlapUser.id==interaction.member.id) return await interaction.reply({ content: `that’s kinda k-kinky..`, allowedMentions: { repliedUser: false }, ephemeral: true })
         let SlapUserID = SlapUser.id
         const Slapgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/slap`)
         .then(async (res) => {
-            if(!res.ok) return await interaction.reply({ content:"\`I'm sorry, the API is currently offline. Please try again later.\`", ephemeral: true });
+            if(!res.ok) return await interaction.reply({ content:"I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });
             const responseBody = await res.text();
             json = JSON.parse(responseBody);
             let image = json.url;

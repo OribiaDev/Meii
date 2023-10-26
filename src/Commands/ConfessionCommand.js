@@ -32,12 +32,12 @@ module.exports = {
         let index = userbans.indexOf(`${interaction.member.user.id}`);
         if (index !== -1) return await interaction.editReply({ embeds: [ConfessionIsBanned], ephemeral: true, allowedMentions: {repliedUser: false}})
         //Confession Channel Error
-        let ConfessionError = new EmbedBuilder()
+        let channelNotFound = new EmbedBuilder()
         .setTitle(`**${interaction.guild.name}: Confession Channel Error**`)
         .setColor('#ff6961')
         .setDescription(`I'm sorry, i'm having trouble finding the confession channel in **${interaction.guild.name}**.`)
         .setFooter({text:`Tell a staff member to re-set the confession channel!`})
-        if(!client.channels.cache.get(guildDocument[0].confession_channel_id)) return await interaction.editReply({ embeds: [ConfessionError], ephemeral: true})
+        if(!client.channels.cache.get(guildDocument[0].confession_channel_id)) return await interaction.editReply({ embeds: [channelNotFound], ephemeral: true})
         //Sending the Confession
         let confessionchannel = interaction.guild.channels.cache.get(guildDocument[0].confession_channel_id)
         let confessedmessage = interaction.options.getString('message');
@@ -47,10 +47,11 @@ module.exports = {
         .setDescription(`> ${confessedmessage}`)
         .setTimestamp()
         try{
-            if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.editReply({ content: `\`Im sorry, I dont have enough permissions to send messages in the set confession channel\``, ephemeral: true })
+            if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.editReply({ content: `Im sorry, I dont have enough permissions to send messages in the set confession channel!\nI need \`Send Messages\`, \`Embed Links\`, and \`View Channel\``, ephemeral: true })
             confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}})
+   
         }catch( error ){
-            return await interaction.editReply({ embeds: [ConfessionError], ephemeral: true})
+            return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, ephemeral: true })
         }
         await interaction.editReply({ content: `Your confession has now been added to **${confessionchannel}**  :thumbsup: `, ephemeral: true });
         //Check if server has Confession Logging 
