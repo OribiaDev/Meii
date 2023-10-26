@@ -1,10 +1,19 @@
 {
-    "db_url": "MONGODB_CONNECTION_URL", 
-    "personal_db_url": "MONGODB_CONNECTION_URL", 
-    "db_name": "DATABASE_NAME", 
-    "db_collection_name": "DATABASE_COLLECTION_NAME",
-    "server_ip": "SERVER_IP", 
-    "main_token": "BOT_TOKEN",
-    "dev_token": "BOT_DEV-VERSION_TOKEN",
-    "top_token": "TOP.GG_TOKEN"
+    "production_server_ip": "PRODUCTION_SERVER_IP",
+    "settings": {
+        "using_docker": false
+    },
+    "tokens" : {
+        "production_token": "PRODUCTION_BOT_TOKEN",
+        "production_id": "PRODUCTION_BOT_ID",
+        "top_gg_token": "TOP.GG_API_KEY",
+        "dev_token": "DEV_BOT_TOKEN",
+        "dev_id": "DEV_BOT_ID"
+    },
+    "database" : {
+        "name": "DATABASE_NAME",
+        "collection_name": "DATABASE_COLLECTION_NAME",
+        "url": "DATABASE_CONNECTION_STRING",
+        "url_docker" : "DATABASE_CONNECTION_STRING_WITH_DOCKER_IP"
+    }
 }
