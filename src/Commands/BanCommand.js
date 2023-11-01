@@ -15,12 +15,12 @@ module.exports = {
 				  .setRequired(false)),
 	async execute(interaction, db, server_data, client) {
 		//Permissions Check
-		if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions!\nI need the \`Ban Members\` permission for this command!`, ephemeral: true }).catch(() => {return;})
+		if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions.\nI need.. \`Ban Members\``, ephemeral: true }).catch(() => {return;})
 		//Get User
 		let targetUser = interaction.options.getMember('user');
 		if(targetUser.id==client.user.id) return await interaction.reply({content:"You can't ban me silly~!", ephemeral: true })
 		//Target Permission Checks
-		if(!targetUser.bannable) return await interaction.reply({ content:"I'm unable to ban this person as they either have the \`Ban Members\` permission or they have a higher role than me!", ephemeral: true });
+		if(!targetUser.bannable) return await interaction.reply({ content:"I'm unable to ban this person as they either have the \`Ban Members\` permission or they have a higher role than me.", ephemeral: true });
 		//Reason Check
 		let reason = interaction.options.getString('reason');
 		if(reason==null){

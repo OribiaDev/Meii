@@ -43,11 +43,15 @@ client.login(token)
 
 //Top.GG
 if(!IsDev){
-    //Poster Var
-    const poster = AutoPoster(tokens.top_gg_token, client)
-    poster.on('posted', (stats) => { // ran when succesfully posted
-        console.log(`Posted stats to Top.gg | ${stats.serverCount} servers.`)
-    })
+    try{
+        //Poster Var
+        const poster = AutoPoster(tokens.top_gg_token, client)
+        poster.on('posted', (stats) => { // ran when succesfully posted
+            console.log(`Posted stats to Top.gg | ${stats.serverCount} servers.`)
+        })
+    }catch{
+        return console.log('Top.GG API Error')
+    }
 }
 
 //Auto Database Purge (Ran only on startup)
@@ -112,6 +116,15 @@ function CommandRefresh(){
       }, 60000 * 360);
 }
 
+//Activity Refresher
+async function activityRefresh(){
+    await client.user.setActivity(`${prefix}help`, { type: ActivityType.Listening })
+    setTimeout(() => {
+        //Refresh every 6 hours
+        activityRefresh();
+      }, 60000 * 360);
+} 
+
 //Ready Function
 client.once(Events.ClientReady, async () => {
     client.user.setActivity(`Starting up... please wait`);
@@ -133,9 +146,9 @@ client.once(Events.ClientReady, async () => {
     await mongoClient.connect();
     console.log('Connected successfully to the database. \n');
     await CommandRefresh();
-    await DatabasePurge()
+    await DatabasePurge();
+    await activityRefresh();
     await console.log("Launched!")
-    await client.user.setActivity(`${prefix}help`, { type: ActivityType.Listening })
     console.log("----")
 });
 
@@ -145,10 +158,7 @@ client.on(Events.InteractionCreate, async interaction => {
     if(!interaction.guild) return interaction.reply({content:"Im sorry, this command can only be ran in a server!", ephemeral: true })
     //Database Variables
     const db = mongoClient.db(database.name)
-    const server_data = db.collection(database.collection_name)
-    //Permissions Check
-    if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \nI need \`Send Messages\`, \`Embed Links\`, and \`View Channel\``, ephemeral: true }).catch(() => {return; })
-    if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.SendMessages) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.ViewChannel) || !interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to send messages! \nI need \`Send Messages\`, \`Embed Links\, and \`View Channel\``, ephemeral: true }).catch(() => {return;})
+    const server_data = db.collection(database.collection_name)  
     //Existing Database Command Handler      
     const { commandName } = interaction;
     if (!client.commands.has(commandName)) return;

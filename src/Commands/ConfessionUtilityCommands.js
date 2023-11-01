@@ -28,8 +28,8 @@ module.exports = {
         let ConfessionChannelNotSet = new EmbedBuilder()
         .setTitle(`**Moderation Error: Confession Channel Not Set**`)
         .setColor("#ff6961")
-        .setDescription(`Please setup the confession channel before using this commmand!`)
-        .setFooter({text:`You can set it up by doing /set confession_channel`})  
+        .setDescription(`Please setup the confession channel before using this commmand.`)
+        .setFooter({text:`You can set it up by doing ${prefix}set confession_channel`})  
         if(guildDocument[0]==undefined) return await interaction.reply({ embeds: [ConfessionChannelNotSet], ephemeral: true, allowedMentions: {repliedUser: false}})  
         //Commands
         if (interaction.options.getSubcommand() === 'ban') {
