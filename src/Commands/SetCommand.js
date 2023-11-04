@@ -26,7 +26,8 @@ module.exports = {
         if (interaction.options.getSubcommand() === 'confession_channel') {
             let channel = interaction.options.getChannel('channel');
             //Channel Permission Check
-            if(!channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions in <#${channel.id}>.\nI need.. \`Send Messages\`, and \`View Channel\` `, ephemeral: true }).catch(() => {return;})
+            if(channel.isThread()){if(!channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions in <#${channel.id}>.\nI need.. \`Send Messages\`, \`Embed Links\`, \`Send Messages in Threads\`, and \`View Channel\` `, ephemeral: true }).catch(() => {return;})}
+            if(!channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions in <#${channel.id}>.\nI need.. \`Send Messages\`, \`Embed Links\`, and \`View Channel\` `, ephemeral: true }).catch(() => {return;})
             const updateResult = await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { confession_channel_id: `${channel.id}` } });
             if(updateResult.matchedCount==0){
                 //Create New Document 
@@ -52,7 +53,8 @@ module.exports = {
         } else if (interaction.options.getSubcommand() === 'confession_log_channel'){
             let channel = interaction.options.getChannel('channel');
             //Permission Check
-            if(!channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions in <#${channel.id}>.\nI need.. \`Send Messages\`, and \`View Channel\` `, ephemeral: true }).catch(() => {return;})      
+            if(channel.isThread()){if(!channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions in <#${channel.id}>.\nI need.. \`Send Messages\`, \`Embed Links\`, \`Send Messages in Threads\`, and \`View Channel\` `, ephemeral: true }).catch(() => {return;})}
+            if(!channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions in <#${channel.id}>.\nI need.. \`Send Messages\`, \`Embed Links\`, and \`View Channel\` `, ephemeral: true }).catch(() => {return;})
             //Check if document exists
             const updateResult = await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { confession_modlog_id: `${channel.id}` } });
             //Document Doesnt Exist

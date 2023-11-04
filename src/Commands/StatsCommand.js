@@ -17,7 +17,7 @@ module.exports = {
 		let InfoEmb = new EmbedBuilder()
 		.setColor("#C3B1E1")
 		.setTitle("**Utility: Stats**")
-		.setDescription(`Servers: **${client.guilds.cache.size}** \n Ping: \`${client.ws.ping}ms\` \n Memory Usage: \`${memoryUsedRoudned}MB\` \n Date Created: **3/8/2023** \n Last Updated: **11/01/2023** \n Author: **oribia.dev** \n Website: https://meiibot.xyz \n\n **Uptime**: \`${uptime}\` \n\n`)
+		.setDescription(`Servers: **${client.guilds.cache.size}** \n Ping: \`${client.ws.ping}ms\` \n Memory Usage: \`${memoryUsedRoudned}MB\` \n Date Created: **3/8/2023** \n Last Updated: **11/03/2023** \n Author: **oribia.dev** \n Website: https://meiibot.xyz \n\n **Uptime**: \`${uptime}\` \n\n`)
 		await interaction.reply({ embeds: [InfoEmb], allowedMentions: { repliedUser: false }})
 	},
 };
