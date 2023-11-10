@@ -60,7 +60,8 @@ module.exports = {
         //Getting the channel
         let confessionmodchannel = client.channels.cache.get(guildDocument[0].confession_modlog_id)
         //Permissions Check
-        if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)) return                 
+        if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return
+        if(confessionmodchannel.isThread()){ if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)){return}}
         //Sending the Confession Log
         let ConfessionLog = new EmbedBuilder()
         .setTitle(`:love_letter: **Anonymous Confession**`)
