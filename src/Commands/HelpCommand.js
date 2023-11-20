@@ -60,7 +60,7 @@ module.exports = {
                     let confessionHelpMenu = new EmbedBuilder()
                     .setTitle(":scream:  **Confession Commands**")
                     .setColor("#C3B1E1")
-                    .setDescription(`**Confession Tutorial:** \n To submit a confession, simply use the command \`/confess\` along with the message in the server you wish to confess too. \n\n **Commands:**\n :grey_question: \`${prefix}confess [message]\` \n Sends an anonymous confession \n\n :speech_left: \`${prefix}set confession_channel [#channel]\`: \n Sets the confession channel \n\n :hammer_pick: \`${prefix}set confession_log_channel [#channel]\`: \n Sets the logging channel for confessions \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
+                    .setDescription(`**Confession Tutorial:** \n To submit a confession, simply use the command \`/confess\` along with the message in the server you wish to confess too. \n\n **Commands:**\n :grey_question: \`${prefix}confess [message]\` \n Sends an anonymous confession \n\n :speech_left: \`${prefix}set confession_channel [#channel]\`: \n Sets the confession channel \n\n :hammer_pick: \`${prefix}set confession_log_channel [#channel]\`: \n Sets the logging channel for confessions \n\n:clipboard: \`${prefix}customize\`: \n Lets you customize the confession embed! \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
                     await interaction.editReply({ embeds: [confessionHelpMenu], allowedMentions: { repliedUser: false }})
                     break;
                 //Moderation
@@ -68,7 +68,7 @@ module.exports = {
                     let moderationHelpMenu = new EmbedBuilder()
                     .setTitle(":tools:  **Moderation Commands**")
                     .setColor("#C3B1E1")
-                    .setDescription(`**Commands:**\n :hammer: \`${prefix}confession ban [@someone]\`: \n Bans someone from using confessions \n\n :no_entry_sign: \`${prefix}confession unban [@someone]\`: \n Unbans someone from using confessions \n\n :hammer: \`${prefix}ban [@someone]\`: \n Bans mentioned user from the server \n\n :leg: \`${prefix}kick [@someone]\`: \n kicks mentioned user from the server \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)                   
+                    .setDescription(`**Commands:**\n :hammer: \`${prefix}ban [@someone]\`: \n Bans mentioned user from the server \n\n :leg: \`${prefix}kick [@someone]\`: \n kicks mentioned user from the server \n\n :hammer: \`${prefix}confession ban [@someone]\`: \n Bans someone from using confessions \n\n :no_entry_sign: \`${prefix}confession unban [@someone]\`: \n Unbans someone from using confessions \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)                   
                     await interaction.editReply({ embeds: [moderationHelpMenu], allowedMentions: { repliedUser: false }})
                     break;
                 //Fun
@@ -76,7 +76,7 @@ module.exports = {
                     let funHelpMenu = new EmbedBuilder()
                     .setTitle(":confetti_ball:  **Fun Commands**")
                     .setColor("#C3B1E1")
-                    .setDescription(`**Commands:**\n :raccoon: \`${prefix}animal [category]\`: \n Sends a random image of an animal \n\n :book: \`${prefix}define [word]\`: \n Sends the definition of a word \n\n :1234: \`${prefix}binary [encode/decode] [text]\`: \n Encodes/Decodes binary \n\n:laughing: \`${prefix}joke\`: \n Sends a ~~corny~~ joke \n\n :confetti_ball: \`${prefix}dice\`: \n Rolls a 6 sided die! \n\n :coin: \`${prefix}coinflip\`: \n Flips a coin! \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)                
+                    .setDescription(`**Commands:**\n :raccoon: \`${prefix}animal [category]\`: \n Sends a random image of an animal \n\n :book: \`${prefix}define [word]\`: \n Sends the definition of a word \n\n :1234: \`${prefix}binary [encode/decode] [text]\`: \n Encodes/Decodes binary \n\n:laughing: \`${prefix}joke\`: \n Sends a ~~corny~~ joke \n\n :confetti_ball: \`${prefix}dice\`: \n Rolls a 6 sided die! \n\n :coin: \`${prefix}coinflip\`: \n Flips a coin! \n\n:smiling_imp: \`${prefix}dare [dare]\`: \n 50/50 chance of doing a given dare \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)                
                     await interaction.editReply({ embeds: [funHelpMenu], allowedMentions: { repliedUser: false }})
                     break;     
                 //Emotes

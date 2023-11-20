@@ -38,14 +38,38 @@ module.exports = {
         .setDescription(`I'm sorry, i'm having trouble finding the confession channel in **${interaction.guild.name}**.`)
         .setFooter({text:`Tell a staff member to re-set the confession channel!`})
         if(!client.channels.cache.get(guildDocument[0].confession_channel_id)) return await interaction.editReply({ embeds: [channelNotFound], ephemeral: true})
-        //Sending the Confession
+        //Getting Confession Info
         let confessionchannel = interaction.guild.channels.cache.get(guildDocument[0].confession_channel_id)
         let confessedmessage = interaction.options.getString('message');
+        //Confession Customization
+        let defaultValues = { "title": ":love_letter: Anonymous Confession", "body": "> {confession}", "footer": "Meii", "color": "{random}"}
+        let dataExists = false;
+        if(guildDocument[0].customization) dataExists = true;
+        let titleData = dataExists ? guildDocument[0].customization.title : defaultValues.title;
+        let bodyData = dataExists? guildDocument[0].customization.body : defaultValues.body;
+        let bodyParsed = bodyData.replace('{confession}', confessedmessage)
+        bodyParsed = bodyParsed.replace('{CONFESSION}', confessedmessage)
+        let footerData = dataExists ? guildDocument[0].customization.footer : defaultValues.footer;
+        let colorData = dataExists ? guildDocument[0].customization.color : defaultValues.color;
+        let colorParsed = colorData.replace('{random}', randomHexColor())
+        colorParsed = colorParsed.replace('{RANDOM}', randomHexColor())
+        //Test if confession is bigger than 4096 Char
+        let confessionTooLong = new EmbedBuilder()
+        .setTitle(`**${interaction.guild.name}: Confession Too Long**`)
+        .setColor('#ff6961')
+        .setDescription(`I'm sorry, your confession is too long.\n\nThe limit is **4096** characters, currently its **${bodyParsed.length}** characters.`)
+        .setFooter({text:`Please shorten and try again!`})
+        if(4096 < bodyData.length) return await interaction.editReply({ embeds: [confessionTooLong], ephemeral: true})
+        //Test if Hex Code is valid
+        var hexRegex = /^#(?:[0-9a-fA-F]{3}){1,2}$/
+        if(!hexRegex.test(colorParsed)) colorParsed = randomHexColor();
+        //Sending Confession
         let Confession = new EmbedBuilder()
-        .setTitle(`**:love_letter: Anonymous Confession**`)
-        .setColor(randomHexColor())
-        .setDescription(`> ${confessedmessage}`)
+        .setTitle(`${titleData}`)
+        .setColor(`${colorParsed}`)
+        .setDescription(`${bodyParsed}`)
         .setTimestamp()
+        .setFooter({text: `${footerData}`})
         try{
             if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Embed Links\`, and \`Send Messages in Threads\` `, ephemeral: true }) }
             if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`Embed Links\`, and \`View Channel\``, ephemeral: true })
@@ -68,6 +92,7 @@ module.exports = {
         .setColor(randomHexColor())
         .setDescription(`"${confessedmessage}" \n\n **User**  \n ||${interaction.member.user.username}  (${interaction.member})||`)
         .setTimestamp()
+        .setFooter({text: "Meii"})
         confessionmodchannel.send({ embeds: [ConfessionLog], allowedMentions: {repliedUser: false}})    
 	},
 };

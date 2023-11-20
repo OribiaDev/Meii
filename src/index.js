@@ -116,6 +116,7 @@ function CommandRefresh(){
       }, 60000 * 360);
 }
 
+
 //Activity Refresher
 async function activityRefresh(){
     await client.user.setActivity(`${prefix}help`, { type: ActivityType.Listening })
@@ -127,8 +128,8 @@ async function activityRefresh(){
 
 //Ready Function
 client.once(Events.ClientReady, async () => {
+    client.user.setStatus('dnd');
     client.user.setActivity(`Starting up... please wait`);
-    client.user.setStatus("online");
     if(!IsDev){
         //Not Dev
         console.log(" _____     _ _ ")
@@ -149,25 +150,34 @@ client.once(Events.ClientReady, async () => {
     await DatabasePurge();
     await activityRefresh();
     await console.log("Launched!")
+    client.user.setStatus("online");
     console.log("----")
 });
 
 //Slash Command Function
 client.on(Events.InteractionCreate, async interaction => {
-	if (!interaction.isCommand()) return;
-    if(!interaction.guild) return interaction.reply({content:"Im sorry, this command can only be ran in a server!", ephemeral: true })
-    //Database Variables
-    const db = mongoClient.db(database.name)
-    const server_data = db.collection(database.collection_name)  
-    //Existing Database Command Handler      
-    const { commandName } = interaction;
-    if (!client.commands.has(commandName)) return;
-    try {
-        await client.commands.get(commandName).execute(interaction, db, server_data, client, prefix);
-    } catch (error) {
-        console.error(error);
-        return await interaction.reply({ content: 'There was an error while executing this command. Please try again later.', ephemeral: true });
-    }  
+    if(interaction.isButton() && interaction.customId.includes("customize")){
+        //Database Vars
+        const db = mongoClient.db(database.name)
+        const server_data = db.collection(database.collection_name)  
+        //Customize Button Handler (Modal) 
+        await client.commands.get('customize').handleButton(interaction, db, server_data); 
+    }else{
+        if (!interaction.isCommand()) return;
+        if(!interaction.guild) return interaction.reply({content:"Im sorry, this command can only be ran in a server!", ephemeral: true })
+        //Database Variables
+        const db = mongoClient.db(database.name)
+        const server_data = db.collection(database.collection_name)  
+        //Existing Database Command Handler      
+        const { commandName } = interaction;
+        if (!client.commands.has(commandName)) return;
+        try {
+            await client.commands.get(commandName).execute(interaction, db, server_data, client, prefix);
+        } catch (error) {
+            console.error(error);
+            return await interaction.reply({ content: 'There was an error while executing this command. Please try again later.', ephemeral: true });
+        }  
+    }
 });
 
 //Guild Leave Function
