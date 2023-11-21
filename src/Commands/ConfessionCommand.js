@@ -44,7 +44,7 @@ module.exports = {
         //Confession Customization
         let defaultValues = { "title": ":love_letter: Anonymous Confession", "body": "> {confession}", "footer": "Meii", "color": "{random}"}
         let dataExists = false;
-        if(guildDocument[0].customization) dataExists = true;
+        if(guildDocument[0]?.customization) dataExists = true;
         let titleData = dataExists ? guildDocument[0].customization.title : defaultValues.title;
         let bodyData = dataExists? guildDocument[0].customization.body : defaultValues.body;
         let bodyParsed = bodyData.replace('{confession}', confessedmessage)

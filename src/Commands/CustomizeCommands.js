@@ -31,7 +31,7 @@ module.exports = {
         //Variables
         let defaultValues = { "title": "**:love_letter: Anonymous Confession**", "body": "> {confession}", "footer": "Meii", "color": "{random}"}
         let dataExists = false;
-        if(guildDocument[0].customization) dataExists = true;
+        if(guildDocument[0]?.customization) dataExists = true;
         let titleData = guildDocument[0]?.customization?.title;
         let bodyData = guildDocument[0]?.customization?.body;
         let footerData = guildDocument[0]?.customization?.footer;
