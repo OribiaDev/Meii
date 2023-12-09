@@ -10,6 +10,7 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {
         let HoldUser = interaction.options.getMember('user');
+        if(HoldUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, ephemeral: true })
         if(HoldUser.id==interaction.member.id) return await interaction.reply({ content: `Do you need some affection ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, ephemeral: true })
         let HoldUserID = HoldUser.id
         const holdgif = new EmbedBuilder()

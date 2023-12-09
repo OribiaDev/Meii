@@ -10,6 +10,7 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {
         let KissUser = interaction.options.getMember('user');
+        if(KissUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, ephemeral: true })
         if(KissUser.id==interaction.member.id) return await interaction.reply({ content: `Do you need a kiss ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, ephemeral: true })
         let KissUserID = KissUser.id
         const KissGif = new EmbedBuilder()

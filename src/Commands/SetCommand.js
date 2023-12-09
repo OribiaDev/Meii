@@ -21,7 +21,7 @@ module.exports = {
                     option.setName('channel')
                             .setDescription('Select a channel for the confession logging')
                             .setRequired(true))),
-	async execute(interaction, db, server_data, client) {
+	async execute(interaction, db, server_data, bot_data, client, prefix) {
         //Sets Confession Channel
         if (interaction.options.getSubcommand() === 'confession_channel') {
             let channel = interaction.options.getChannel('channel');

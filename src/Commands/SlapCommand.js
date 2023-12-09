@@ -10,6 +10,7 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {
         let SlapUser = interaction.options.getMember('user');
+        if(SlapUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, ephemeral: true })
         if(SlapUser.id==interaction.member.id) return await interaction.reply({ content: `that’s kinda k-kinky..`, allowedMentions: { repliedUser: false }, ephemeral: true })
         let SlapUserID = SlapUser.id
         const Slapgif = new EmbedBuilder()

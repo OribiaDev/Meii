@@ -13,11 +13,12 @@ module.exports = {
 			option.setName('reason')
 				  .setDescription('State the reasoning for this ban')
 				  .setRequired(false)),
-	async execute(interaction, db, server_data, client) {
+	async execute(interaction, db, server_data, bot_data, client) {
 		//Permissions Check
 		if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions.\nI need.. \`Ban Members\``, ephemeral: true }).catch(() => {return;})
 		//Get User
 		let targetUser = interaction.options.getMember('user');
+		if(targetUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, ephemeral: true }) 
 		if(targetUser.id==client.user.id) return await interaction.reply({content:"You can't ban me silly~!", ephemeral: true })
 		//Target Permission Checks
 		if(!targetUser.bannable) return await interaction.reply({ content:"I'm unable to ban this person as they either have the \`Ban Members\` permission or they have a higher role than me.", ephemeral: true });

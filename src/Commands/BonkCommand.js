@@ -10,6 +10,7 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {
         let BonkUser = interaction.options.getMember('user');
+        if(BonkUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, ephemeral: true })
         let BonkUserID = BonkUser.id
         const bonkgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/bonk`)

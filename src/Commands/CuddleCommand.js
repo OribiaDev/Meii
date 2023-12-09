@@ -10,6 +10,7 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {   
         let CuddleUser = interaction.options.getMember('user');
+        if(CuddleUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, ephemeral: true })
         if(CuddleUser.id==interaction.member.id) return await interaction.reply({ content: `Do you need a cuddle ${interaction.member.displayName}..?`, ephemeral: true, allowedMentions: { repliedUser: false }})
         let CuddleUserID = CuddleUser.id
         const Cuddlegif = new EmbedBuilder()

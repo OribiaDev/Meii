@@ -10,6 +10,7 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {
         let PokeUser = interaction.options.getMember('user');
+        if(PokeUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, ephemeral: true })
         if(PokeUser.id==interaction.member.id) return await interaction.reply({ content: `i- don't poke yourself-`, allowedMentions: { repliedUser: false }, ephemeral: true })
         let PokeUserID = PokeUser.id
         const pokegif = new EmbedBuilder()

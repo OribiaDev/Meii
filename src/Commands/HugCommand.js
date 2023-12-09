@@ -10,6 +10,7 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {
         let HugUser = interaction.options.getMember('user');
+        if(HugUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, ephemeral: true })
         if(HugUser.id==interaction.member.id) return await interaction.reply({ content: `Do you need a hug ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, ephemeral: true })
         let HugUserID = HugUser.id
         const HugGif = new EmbedBuilder()

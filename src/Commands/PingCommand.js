@@ -4,7 +4,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ping')
 		.setDescription('Gives the ping of Meii!'),
-	async execute(interaction, db, server_data, client) {
+	async execute(interaction, db, server_data, bot_data, client) {
 		if(!interaction.channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions to use this command. \nI need.. \`Send Messages\` `, ephemeral: true }).catch(() => {return; })
 		await interaction.deferReply();
 		const m = await interaction.channel.send("Ping?");

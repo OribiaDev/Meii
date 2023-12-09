@@ -10,6 +10,7 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {     
         let KillUser = interaction.options.getMember('user');
+        if(KillUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, ephemeral: true })
         if(KillUser.id==interaction.member.id) return await interaction.reply({ content: `n-no- don't do that--`, allowedMentions: { repliedUser: false }, ephemeral: true })
         let KillUserID = KillUser.id
         const Killgif = new EmbedBuilder()

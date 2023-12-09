@@ -10,8 +10,28 @@ module.exports = {
                 .setName('message')
                 .setRequired(true)
                 .setDescription('The message you want to confess')),
-	async execute(interaction, db, server_data, client, prefix) {
+	async execute(interaction, db, server_data, bot_data, client, prefix) {
         await interaction.deferReply({ ephemeral: true });
+        //Admin Bans
+        const botDocument = await bot_data.find({ type: 'prod' }).toArray();
+        //Admin Confession Server Ban
+        let AdminServerConfessionBanned = new EmbedBuilder()
+        .setTitle(`**${interaction.guild.name}: Server Confession Banned**`)
+        .setColor("#ff6961")
+        .setDescription(`I'm sorry, The server **${interaction.guild.name}** is banned from using the confession feature on Meii.`)
+        .setFooter({text:`If you think this is a mistake, please join the support server.`})
+        const serverBansArray = botDocument[0].server_confession_bans || [] 
+        let serverBanindex = serverBansArray.indexOf(`${interaction.guild.id}`);
+        if (serverBanindex !== -1) return await interaction.editReply({ embeds: [AdminServerConfessionBanned], ephemeral: true, allowedMentions: {repliedUser: false}})
+        //Admin Confession User Ban
+        let AdminUserConfessionBanned = new EmbedBuilder()
+        .setTitle(`**${interaction.member.user.username} : Confession Banned**`)
+        .setColor("#ff6961")
+        .setDescription(`I'm sorry, you are banned from using the confession feature on Meii.`)
+        .setFooter({text:`If you think this is a mistake, please join the support server.`})
+        const userBansArray = botDocument[0].user_confession_bans || [] 
+        let userBanindex = userBansArray.indexOf(`${interaction.member.user.id}`);
+        if (userBanindex !== -1) return await interaction.editReply({ embeds: [AdminUserConfessionBanned], ephemeral: true, allowedMentions: {repliedUser: false}})
         //Guild Document
         const guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
         //Database Document Check
@@ -57,9 +77,9 @@ module.exports = {
         let confessionTooLong = new EmbedBuilder()
         .setTitle(`**${interaction.guild.name}: Confession Too Long**`)
         .setColor('#ff6961')
-        .setDescription(`I'm sorry, your confession is too long.\n\nThe limit is **4096** characters, currently its **${bodyParsed.length}** characters.`)
+        .setDescription(`I'm sorry, your confession is too long.\nThe limit is **4096** characters, currently its **${bodyParsed.length}** characters.`)
         .setFooter({text:`Please shorten and try again!`})
-        if(4096 < bodyData.length) return await interaction.editReply({ embeds: [confessionTooLong], ephemeral: true})
+        if(4096 < bodyParsed.length) return await interaction.editReply({ embeds: [confessionTooLong], ephemeral: true})
         //Test if Hex Code is valid
         var hexRegex = /^#(?:[0-9a-fA-F]{3}){1,2}$/
         if(!hexRegex.test(colorParsed)) colorParsed = randomHexColor();
@@ -71,9 +91,14 @@ module.exports = {
         .setTimestamp()
         .setFooter({text: `${footerData}`})
         try{
+            //Confession Send
             if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Embed Links\`, and \`Send Messages in Threads\` `, ephemeral: true }) }
             if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`Embed Links\`, and \`View Channel\``, ephemeral: true })
             confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}}) 
+            //Confession Number Add
+            let confessionNumber = botDocument[0].confession_number;
+            confessionNumber = confessionNumber + 1;
+            await bot_data.updateOne({ type: `prod` }, { $set: { confession_number: confessionNumber } });
         }catch( error ){
             return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, ephemeral: true })
         }
