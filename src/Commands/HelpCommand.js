@@ -4,7 +4,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('help')
 		.setDescription('Menu of all Meii\'s commands!'),
-	async execute(interaction, db, server_data, bot_data, client, prefix) {
+	async execute(interaction, db, databaseCollections, client, prefix) {
 		const select = new StringSelectMenuBuilder()
         .setCustomId('help_menu')
         .setPlaceholder('Choose a help section!')
@@ -60,7 +60,7 @@ module.exports = {
                     let confessionHelpMenu = new EmbedBuilder()
                     .setTitle(":scream:  **Confession Commands**")
                     .setColor("#C3B1E1")
-                    .setDescription(`**Confession Tutorial:** \n To submit a confession, simply use the command \`/confess\` along with the message in the server you wish to confess too. \n\n **Commands:**\n :grey_question: \`${prefix}confess [message]\` \n Sends an anonymous confession \n\n :speech_left: \`${prefix}set confession_channel [#channel]\`: \n Sets the confession channel \n\n :hammer_pick: \`${prefix}set confession_log_channel [#channel]\`: \n Sets the logging channel for confessions \n\n:clipboard: \`${prefix}customize\`: \n Lets you customize the confession embed! \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
+                    .setDescription(`**Confession Tutorial:** \n To submit a confession, simply use the command \`/confess\` along with the message in the server you wish to confess too. \n\n **Commands:**\n :grey_question: \`${prefix}confess [message]\` \n Sends an anonymous confession \n\n :exclamation: \`${prefix}report [confession_id]\`: \n Reports a confession\n\n:speech_left: \`${prefix}set confession_channel [#channel]\`: \n Sets the confession channel \n\n :hammer_pick: \`${prefix}set confession_log_channel [#channel]\`: \n Sets the logging channel for confessions \n\n:clipboard: \`${prefix}customize\`: \n Lets you customize the confession embed! \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
                     await interaction.editReply({ embeds: [confessionHelpMenu], allowedMentions: { repliedUser: false }})
                     break;
                 //Moderation

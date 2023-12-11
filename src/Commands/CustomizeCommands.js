@@ -25,16 +25,18 @@ module.exports = {
 			components: [row],
 		});        
 	},
-    async handleButton(interaction, db, server_data) {
+    async handleButton(interaction, db, databaseCollections) {
+        //Database Collections
+        let server_data = databaseCollections.server_data;
+        //Command
         if(interaction.user.id !== interaction.message.interaction.user.id) return interaction.reply({content:"Im sorry, you cannot use this button!", ephemeral: true })
         const guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
         //Variables
-        let defaultValues = { "title": "**:love_letter: Anonymous Confession**", "body": "> {confession}", "footer": "Meii", "color": "{random}"}
+        let defaultValues = { "title": "**:love_letter: Anonymous Confession**", "body": "> {confession}", "color": "{random}"}
         let dataExists = false;
         if(guildDocument[0]?.customization) dataExists = true;
         let titleData = guildDocument[0]?.customization?.title;
         let bodyData = guildDocument[0]?.customization?.body;
-        let footerData = guildDocument[0]?.customization?.footer;
         let colorData = guildDocument[0]?.customization?.color;
         //Customize Modal
         if (interaction.customId === 'cc-customize') { 
@@ -56,13 +58,6 @@ module.exports = {
             .setLabel("Body | {confession}")
             .setValue(bodyString)
             .setStyle(TextInputStyle.Short);
-            //Footer
-            let footerString = dataExists ? footerData : defaultValues.footer;
-            const footerInput = new TextInputBuilder()
-            .setCustomId('footerinput')
-            .setLabel("Footer")
-            .setValue(footerString)
-            .setStyle(TextInputStyle.Short);
             //Color
             let colorString = dataExists ? colorData : defaultValues.color;
             const colorInput = new TextInputBuilder()
@@ -73,10 +68,9 @@ module.exports = {
             //Action Rows
             const titleActionRow = new ActionRowBuilder().addComponents(titleInput);
             const bodyActionRow = new ActionRowBuilder().addComponents(bodyInput);
-            const footerActionRow = new ActionRowBuilder().addComponents(footerInput);
             const colorActionRow = new ActionRowBuilder().addComponents(colorInput);
             //Add to Modal
-            ccModal.addComponents(titleActionRow, bodyActionRow, footerActionRow, colorActionRow);
+            ccModal.addComponents(titleActionRow, bodyActionRow, colorActionRow);
             await interaction.showModal(ccModal);
             //Customize Modal Collector
             const filter = (interaction) => interaction.customId === `ccModal-${interaction.user.id}`;
@@ -84,7 +78,6 @@ module.exports = {
                 //Variables
                 const titleText = modalInteraction.fields.getTextInputValue('titleinput');
                 const bodyText = modalInteraction.fields.getTextInputValue('bodyinput');
-                const footerText = modalInteraction.fields.getTextInputValue('footerinput');
                 const colorText = modalInteraction.fields.getTextInputValue('colorInput');
                 //Document Not Found
                 let serverNotFound = new EmbedBuilder()
@@ -94,7 +87,7 @@ module.exports = {
                 .setFooter({text:`You can set it up with /set`})
                 if(guildDocument[0]==undefined) return modalInteraction.update({content: "", embeds: [serverNotFound], components: [], ephemeral: true }); 
                 //Check if values are default 
-                if(titleText == defaultValues.title && bodyText == defaultValues.body && footerText == defaultValues.footer && colorText == defaultValues.color){
+                if(titleText == defaultValues.title && bodyText == defaultValues.body && colorText == defaultValues.color){
                     //Values Default
                     let customizationSaved = new EmbedBuilder()
                     .setTitle(`**Customization: Customization Saved**`)
@@ -105,7 +98,7 @@ module.exports = {
                     return
                 }
                 //Check if values are in database
-                if(titleText == titleData && bodyText == bodyData && footerText == footerData && colorText == colorData ){
+                if(titleText == titleData && bodyText == bodyData && colorText == colorData ){
                     //Values Same
                     let customizationSaved = new EmbedBuilder()
                     .setTitle(`**Customization: Customization Saved**`)
@@ -116,7 +109,7 @@ module.exports = {
                     return
                 }
                 //Update Document
-                await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { customization: { "title":`${titleText}`, "body":`${bodyText}`, "footer":`${footerText}`, "color":`${colorText}` } } });
+                await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { customization: { "title":`${titleText}`, "body":`${bodyText}`, "color":`${colorText}` } } });
                 //Tell User Document Saved
                 let customizationSaved = new EmbedBuilder()
                 .setTitle(`**Customization: Customization Saved**`)

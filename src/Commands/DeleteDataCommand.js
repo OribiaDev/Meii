@@ -5,7 +5,10 @@ module.exports = {
 		.setName('delete_data')
 		.setDescription('Deletes all stored data for the current server')
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
-	async execute(interaction, db, server_data) {
+	async execute(interaction, db, databaseCollections) {
+        //Database Collections
+        let server_data = databaseCollections.server_data;
+        //Command
         let serverOwner = await interaction.guild.fetchOwner().catch(err=>err)
         if(!interaction.member.user.id==serverOwner.id)return await interaction.reply({ content: `Only the server owner may use this command.`, allowedMentions: { repliedUser: false }, ephemeral: true })
 		const confirm = new ButtonBuilder()

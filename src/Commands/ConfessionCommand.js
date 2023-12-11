@@ -10,8 +10,12 @@ module.exports = {
                 .setName('message')
                 .setRequired(true)
                 .setDescription('The message you want to confess')),
-	async execute(interaction, db, server_data, bot_data, client, prefix) {
+	async execute(interaction, db, databaseCollections, client, prefix) {
         await interaction.deferReply({ ephemeral: true });
+        //Database Collections
+        let server_data = databaseCollections.server_data;
+        let bot_data = databaseCollections.bot_data;
+        let confession_data = databaseCollections.confession_data;
         //Admin Bans
         const botDocument = await bot_data.find({ type: 'prod' }).toArray();
         //Admin Confession Server Ban
@@ -62,14 +66,13 @@ module.exports = {
         let confessionchannel = interaction.guild.channels.cache.get(guildDocument[0].confession_channel_id)
         let confessedmessage = interaction.options.getString('message');
         //Confession Customization
-        let defaultValues = { "title": ":love_letter: Anonymous Confession", "body": "> {confession}", "footer": "Meii", "color": "{random}"}
+        let defaultValues = { "title": ":love_letter: Anonymous Confession", "body": "> {confession}", "color": "{random}"}
         let dataExists = false;
         if(guildDocument[0]?.customization) dataExists = true;
         let titleData = dataExists ? guildDocument[0].customization.title : defaultValues.title;
         let bodyData = dataExists? guildDocument[0].customization.body : defaultValues.body;
         let bodyParsed = bodyData.replace('{confession}', confessedmessage)
         bodyParsed = bodyParsed.replace('{CONFESSION}', confessedmessage)
-        let footerData = dataExists ? guildDocument[0].customization.footer : defaultValues.footer;
         let colorData = dataExists ? guildDocument[0].customization.color : defaultValues.color;
         let colorParsed = colorData.replace('{random}', randomHexColor())
         colorParsed = colorParsed.replace('{RANDOM}', randomHexColor())
@@ -83,19 +86,27 @@ module.exports = {
         //Test if Hex Code is valid
         var hexRegex = /^#(?:[0-9a-fA-F]{3}){1,2}$/
         if(!hexRegex.test(colorParsed)) colorParsed = randomHexColor();
-        //Sending Confession
-        let Confession = new EmbedBuilder()
-        .setTitle(`${titleData}`)
-        .setColor(`${colorParsed}`)
-        .setDescription(`${bodyParsed}`)
-        .setTimestamp()
-        .setFooter({text: `${footerData}`})
         try{
-            //Confession Send
+            //Confession Checks
             if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Embed Links\`, and \`Send Messages in Threads\` `, ephemeral: true }) }
             if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`Embed Links\`, and \`View Channel\``, ephemeral: true })
+            //Confession Moderation Database
+            //Random ID Generator
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let confessionID = '';
+            for (let i = 0; i < 4; i++) {
+              const randomIndex = Math.floor(Math.random() * characters.length);
+              confessionID += characters.charAt(randomIndex);
+            }
+            await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}` }});
+            //Sending Confession
+            let Confession = new EmbedBuilder()
+            .setTitle(`${titleData}`)
+            .setColor(`${colorParsed}`)
+            .setDescription(`${bodyParsed}`)
+            .setFooter({text: `✨  If this confession breaks TOS or is overtly hateful, you can report it with "${prefix}report ${confessionID}"`})
             confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}}) 
-            //Confession Number Add
+            //Confession Number Increase
             let confessionNumber = botDocument[0].confession_number;
             confessionNumber = confessionNumber + 1;
             await bot_data.updateOne({ type: `prod` }, { $set: { confession_number: confessionNumber } });

@@ -4,7 +4,9 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('checklogs')
 		.setDescription('Checks if confession logs are enabled in the server'),
-	async execute(interaction, db, server_data) {
+	async execute(interaction, db, databaseCollections) {
+        //Database Collections
+        let server_data = databaseCollections.server_data;
         //No Document for guild (Thus no log channel)
         const guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
         if(guildDocument[0]==undefined) return await interaction.reply({ content: `Confessions are not logged or setup on ${interaction.guild.name}.`, ephemeral: true });

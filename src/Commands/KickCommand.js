@@ -13,7 +13,7 @@ module.exports = {
 			option.setName('reason')
 				  .setDescription('State the reasoning for this kick')
 				  .setRequired(false)),
-	async execute(interaction, db, server_data, bot_data, client) {
+	async execute(interaction, db, databaseCollections, client) {
 		//Permissions Check
 		if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.KickMembers)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions.\nI need.. \`Kick Members\``, ephemeral: true }).catch(() => {return});
 		//Get Target User

@@ -61,7 +61,10 @@ module.exports = {
                             .setName('userid')
                             .setRequired(true)
                             .setDescription('The ID of the user'))),
-	async execute(interaction, db, server_data, bot_data, client, prefix) {
+	async execute(interaction, db, databaseCollections, client) {
+        //Database Collections
+        let bot_data = databaseCollections.bot_data;
+        //Command
         const botDocument = await bot_data.find({ type: 'prod' }).toArray();
         const adminArray = botDocument[0].admins || [] 
         let index = adminArray.indexOf(`${interaction.member.user.id}`);

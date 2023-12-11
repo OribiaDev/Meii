@@ -54,10 +54,10 @@ if(!IsDev){
     }
 }
 
-//Auto Database Purge (Ran only on startup)
-async function DatabasePurge(){
-    console.log('Attempting to purge the database..')
-    if(IsDev) return console.log("Cannot do database purge in Dev mode! \n")
+//Auto Server Database Purge (Ran only on startup)
+async function ServerDatabasePurge(){
+    console.log('\nAttempting to purge the server database..')
+    if(IsDev) return console.log("Cannot do server database purge in Dev mode! \n")
     const db = mongoClient.db(database.name)
     const server_data = db.collection(database.server_collection_name)
     let serverCounter = 0;
@@ -69,7 +69,25 @@ async function DatabasePurge(){
             serverCounter++;
         }
     }
-    await console.log(`Successfully purged (${serverCounter}) document(s). \n`)
+    await console.log(`Successfully purged (${serverCounter}) server document(s). \n`)
+}
+
+//Auto Confession Database Purge
+async function ConfessionDatabasePurge(){
+    console.log('Attempting to purge the confession database..')
+    //Database Variables
+    const db = mongoClient.db(database.name)
+    const confession_data = db.collection(database.confession_collection_name)
+    //Calculate the date 30 days ago
+    const desiredDate = new Date();
+    desiredDate.setDate(desiredDate.getDate() - 30);
+    //Delete the documents
+    const result = await confession_data.deleteMany({ document_date: { $lt: desiredDate } });
+    console.log(`Successfully purged (${result.deletedCount}) confession document(s). \n`)
+    setTimeout(() => {
+        // Refresh every 24 Hours
+        ConfessionDatabasePurge();
+    }, 1000 * 60 * 60 * 24);
 }
 
 //Command Handler 
@@ -147,7 +165,8 @@ client.once(Events.ClientReady, async () => {
     await mongoClient.connect();
     console.log('Connected successfully to the database. \n');
     await CommandRefresh();
-    await DatabasePurge();
+    await ServerDatabasePurge();
+    await ConfessionDatabasePurge();
     await activityRefresh();
     await console.log("Launched!")
     client.user.setStatus("online");
@@ -156,31 +175,29 @@ client.once(Events.ClientReady, async () => {
 
 //Slash Command Function
 client.on(Events.InteractionCreate, async interaction => {
-    //Check If User Banned
+    //Database Variables
     const db = mongoClient.db(database.name)
-    const bot_data = db.collection(database.bot_collection_name) 
-    const botDocument = await bot_data.find({ type: 'prod' }).toArray();
+    var databaseCollections = {
+        server_data: db.collection(database.server_collection_name),
+        bot_data: db.collection(database.bot_collection_name),
+        confession_data: db.collection(database.confession_collection_name)  
+    };
+    //Check If User Banned
+    const botDocument = await databaseCollections.bot_data.find({ type: 'prod' }).toArray();
     const userBansArray = botDocument[0].user_bans || [] 
     let index = userBansArray.indexOf(`${interaction.user.id}`);
     if (index !== -1) return await interaction.reply({content:"I'm sorry, you are banned from using Meii.\n\nIf you think this is a mistake, please join the [support server](https://discord.gg/E23tPPTwSc).", ephemeral: true })
     if(interaction.isButton() && interaction.customId.includes("customize")){
-        //Database Vars
-        const db = mongoClient.db(database.name)
-        const server_data = db.collection(database.server_collection_name)  
         //Customize Button Handler (Modal) 
-        await client.commands.get('customize').handleButton(interaction, db, server_data); 
+        await client.commands.get('customize').handleButton(interaction, db, databaseCollections); 
     }else{
         if (!interaction.isCommand()) return;
         if(!interaction.guild) return interaction.reply({content:"Im sorry, this command can only be ran in a server!", ephemeral: true })
-        //Database Variables
-        const db = mongoClient.db(database.name)
-        const server_data = db.collection(database.server_collection_name)  
-        const bot_data = db.collection(database.bot_collection_name)  
         //Existing Database Command Handler      
         const { commandName } = interaction;
         if (!client.commands.has(commandName)) return;
         try {
-            await client.commands.get(commandName).execute(interaction, db, server_data, bot_data, client, prefix);
+            await client.commands.get(commandName).execute(interaction, db, databaseCollections, client, prefix);
         } catch (error) {
             console.error(error);
             return await interaction.reply({ content: 'There was an error while executing this command. Please try again later.', ephemeral: true });

@@ -21,7 +21,9 @@ module.exports = {
                     option.setName('user')
                           .setDescription('Select a user to unban from confessions')
                           .setRequired(true))),
-	async execute(interaction, db, server_data, bot_data, client, prefix) {
+	async execute(interaction, db, databaseCollections, client, prefix) {
+        //Database Collections
+        let server_data = databaseCollections.server_data;
         //Guild Document
         const guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
         //Confession Channel Check
