@@ -1,4 +1,4 @@
-//Copyright 2023 Oribia. All Rights Reserved
+//Copyright 2024 Oribia. All Rights Reserved
 //If you see this, have a great day :3 - OribiaDev
 
 //Imports
@@ -83,7 +83,7 @@ async function ConfessionDatabasePurge(){
     desiredDate.setDate(desiredDate.getDate() - 30);
     //Delete the documents
     const result = await confession_data.deleteMany({ document_date: { $lt: desiredDate } });
-    console.log(`Successfully purged (${result.deletedCount}) confession document(s). \n`)
+    console.log(`Successfully purged (${result.deletedCount}) confession document(s).`)
     setTimeout(() => {
         // Refresh every 24 Hours
         ConfessionDatabasePurge();
@@ -167,6 +167,7 @@ client.once(Events.ClientReady, async () => {
     await CommandRefresh();
     await ServerDatabasePurge();
     await ConfessionDatabasePurge();
+    await console.log('\n')
     await activityRefresh();
     await console.log("Launched!")
     client.user.setStatus("online");

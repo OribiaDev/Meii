@@ -12,8 +12,8 @@ module.exports = {
         .addStringOption(option =>
             option
                 .setName('additional_info')
-                .setRequired(false)
-                .setDescription('Additional information that would help with the report')),
+                .setRequired(true)
+                .setDescription('Additional information that would help with the report. (Context, evidence, etc.)')),
 	async execute(interaction, db, databaseCollections, client) {
         await interaction.deferReply({ ephemeral: true });
         //Database Collection Vars
@@ -21,7 +21,6 @@ module.exports = {
         //Given Vars
         const confessionID = interaction.options.getString('confession_id').toUpperCase();
         let additionalInfo = interaction.options.getString('additional_info');
-        if(additionalInfo==null) additionalInfo = 'No Additional Info';
         //Confession Document
         const confessionDocument = await confession_data.find({ confession_id: confessionID }).toArray();
         if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the bottom of the confession) is correct.`, ephemeral: true })
