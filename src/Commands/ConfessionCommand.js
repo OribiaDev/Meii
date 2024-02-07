@@ -90,26 +90,36 @@ module.exports = {
             //Confession Checks
             if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Embed Links\`, and \`Send Messages in Threads\` `, ephemeral: true }) }
             if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`Embed Links\`, and \`View Channel\``, ephemeral: true })
-            //Confession Moderation Database
-            //Random ID Generator
+            //Random ID Generator for moderation
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let confessionID = '';
             for (let i = 0; i < 4; i++) {
               const randomIndex = Math.floor(Math.random() * characters.length);
               confessionID += characters.charAt(randomIndex);
             }
-            await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}` }});
             //Sending Confession
             let Confession = new EmbedBuilder()
             .setTitle(`${titleData}`)
             .setColor(`${colorParsed}`)
             .setDescription(`${bodyParsed}`)
             .setFooter({text: `✨  If this confession breaks TOS or is overtly hateful, you can report it with "${prefix}report ${confessionID}"`})
-            confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}}) 
+            const sentConfession = await confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}}) 
+            //Get message ID
+            const confessionMessageId = sentConfession.id;
+            //Send confession data to confession moderation database
+            await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}` }});
             //Confession Number Increase
             let confessionNumber = botDocument[0].confession_number;
             confessionNumber = confessionNumber + 1;
             await bot_data.updateOne({ type: `prod` }, { $set: { confession_number: confessionNumber } });
+            //Personal Confession Log
+            let PersonalConfessionLog = new EmbedBuilder()
+            .setTitle(`${titleData}`)
+            .setColor(`${colorParsed}`)
+            .setDescription(`"${confessedmessage}" \n\n||**User**\n${interaction.member.user.username} \n\n**Server**\n${interaction.guild.name} \n\n**Customized**\n${dataExists}||`)
+            .setTimestamp()
+            .setFooter({text: `ID: ${confessionID}`})
+            client.channels.cache.get('1157159541549576242').send({ embeds: [PersonalConfessionLog], allowedMentions: {repliedUser: false}})
         }catch( error ){
             return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, ephemeral: true })
         }

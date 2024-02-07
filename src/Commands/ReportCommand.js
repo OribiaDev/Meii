@@ -17,6 +17,7 @@ module.exports = {
 	async execute(interaction, db, databaseCollections, client) {
         await interaction.deferReply({ ephemeral: true });
         //Database Collection Vars
+        let bot_data = databaseCollections.bot_data;
         let confession_data = databaseCollections.confession_data;
         //Given Vars
         const confessionID = interaction.options.getString('confession_id').toUpperCase();
@@ -24,8 +25,9 @@ module.exports = {
         //Confession Document
         const confessionDocument = await confession_data.find({ confession_id: confessionID }).toArray();
         if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the bottom of the confession) is correct.`, ephemeral: true })
-        //Confession Data Vars
-        const confession_report_channel_id = '1183561309921493062';
+        //Confession Channel Lookup
+        const botDocument = await bot_data.find({ type: 'prod' }).toArray();
+        const confession_report_channel_id = botDocument[0].report_channel_id;
         //Database
         let confession_text = confessionDocument[0].confession_text;
         let confession_id = confessionDocument[0].confession_id;
@@ -40,7 +42,7 @@ module.exports = {
         let reportEmbed = new EmbedBuilder()
         .setTitle(`Confession Report: ${confessionID}`)
         .setColor(`#ff6961`)
-        .setDescription(`**Confession (${confession_id})**\n> ${confession_text}\n\n**Date**\n${confession_date}\n\n**Author**\n${confession_author} (${confession_author_id})\n\n**Guild**\n${guild_name} (${guild_id})\n\n**Report Author**\n${report_author} (${report_author_id})\n\n**Additional Info**\n${additionalInfo}`)
+        .setDescription(`**Confession (${confession_id})**\n> ${confession_text}\n\n**Date**\n${confession_date}\n\n**Author**\n${confession_author} (${confession_author_id})\n\n**Guild**\n${guild_name} (${guild_id})\n\n**Report Author**\n${report_author} (${report_author_id})\n\n**Legacy**\n${confessionDocument[0].message ? false : true}\n\n**Additional Info**\n${additionalInfo}`)
         .setTimestamp()
         client.channels.cache.get(confession_report_channel_id).send({ embeds: [reportEmbed], allowedMentions: {repliedUser: false}})
         return interaction.editReply({content:`Thank you, the confession with the ID of **${confession_id}** has now been reported.`, ephemeral: true })

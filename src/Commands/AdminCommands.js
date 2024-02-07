@@ -2,7 +2,7 @@ const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('disc
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('adminctl')
+		.setName('admin')
 		.setDescription(`Bot Admin Controls`)
         .addSubcommand(subcommand =>
             subcommand
@@ -39,37 +39,62 @@ module.exports = {
                             { name: 'Confession Unban', value: 'confessionunban' },
                         ))
                 .addStringOption(option =>
+                    option.setName('id_type')
+                        .setDescription('Types of IDs')
+                        .setRequired(true)
+                        .addChoices(
+                            { name: 'User ID', value: 'userchoiceid' },
+                            { name: 'Confession ID', value: 'confessionchoiceid' },
+                        ))
+                .addStringOption(option =>
+                    option
+                        .setName('choiceid')
+                        .setRequired(true)
+                        .setDescription('The ID of you previous choice')))
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('bot')
+                .setDescription('Bot Moderation')
+                .addStringOption(option =>
+                    option.setName('moderation_type')
+                        .setDescription('Types of moderation')
+                        .setRequired(true)
+                        .addChoices(
+                            { name: 'Admin Add', value: 'adminadd' },
+                            { name: 'Admin Remove', value: 'adminremove' },
+                        ))
+                .addStringOption(option =>
                     option
                         .setName('userid')
                         .setRequired(true)
                         .setDescription('The ID of the user')))
-            .addSubcommand(subcommand =>
-                subcommand
-                    .setName('bot')
-                    .setDescription('Bot Moderation')
-                    .addStringOption(option =>
-                        option.setName('moderation_type')
-                            .setDescription('Types of moderation')
-                            .setRequired(true)
-                            .addChoices(
-                                { name: 'Admin Add', value: 'adminadd' },
-                                { name: 'Admin Remove', value: 'adminremove' },
-                            ))
-                    .addStringOption(option =>
-                        option
-                            .setName('userid')
-                            .setRequired(true)
-                            .setDescription('The ID of the user'))),
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('message')
+                .setDescription('Message Moderation')
+                .addStringOption(option =>
+                    option.setName('moderation_type')
+                        .setDescription('Types of moderation')
+                        .setRequired(true)
+                        .addChoices(
+                            { name: 'Confession Remove', value: 'confessionremove' },
+                        ))
+                .addStringOption(option =>
+                    option
+                        .setName('confessionid')
+                        .setRequired(true)
+                        .setDescription('The ID of the confession'))),
 	async execute(interaction, db, databaseCollections, client) {
         //Database Collections
         let bot_data = databaseCollections.bot_data;
+        let confession_data = databaseCollections.confession_data;
         //Command
         const botDocument = await bot_data.find({ type: 'prod' }).toArray();
         const adminArray = botDocument[0].admins || [] 
         let index = adminArray.indexOf(`${interaction.member.user.id}`);
         if (index == -1) return await interaction.reply({content:"I'm sorry, this command can only be ran by the developers and admins of Meii.", ephemeral: true })
         const moderationType = interaction.options.getString('moderation_type');
-        if(botDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find the bot data document!`, ephemeral: true })
+        if(botDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find the bot data document.`, ephemeral: true })
         if (interaction.options.getSubcommand() === 'server') {
             //Server
             const givenServerID = interaction.options.getString('serverid');
@@ -119,11 +144,26 @@ module.exports = {
             if(moderationType=='serverleave'){
                 if(serverObject==undefined) return interaction.reply({content:`I cannot find a server with that ID.`, ephemeral: true })
                 await serverObject.leave();
-                return interaction.reply({content:`Meii has now left \`${serverObject.name} (${serverObject.id})\`.`, ephemeral: true })
+                return interaction.reply({content:`Meii has now left \`${serverObject.name} (${serverObject.id})\`.`, ephemeral: false })
             }
         } else if (interaction.options.getSubcommand() === 'user'){ 
-            //User
-            const givenUserID = interaction.options.getString('userid');
+            //Check if User or Confession ID
+            const moderationType = interaction.options.getString('moderation_type');
+            const id_type = interaction.options.getString('id_type');
+            const choiceId = interaction.options.getString('choiceid').toUpperCase();
+            let givenUserID = undefined;
+            //Confession ID
+            if(id_type=='confessionchoiceid'){
+                //ID Lookup
+                const confessionDocument = await confession_data.find({ confession_id: choiceId }).toArray();
+                if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${choiceId}**.`, ephemeral: true })
+                //ID Set
+                givenUserID = confessionDocument[0].author.id;
+            }
+            //User ID
+            if(id_type=='userchoiceid'){
+                givenUserID = choiceId;
+            }
             //Bot Ban
             if(moderationType=='botban'){
                 let userBansArray = botDocument[0].user_bans || []
@@ -131,7 +171,7 @@ module.exports = {
                 if (index !== -1) return await interaction.reply({ content:`This user is already banned from using Meii.`, ephemeral: true })
                 userBansArray.push(`${givenUserID}`)  
                 await bot_data.updateOne({ type: `prod` }, { $set: { user_bans: userBansArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now banned from using Meii.`, ephemeral: true })
+                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now banned from using Meii.`, ephemeral: false })
             }
             //Bot Unban
             if(moderationType=='botunban'){
@@ -140,7 +180,7 @@ module.exports = {
                 if (index == -1) return await interaction.reply({ content:`This user isn't banned from using Meii.`, ephemeral: true })
                 userBansArray.splice(index, 1);
                 await bot_data.updateOne({ type: `prod` }, { $set: { user_bans: userBansArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now unbanned from using Meii.`, ephemeral: true })
+                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now unbanned from using Meii.`, ephemeral: false })
             }
             //Confession Ban
             if(moderationType=='confessionban'){
@@ -149,7 +189,7 @@ module.exports = {
                 if (index !== -1) return await interaction.reply({ content:`This user is already banned from using confessions.`, ephemeral: true })
                 confessionBansArray.push(`${givenUserID}`)  
                 await bot_data.updateOne({ type: `prod` }, { $set: { user_confession_bans: confessionBansArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now banned from using confessions.`, ephemeral: true })
+                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now banned from using confessions.`, ephemeral: false })
             }
             //Confession Unban
             if(moderationType=='confessionunban'){
@@ -158,7 +198,7 @@ module.exports = {
                 if (index == -1) return await interaction.reply({ content:`This user isn't banned from using confessions.`, ephemeral: true })
                 confessionBansArray.splice(index, 1);
                 await bot_data.updateOne({ type: `prod` }, { $set: { user_confession_bans: confessionBansArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now unbanned from using confessions.`, ephemeral: true })
+                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now unbanned from using confessions.`, ephemeral: false })
             }
         } else if (interaction.options.getSubcommand() === 'bot'){ 
             //Bot
@@ -170,7 +210,7 @@ module.exports = {
                 if (index !== -1) return await interaction.reply({ content:`This user is already an admin of Meii.`, ephemeral: true })
                 adminArray.push(`${givenUserID}`)  
                 await bot_data.updateOne({ type: `prod` }, { $set: { admins: adminArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now an admin of Meii.`, ephemeral: true })
+                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now an admin of Meii.`, ephemeral: false })
             }
             //Admin Remove
             if(moderationType=='adminremove'){
@@ -179,7 +219,46 @@ module.exports = {
                 if (index == -1) return await interaction.reply({ content:`This user isn't an admin of Meii.`, ephemeral: true })
                 adminArray.splice(index, 1);
                 await bot_data.updateOne({ type: `prod` }, { $set: { admins: adminArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now removed as an admin of Meii.`, ephemeral: true })
+                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now removed as an admin of Meii.`, ephemeral: false })
+            }
+        } else if (interaction.options.getSubcommand() === 'message'){ 
+            //ID Lookup
+            const givenConfessionID = interaction.options.getString('confessionid').toUpperCase();
+            const confessionDocument = await confession_data.find({ confession_id: givenConfessionID }).toArray();
+            if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${givenConfessionID}**.`, ephemeral: true })
+            if(confessionDocument[0].message==undefined) return interaction.reply({content:`I'm sorry, this is a legacy confession that does not have the message info stored.`, ephemeral: true })
+            //Message Remove
+            if(moderationType=='confessionremove'){
+                try{
+                    //Check if channel ID is valid
+                    try {
+                        let storedChannel = await client.channels.fetch(confessionDocument[0].message.channel_id);
+                        if (!storedChannel) return interaction.reply({content:`I'm sorry, the channel ID stored isnt valid.`, ephemeral: true })
+                    } catch (error) {
+                        interaction.reply({content:`I'm sorry, the channel ID thats stored isnt valid.`, ephemeral: true })
+                        return;
+                    }
+                    //Edit Message
+                    const storedChannel = await client.channels.fetch(confessionDocument[0].message.channel_id);
+                    if (storedChannel.isTextBased()) {
+                        //Get Message
+                        const confessionMessage = await storedChannel.messages.fetch(confessionDocument[0].message.id);
+                        //Editing Message
+                        const TOSMessage = "\n__**This confession has been removed for breaking Discord's and or Meii's TOS.**__\n";
+                        await confessionMessage.edit({content: `${TOSMessage}`, embeds: []});
+                        interaction.reply({content:`The confession with the ID of **${givenConfessionID}** has been successfully edited/removed.`, ephemeral: false })
+                        return;
+                    } else {
+                        //Error for non text channel
+                        interaction.reply({content:`I'm sorry, this channel is not a text channel.`, ephemeral: true })
+                        return;
+                    }
+                } catch (error) {
+                    //Critical Error Catch
+                    interaction.reply({content:`I'm sorry, there has been a error editing this confession.`, ephemeral: true })
+                    console.log(error)
+                    return;
+                }
             }
         }
 	},
