@@ -86,13 +86,13 @@ module.exports = {
         //Test if Hex Code is valid
         var hexRegex = /^#(?:[0-9a-fA-F]{3}){1,2}$/
         if(!hexRegex.test(colorParsed)) colorParsed = randomHexColor();
+        let confessionID = '';
         try{
             //Confession Checks
             if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Embed Links\`, and \`Send Messages in Threads\` `, ephemeral: true }) }
             if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`Embed Links\`, and \`View Channel\``, ephemeral: true })
             //Random ID Generator for moderation
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let confessionID = '';
             for (let i = 0; i < 4; i++) {
               const randomIndex = Math.floor(Math.random() * characters.length);
               confessionID += characters.charAt(randomIndex);
@@ -128,7 +128,7 @@ module.exports = {
         let ConfessionLog = new EmbedBuilder()
         .setTitle(`:love_letter: **Anonymous Confession**`)
         .setColor(randomHexColor())
-        .setDescription(`"${confessedmessage}" \n\n **User**  \n ||${interaction.member.user.username}  (${interaction.member})||`)
+        .setDescription(`**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})||`)
         .setTimestamp()
         .setFooter({text: "Meii"})
         confessionmodchannel.send({ embeds: [ConfessionLog], allowedMentions: {repliedUser: false}})    
