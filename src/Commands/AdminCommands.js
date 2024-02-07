@@ -244,7 +244,7 @@ module.exports = {
                         //Get Message
                         const confessionMessage = await storedChannel.messages.fetch(confessionDocument[0].message.id);
                         //Editing Message
-                        const TOSMessage = "\n__**This confession has been removed for breaking Discord's and or Meii's TOS.**__\n";
+                        const TOSMessage = "\n__**This confession has been removed for breaking Discord's And/or Meii's TOS.**__\n";
                         await confessionMessage.edit({content: `${TOSMessage}`, embeds: []});
                         interaction.reply({content:`The confession with the ID of **${givenConfessionID}** has been successfully edited/removed.`, ephemeral: false })
                         return;
