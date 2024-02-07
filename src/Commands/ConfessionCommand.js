@@ -112,14 +112,6 @@ module.exports = {
             let confessionNumber = botDocument[0].confession_number;
             confessionNumber = confessionNumber + 1;
             await bot_data.updateOne({ type: `prod` }, { $set: { confession_number: confessionNumber } });
-            //Personal Confession Log
-            let PersonalConfessionLog = new EmbedBuilder()
-            .setTitle(`${titleData}`)
-            .setColor(`${colorParsed}`)
-            .setDescription(`"${confessedmessage}" \n\n||**User**\n${interaction.member.user.username} \n\n**Server**\n${interaction.guild.name} \n\n**Customized**\n${dataExists}||`)
-            .setTimestamp()
-            .setFooter({text: `ID: ${confessionID}`})
-            client.channels.cache.get('1157159541549576242').send({ embeds: [PersonalConfessionLog], allowedMentions: {repliedUser: false}})
         }catch( error ){
             return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, ephemeral: true })
         }
