@@ -12,7 +12,7 @@ module.exports = {
 		//Database Collection Vars
 		let bot_data = databaseCollections.bot_data;
 		//Updated Date
-		let updatedDate = '12/10/2023'
+		let updatedDate = '2/07/2024'
 		//Memory Math
 		memoryUsageVar = process.memoryUsage()
 		memoryUsed = memoryUsageVar.rss/1000000
