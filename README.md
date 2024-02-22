@@ -7,7 +7,7 @@ A powerful multipurpose, gif emote, confession + logging, and moderation Discord
 
 ## Description
 
-Meii has an in-depth and simple anonymous confession system with logging. It is very well-polished and has many commands to keep you entertained while keeping your server safe. .
+Meii has an in-depth and simple anonymous confession system with logging. It is very well-polished and has many commands to keep you entertained while keeping your server safe.
 
 ## Getting Started
 
