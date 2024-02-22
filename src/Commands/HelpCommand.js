@@ -76,7 +76,7 @@ module.exports = {
                     let funHelpMenu = new EmbedBuilder()
                     .setTitle(":confetti_ball:  **Fun Commands**")
                     .setColor("#C3B1E1")
-                    .setDescription(`**Commands:**\n :raccoon: \`${prefix}animal [category]\`: \n Sends a random image of an animal \n\n :book: \`${prefix}define [word]\`: \n Sends the definition of a word \n\n :1234: \`${prefix}binary [encode/decode] [text]\`: \n Encodes/Decodes binary \n\n:laughing: \`${prefix}joke\`: \n Sends a ~~corny~~ joke \n\n :confetti_ball: \`${prefix}dice\`: \n Rolls a 6 sided die! \n\n :coin: \`${prefix}coinflip\`: \n Flips a coin! \n\n:smiling_imp: \`${prefix}dare [dare]\`: \n 50/50 chance of doing a given dare \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)                
+                    .setDescription(`**Commands:**\n :raccoon: \`${prefix}animal [category]\`: \n Sends a random image of an animal \n\n :book: \`${prefix}define [word]\`: \n Sends the definition of a word \n\n :1234: \`${prefix}binary [encode/decode] [text]\`: \n Encodes/Decodes binary \n\n:laughing: \`${prefix}joke\`: \n Sends a ~~corny~~ joke \n\n :confetti_ball: \`${prefix}dice\`: \n Rolls a 6 sided die! \n\n :coin: \`${prefix}coinflip\`: \n Flips a coin! \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)                
                     await interaction.editReply({ embeds: [funHelpMenu], allowedMentions: { repliedUser: false }})
                     break;     
                 //Emotes
