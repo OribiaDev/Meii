@@ -5,7 +5,7 @@ const moment = require("moment");
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('info')
-		.setDescription(`Sends some info about a user or the server!`)
+		.setDescription(`Gives some info about a user/server`)
         .addSubcommand(subcommand =>
             subcommand
                 .setName('user')

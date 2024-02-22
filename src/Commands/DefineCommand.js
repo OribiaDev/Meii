@@ -4,7 +4,7 @@ const randomHexColor = require('random-hex-color')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('define')
-		.setDescription(`Gets the definition of a word`)
+		.setDescription(`Defines a word`)
         .addStringOption(option =>
 			option
 				.setName('word')

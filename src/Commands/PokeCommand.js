@@ -3,7 +3,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('poke')
-		.setDescription('Pokes said user')
+		.setDescription('Annoyingly pokes a user')
         .addUserOption(option => 
             option.setName('user')
                   .setDescription('Select a user to poke')

@@ -3,7 +3,7 @@ const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('disc
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('set')
-		.setDescription(`Sets the channels for the confession module`)
+		.setDescription(`Sets the channels for confessions`)
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
         .addSubcommand(subcommand =>
             subcommand

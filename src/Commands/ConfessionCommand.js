@@ -4,7 +4,7 @@ const randomHexColor = require('random-hex-color')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('confess')
-		.setDescription('Submit an anonymous confession')
+		.setDescription('Submits an anonymous confession')
         .addStringOption(option =>
             option
                 .setName('message')

@@ -3,7 +3,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('yeet')
-		.setDescription('Yeets said person')
+		.setDescription('Yeets a user as far as it can')
         .addUserOption(option => 
             option.setName('user')
                   .setDescription('Select a user to yeet')

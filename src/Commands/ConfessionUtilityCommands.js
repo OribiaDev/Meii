@@ -8,7 +8,7 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('ban')
-                .setDescription('Bans a user from confessions')
+                .setDescription('Bans a user from using confessions on the server')
                 .addUserOption(option => 
                     option.setName('user')
                           .setDescription('Select a user to ban from confessions')
@@ -16,7 +16,7 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('unban')
-                .setDescription('Unbans a user from confessions')
+                .setDescription('Unbans a user  from using confessions on the server')
                 .addUserOption(option => 
                     option.setName('user')
                           .setDescription('Select a user to unban from confessions')

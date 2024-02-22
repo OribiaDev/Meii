@@ -3,7 +3,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('hug')
-		.setDescription('Hugs said user')
+		.setDescription('Tightly hugs a user')
         .addUserOption(option => 
             option.setName('user')
                   .setDescription('Select a user to hug')

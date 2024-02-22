@@ -3,7 +3,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('cuddle')
-		.setDescription('Cuddles said user')
+		.setDescription('Snuggles up with a user')
         .addUserOption(option => 
             option.setName('user')
                   .setDescription('Select a user to cuddle')

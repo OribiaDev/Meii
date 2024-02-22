@@ -3,7 +3,7 @@ const { SlashCommandBuilder } = require('discord.js')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('binary')
-		.setDescription(`Encodes/Decodes Binary `)
+		.setDescription(`Allows you to Encode/Decode Binary`)
         .addStringOption(option =>
             option.setName('function')
                 .setDescription('Encode/Decode')

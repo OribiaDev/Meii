@@ -3,7 +3,7 @@ const { SlashCommandBuilder } = require('discord.js')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('checklogs')
-		.setDescription('Checks if confession logs are enabled in the server'),
+		.setDescription('Checks if confession logs are enabled on the server'),
 	async execute(interaction, db, databaseCollections) {
         //Database Collections
         let server_data = databaseCollections.server_data;

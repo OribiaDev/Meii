@@ -3,7 +3,7 @@ const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('disc
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('kick')
-		.setDescription('Kick a user')
+		.setDescription('Spartan Kicks a user out of the server')
 		.setDefaultMemberPermissions(PermissionFlagsBits.KickMembers)
         .addUserOption(option => 
             option.setName('user')

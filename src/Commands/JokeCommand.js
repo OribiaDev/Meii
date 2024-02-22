@@ -3,7 +3,7 @@ const { SlashCommandBuilder } = require('discord.js')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('joke')
-		.setDescription('Sends a joke'),
+		.setDescription('Sends a dad joke'),
 	async execute(interaction) {
 		await interaction.deferReply();
 		fetch('https://icanhazdadjoke.com/', {
