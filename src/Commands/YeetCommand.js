@@ -24,7 +24,7 @@ module.exports = {
             yeetgif.setImage(String(image))
             yeetgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             yeetgif.setTimestamp()
-            await interaction.reply({ embeds: [yeetgif], allowedMentions: {repliedUser: true, users: [YeetUserID]}, content: `:smiling_imp: ${interaction.guild.members.cache.get(YeetUserID)} :smiling_imp:`}) 
+            await interaction.reply({ embeds: [yeetgif], allowedMentions: {repliedUser: true, users: [YeetUserID]}, content: `${interaction.guild.members.cache.get(YeetUserID)}`}) 
         });
 	},
 };

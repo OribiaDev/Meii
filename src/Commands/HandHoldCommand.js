@@ -24,7 +24,7 @@ module.exports = {
             holdgif.setImage(String(image))
             holdgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             holdgif.setTimestamp()
-            await interaction.reply({ embeds: [holdgif], allowedMentions: {repliedUser: true, users: [HoldUserID]}, content: `:people_holding_hands: ${interaction.guild.members.cache.get(HoldUserID)} :people_holding_hands:`})
+            await interaction.reply({ embeds: [holdgif], allowedMentions: {repliedUser: true, users: [HoldUserID]}, content: `${interaction.guild.members.cache.get(HoldUserID)}`})
         });
 	},
 };

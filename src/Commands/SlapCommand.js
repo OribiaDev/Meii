@@ -24,7 +24,7 @@ module.exports = {
             Slapgif.setImage(String(image))
             Slapgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             Slapgif.setTimestamp()
-            await interaction.reply({ embeds: [Slapgif], allowedMentions: {repliedUser: true, users: [SlapUserID]}, content: `:raised_hand: ${interaction.guild.members.cache.get(SlapUserID)} :raised_hand:`})
+            await interaction.reply({ embeds: [Slapgif], allowedMentions: {repliedUser: true, users: [SlapUserID]}, content: `${interaction.guild.members.cache.get(SlapUserID)}`})
         });
 	},
 };

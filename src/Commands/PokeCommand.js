@@ -24,7 +24,7 @@ module.exports = {
             pokegif.setImage(String(image))
             pokegif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             pokegif.setTimestamp()
-            await interaction.reply({ embeds: [pokegif], allowedMentions: {repliedUser: true, users: [PokeUserID]}, content: `:point_right: ${interaction.guild.members.cache.get(PokeUserID)} :point_left:`}) 
+            await interaction.reply({ embeds: [pokegif], allowedMentions: {repliedUser: true, users: [PokeUserID]}, content: `${interaction.guild.members.cache.get(PokeUserID)}`}) 
         });
 	},
 };

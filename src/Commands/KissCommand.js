@@ -24,7 +24,7 @@ module.exports = {
             KissGif.setImage(String(image))
             KissGif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             KissGif.setTimestamp()
-            await interaction.reply({ embeds: [KissGif], allowedMentions: {repliedUser: true, users: [KissUserID]}, content: `:sparkling_heart: ${interaction.guild.members.cache.get(KissUserID)} :sparkling_heart:`})     
+            await interaction.reply({ embeds: [KissGif], allowedMentions: {repliedUser: true, users: [KissUserID]}, content: `${interaction.guild.members.cache.get(KissUserID)}`})     
         });	
 	},
 };

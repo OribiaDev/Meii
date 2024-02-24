@@ -23,7 +23,7 @@ module.exports = {
             bonkgif.setImage(String(image))
             bonkgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             bonkgif.setTimestamp()
-            await interaction.reply({ embeds: [bonkgif], allowedMentions: {repliedUser: true, users: [BonkUserID]}, content:`:hammer: ${interaction.guild.members.cache.get(BonkUserID)} :hammer:`})
+            await interaction.reply({ embeds: [bonkgif], allowedMentions: {repliedUser: true, users: [BonkUserID]}, content:`${interaction.guild.members.cache.get(BonkUserID)}`})
         });
 	},
 };

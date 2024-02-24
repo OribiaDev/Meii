@@ -24,7 +24,7 @@ module.exports = {
             HugGif.setImage(String(image))
             HugGif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             HugGif.setTimestamp()
-            await interaction.reply({ embeds: [HugGif], allowedMentions: {repliedUser: true, users: [HugUserID]}, content: `:hugging: ${interaction.guild.members.cache.get(HugUserID)} :hugging:`})
+            await interaction.reply({ embeds: [HugGif], allowedMentions: {repliedUser: true, users: [HugUserID]}, content: `${interaction.guild.members.cache.get(HugUserID)}`})
             
         });
 	},

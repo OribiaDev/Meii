@@ -24,7 +24,7 @@ module.exports = {
             Killgif.setImage(String(image))
             Killgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             Killgif.setTimestamp()
-            await interaction.reply({ embeds: [Killgif], allowedMentions: {repliedUser: true, users: [KillUserID]}, content: `:knife: ${interaction.guild.members.cache.get(KillUserID)} :knife:`}) 
+            await interaction.reply({ embeds: [Killgif], allowedMentions: {repliedUser: true, users: [KillUserID]}, content: `${interaction.guild.members.cache.get(KillUserID)}`}) 
         });	
 	},
 };
