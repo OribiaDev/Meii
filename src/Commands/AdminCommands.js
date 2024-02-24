@@ -20,10 +20,18 @@ module.exports = {
                             { name: 'Leave', value: 'serverleave' },
                         ))
                 .addStringOption(option =>
-                    option
-                        .setName('serverid')
+                    option.setName('id_type')
+                        .setDescription('Types of IDs')
                         .setRequired(true)
-                        .setDescription('The ID of the server')))
+                        .addChoices(
+                            { name: 'Server ID', value: 'serverchoiceid' },
+                            { name: 'Confession ID', value: 'confessionchoiceid' },
+                        ))
+                .addStringOption(option =>
+                    option
+                        .setName('choiceid')
+                        .setRequired(true)
+                        .setDescription('The ID of your previous choice')))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('user')
@@ -50,7 +58,7 @@ module.exports = {
                     option
                         .setName('choiceid')
                         .setRequired(true)
-                        .setDescription('The ID of you previous choice')))
+                        .setDescription('The ID of your previous choice')))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('bot')
@@ -97,8 +105,28 @@ module.exports = {
         if(botDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find the bot data document.`, ephemeral: true })
         if (interaction.options.getSubcommand() === 'server') {
             //Server
-            const givenServerID = interaction.options.getString('serverid');
-            const serverObject = client.guilds.cache.get(givenServerID);
+
+
+            //Check if User or Confession ID
+            const moderationType = interaction.options.getString('moderation_type');
+            const id_type = interaction.options.getString('id_type');
+            const choiceId = interaction.options.getString('choiceid').toUpperCase();
+            let givenServerID = undefined;
+            let serverObject = undefined;
+            //Confession ID
+            if(id_type=='confessionchoiceid'){
+                //ID Lookup
+                const confessionDocument = await confession_data.find({ confession_id: choiceId }).toArray();
+                if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${choiceId}**.`, ephemeral: true })
+                //ID Set
+                serverObject = client.guilds.cache.get(confessionDocument[0].guild.id);
+                givenServerID = confessionDocument[0].guild.id;
+            }
+            //Server ID
+            if(id_type=='serverchoiceid'){
+                givenServerID = interaction.options.getString('choiceid'); 
+                serverObject = client.guilds.cache.get(givenServerID);
+            }
             //Ban
             if(moderationType=='serverban'){
                 let botBansArray = botDocument[0].server_bans || []
