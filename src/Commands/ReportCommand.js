@@ -45,6 +45,6 @@ module.exports = {
         .setDescription(`**Confession (${confession_id})**\n> ${confession_text}\n\n**Date**\n${confession_date}\n\n**Author**\n${confession_author} (${confession_author_id})\n\n**Guild**\n${guild_name} (${guild_id})\n\n**Report Author**\n${report_author} (${report_author_id})\n\n**Legacy**\n${confessionDocument[0].message ? false : true}\n\n**Is Reply**\n${confessionDocument[0].message.isReply ? true : false}\n\n**Additional Info**\n${additionalInfo}`)
         .setTimestamp()
         client.channels.cache.get(confession_report_channel_id).send({ embeds: [reportEmbed], allowedMentions: {repliedUser: false}})
-        return interaction.editReply({content:`Thank you, the confession with the ID of **${confession_id}** has now been reported.`, ephemeral: true })
+        return interaction.editReply({content:`Thank you, the confession/reply with the ID of **${confession_id}** has now been reported.`, ephemeral: true })
 	},
 };
