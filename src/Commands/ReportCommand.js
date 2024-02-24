@@ -8,7 +8,7 @@ module.exports = {
             option
                 .setName('confession_id')
                 .setRequired(true)
-                .setDescription('The ID of the confession, found in the footer'))
+                .setDescription('The ID of the confession, found in the footer or title'))
         .addStringOption(option =>
             option
                 .setName('additional_info')
@@ -24,7 +24,7 @@ module.exports = {
         let additionalInfo = interaction.options.getString('additional_info');
         //Confession Document
         const confessionDocument = await confession_data.find({ confession_id: confessionID }).toArray();
-        if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the bottom of the confession) is correct.`, ephemeral: true })
+        if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, ephemeral: true })
         //Confession Channel Lookup
         const botDocument = await bot_data.find({ type: 'prod' }).toArray();
         const confession_report_channel_id = botDocument[0].report_channel_id;

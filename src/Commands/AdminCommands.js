@@ -105,8 +105,6 @@ module.exports = {
         if(botDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find the bot data document.`, ephemeral: true })
         if (interaction.options.getSubcommand() === 'server') {
             //Server
-
-
             //Check if User or Confession ID
             const moderationType = interaction.options.getString('moderation_type');
             const id_type = interaction.options.getString('id_type');

@@ -8,7 +8,7 @@ module.exports = {
             option
                 .setName('confession_id')
                 .setRequired(true)
-                .setDescription('The ID of the confession, found in the footer')),
+                .setDescription('The ID of the confession, found in the footer or title')),
 	async execute(interaction, db, databaseCollections, client) {
         await interaction.deferReply({ ephemeral: true });
         //Database Collection Vars
@@ -17,7 +17,7 @@ module.exports = {
         const confessionID = interaction.options.getString('confession_id').toUpperCase();
         //Confession Document
         const confessionDocument = await confession_data.find({ confession_id: confessionID }).toArray();
-        if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the bottom of the confession) is correct.`, ephemeral: true })
+        if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, ephemeral: true })
         //Check if the user is authorized to delete
         if(interaction.user.id!==confessionDocument[0].author.id) return interaction.editReply({content:`I'm sorry, but you are not allowed to delete the confession with the ID of **${confessionID}** as it was not sent by you.`, ephemeral: true })
         //Check if legacy document
