@@ -24,7 +24,7 @@ module.exports = {
         //Get confession document
         const givenconfessionID = interaction.options.getString('confession_id').toUpperCase();
         const confessionDocument = await confession_data.find({ confession_id: givenconfessionID }).toArray();
-        if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, ephemeral: true })
+        if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${givenconfessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, ephemeral: true })
         //Get Guild from Document
         guildObject = client.guilds.cache.get(confessionDocument[0].guild.id);
         if(guildObject==undefined) return await interaction.editReply({content:`I'm sorry, I cannot find the guild thats associated with the confession ID of \`${givenconfessionID}\`.`, ephemeral: true })   
