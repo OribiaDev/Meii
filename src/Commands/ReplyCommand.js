@@ -87,16 +87,16 @@ module.exports = {
         //Confession Customization
         let defaultValues = { "title": `:love_letter: Anonymous Reply to {reply_id}  ({id})`, "body": "> {confession}", "color": "{random}"}
         let dataExists = false; 
-        if(guildDocument[0]?.customization) dataExists = true;
-        let titleData = dataExists ? defaultValues.title : defaultValues.title;
+        if(guildDocument[0]?.customization_reply) dataExists = true;
+        let titleData = dataExists ? guildDocument[0].customization_reply.title : defaultValues.title;
         let TitleParsed = titleData.replace('{id}', confessionID)
         TitleParsed = TitleParsed.replace('{ID}', confessionID)
         TitleParsed = TitleParsed.replace('{reply_id}', givenconfessionID)
         TitleParsed = TitleParsed.replace('{REPLY_ID}', givenconfessionID)
-        let bodyData = dataExists? guildDocument[0].customization.body : defaultValues.body;
+        let bodyData = dataExists? guildDocument[0].customization_reply.body : defaultValues.body;
         let bodyParsed = bodyData.replace('{confession}', confessedmessage)
         bodyParsed = bodyParsed.replace('{CONFESSION}', confessedmessage)
-        let colorData = dataExists ? guildDocument[0].customization.color : defaultValues.color;
+        let colorData = dataExists ? guildDocument[0].customization_reply.color : defaultValues.color;
         let colorParsed = colorData.replace('{random}', randomHexColor())
         colorParsed = colorParsed.replace('{RANDOM}', randomHexColor())
         //Test if confession is bigger than 4096 Char
@@ -137,7 +137,7 @@ module.exports = {
                             let confessionNumber = botDocument[0].confession_number;
                             confessionNumber = confessionNumber + 1;
                             await bot_data.updateOne({ type: `prod` }, { $set: { confession_number: confessionNumber } });
-                            await interaction.editReply({ content: `Your reply has now been added sent to **${confessionchannel}**  :thumbsup:`, ephemeral: true });
+                            await interaction.editReply({ content: `Your reply has now been added to **${confessionchannel}**  :thumbsup:`, ephemeral: true });
                             //Check if server has Confession Logging 
                             if(guildDocument[0].confession_modlog_id==undefined) return
                             if(!client.channels.cache.get(guildDocument[0].confession_modlog_id)) return

@@ -10,6 +10,10 @@ module.exports = {
 			.setCustomId(`cc-customize`)
 			.setLabel('Customize Confession Embed')
 			.setStyle(ButtonStyle.Primary);
+        const replycustomize = new ButtonBuilder()
+            .setCustomId(`reply-customize`)
+            .setLabel('Customize Confession Reply Embed')
+            .setStyle(ButtonStyle.Primary);
 		const reset = new ButtonBuilder()
 			.setCustomId('reset-customize')
 			.setLabel('Reset Customization')
@@ -19,7 +23,7 @@ module.exports = {
         .setLabel('Cancel')
         .setStyle(ButtonStyle.Secondary);
 		const row = new ActionRowBuilder()
-			.addComponents(confessioncustomize, reset, cancel);
+			.addComponents(confessioncustomize, replycustomize, reset, cancel);
 		await interaction.reply({
 			content: `Please select an option..`,
 			components: [row],
@@ -38,6 +42,15 @@ module.exports = {
         let titleData = guildDocument[0]?.customization?.title;
         let bodyData = guildDocument[0]?.customization?.body;
         let colorData = guildDocument[0]?.customization?.color;
+        let defaultValuesReply = { "title": ":love_letter: Anonymous Reply to {reply_id}  ({id})", "body": "> {confession}", "color": "{random}"}
+        let dataExistsReply = false;
+        if(guildDocument[0]?.customization_reply) dataExists = true;
+        let titleDataReply = guildDocument[0]?.customization_reply?.title;
+        let bodyDataReply = guildDocument[0]?.customization_reply?.body;
+        let colorDataReply = guildDocument[0]?.customization_reply?.color;
+
+
+
         //Customize Modal
         if (interaction.customId === 'cc-customize') { 
             //Modal
@@ -121,6 +134,89 @@ module.exports = {
             }).catch((e) => {
                 return
             }); 
+        }else if(interaction.customId === 'reply-customize'){
+            //Customize Relpy Embed Button
+            //Modal
+            const ReplyModal = new ModalBuilder()
+            .setCustomId(`ReplyModal-${interaction.user.id}`)
+            .setTitle('Confession Reply Customization');
+            //Title
+            let titleString = dataExistsReply ? titleDataReply : defaultValuesReply.title;
+            const titleInput = new TextInputBuilder()
+            .setCustomId('titleinput')
+            .setLabel("Title | {reply_id}, {id}")
+            .setValue(titleString)
+            .setStyle(TextInputStyle.Short);
+            //Body
+            let bodyString = dataExistsReply ? bodyDataReply : defaultValuesReply.body;
+            const bodyInput = new TextInputBuilder()
+            .setCustomId('bodyinput')
+            .setLabel("Body | {confession}")
+            .setValue(bodyString)
+            .setStyle(TextInputStyle.Short);
+            //Color
+            let colorString = dataExistsReply ? colorDataReply : defaultValuesReply.color;
+            const colorInput = new TextInputBuilder()
+            .setCustomId('colorInput')
+            .setLabel("Color (#Hex-Code) | {random}")
+            .setValue(colorString)
+            .setStyle(TextInputStyle.Short);
+            //Action Rows
+            const titleActionRow = new ActionRowBuilder().addComponents(titleInput);
+            const bodyActionRow = new ActionRowBuilder().addComponents(bodyInput);
+            const colorActionRow = new ActionRowBuilder().addComponents(colorInput);
+            //Add to Modal
+            ReplyModal.addComponents(titleActionRow, bodyActionRow, colorActionRow);
+            await interaction.showModal(ReplyModal);
+            //Customize Modal Collector
+            const filter = (interaction) => interaction.customId === `ReplyModal-${interaction.user.id}`;
+            interaction.awaitModalSubmit({filter, time: 300000}).then(async (modalInteraction) => {
+                //Variables
+                const titleText = modalInteraction.fields.getTextInputValue('titleinput');
+                const bodyText = modalInteraction.fields.getTextInputValue('bodyinput');
+                const colorText = modalInteraction.fields.getTextInputValue('colorInput');
+                //Document Not Found
+                let serverNotFound = new EmbedBuilder()
+                .setTitle(`**Customization: Server Not Found**`)
+                .setColor("#ff6961")
+                .setDescription(`I'm sorry, this server hasnt setup confessions.`)
+                .setFooter({text:`You can set it up with /set`})
+                if(guildDocument[0]==undefined) return modalInteraction.update({content: "", embeds: [serverNotFound], components: [], ephemeral: true }); 
+                //Check if values are default 
+                if(titleText == defaultValuesReply.title && bodyText == defaultValuesReply.body && colorText == defaultValuesReply.color){
+                    //Values Default
+                    let customizationSaved = new EmbedBuilder()
+                    .setTitle(`**Customization: Customization Saved**`)
+                    .setColor("#77DD77")
+                    .setDescription(`Your customizations have been saved.`)
+                    .setFooter({text:"If something doesnt work, make sure you filled in the values correctly!"})  
+                    await modalInteraction.update({content: ``, embeds: [customizationSaved], components: []});
+                    return
+                }
+                //Check if values are in database
+                if(titleText == titleDataReply && bodyText == bodyDataReply && colorText == colorDataReply ){
+                    //Values Same
+                    let customizationSaved = new EmbedBuilder()
+                    .setTitle(`**Customization: Customization Saved**`)
+                    .setColor("#77DD77")
+                    .setDescription(`Your customizations have been saved.`)
+                    .setFooter({text:"If something doesnt work, make sure you filled in the values correctly!"})  
+                    await modalInteraction.update({content: ``, embeds: [customizationSaved], components: []});
+                    return
+                }
+                //Update Document
+                await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { customization_reply: { "title":`${titleText}`, "body":`${bodyText}`, "color":`${colorText}` } } });
+                //Tell User Document Saved
+                let customizationSaved = new EmbedBuilder()
+                .setTitle(`**Customization: Customization Saved**`)
+                .setColor("#77DD77")
+                .setDescription(`Your customizations have been saved.`)
+                .setFooter({text:"If something doesnt work, make sure you filled in the values correctly!"})  
+                await modalInteraction.update({content: ``, embeds: [customizationSaved], components: []});
+                return
+            }).catch((e) => {
+                return
+            });
         }else if(interaction.customId === 'reset-customize'){
             //Reset Button
             //Check if document exists
@@ -149,6 +245,7 @@ module.exports = {
             //Confirm Reset Button
             //Reset in document
             await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $unset: { customization: "" } });
+            await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $unset: { customization_reply: "" } });
             //Tell User it has been reset
             let customizationReset = new EmbedBuilder()
             .setTitle(`**Customization: Customization Reset**`)
