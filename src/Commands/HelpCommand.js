@@ -60,7 +60,7 @@ module.exports = {
                     let confessionHelpMenu = new EmbedBuilder()
                     .setTitle(":scream:  **Confession Commands**")
                     .setColor("#C3B1E1")
-                    .setDescription(`**Confession Tutorial:** \n To submit a confession, simply use the command \`/confess\` along with the message in the server you wish to confess too. \n\n **Commands:**\n :grey_question: \`${prefix}confess [message]\` \n Sends an anonymous confession \n\n :exclamation: \`${prefix}report [confession_id]\`: \n Reports a confession\n\n:speech_left: \`${prefix}set confession_channel [#channel]\`: \n Sets the confession channel \n\n :hammer_pick: \`${prefix}set confession_log_channel [#channel]\`: \n Sets the logging channel for confessions \n\n:clipboard: \`${prefix}customize\`: \n Lets you customize the confession embed! \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
+                    .setDescription(`**Confession Tutorial:** \n To submit a confession, simply use the command \`/confess\` along with the message in the server you wish to confess too. \n\n **Commands:**\n :grey_question: \`${prefix}confess [message]\` \n Sends an anonymous confession \n\n :pen_ballpoint: \`${prefix}reply [confession_id]\`: \n Anonymously replys to a sent confession \n\n :wastebasket: \`${prefix}delete [confession_id]\`: \n Allows you to delete a confession that was sent by you\n\n :exclamation: \`${prefix}report [confession_id]\`: \n Reports a confession\n\n:speech_left: \`${prefix}set confession_channel [#channel]\`: \n Sets the confession channel \n\n :hammer_pick: \`${prefix}set confession_log_channel [#channel]\`: \n Sets the logging channel for confessions \n\n:clipboard: \`${prefix}customize\`: \n Lets you customize the confession embed! \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
                     await interaction.editReply({ embeds: [confessionHelpMenu], allowedMentions: { repliedUser: false }})
                     break;
                 //Moderation
@@ -68,7 +68,7 @@ module.exports = {
                     let moderationHelpMenu = new EmbedBuilder()
                     .setTitle(":tools:  **Moderation Commands**")
                     .setColor("#C3B1E1")
-                    .setDescription(`**Commands:**\n :hammer: \`${prefix}ban [@someone]\`: \n Bans mentioned user from the server \n\n :leg: \`${prefix}kick [@someone]\`: \n kicks mentioned user from the server \n\n :hammer: \`${prefix}confessban\`: \n Bans someone from using confessions \n\n :no_entry_sign: \`${prefix}confessunban\`: \n Unbans someone from using confessions \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)                   
+                    .setDescription(`**Commands:**\n :hammer: \`${prefix}ban [@someone]\`: \n Bans mentioned user from the server \n\n :leg: \`${prefix}kick [@someone]\`: \n kicks mentioned user from the server \n\n :hammer: \`${prefix}confessban [user/confession]\`: \n Bans someone from using confessions \n\n :no_entry_sign: \`${prefix}confessunban [user/confession]\`: \n Unbans someone from using confessions \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)                   
                     await interaction.editReply({ embeds: [moderationHelpMenu], allowedMentions: { repliedUser: false }})
                     break;
                 //Fun
