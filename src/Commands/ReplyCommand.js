@@ -85,7 +85,7 @@ module.exports = {
             confessionID += characters.charAt(randomIndex);
         }
         //Confession Customization
-        let defaultValues = { "title": `:love_letter: Anonymous Reply to {reply_id}  ({id})`, "body": "> {confession}", "color": "{random}"}
+        let defaultValues = { "title": `:love_letter: Anonymous Reply to {reply_id}`, "body": "> {confession}", "color": "{random}"}
         let dataExists = false; 
         if(guildDocument[0]?.customization_reply) dataExists = true;
         let titleData = dataExists ? guildDocument[0].customization_reply.title : defaultValues.title;
@@ -127,7 +127,7 @@ module.exports = {
                             .setTitle(`${TitleParsed}`)
                             .setColor(`${colorParsed}`)
                             .setDescription(`${bodyParsed}`)
-                            .setFooter({text: `✨  If this confession breaks TOS or is overtly hateful, you can report it with "${prefix}report ${confessionID}"`})
+                            .setFooter({text: `✨  If this reply breaks TOS or is overtly hateful, you can report it with "${prefix}report ${confessionID}"`})
                             const sentConfession = await confessionMessage.reply({ embeds: [Confession], allowedMentions: {repliedUser: false}}) 
                             //Get message ID
                             const confessionMessageId = sentConfession.id;
