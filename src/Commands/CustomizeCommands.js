@@ -32,7 +32,7 @@ module.exports = {
         if(interaction.user.id !== interaction.message.interaction.user.id) return interaction.reply({content:"Im sorry, you cannot use this button!", ephemeral: true })
         const guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
         //Variables
-        let defaultValues = { "title": "**:love_letter: Anonymous Confession**", "body": "> {confession}", "color": "{random}"}
+        let defaultValues = { "title": "**:love_letter: Anonymous Confession** ({id})", "body": "> {confession}", "color": "{random}"}
         let dataExists = false;
         if(guildDocument[0]?.customization) dataExists = true;
         let titleData = guildDocument[0]?.customization?.title;
@@ -48,7 +48,7 @@ module.exports = {
             let titleString = dataExists ? titleData : defaultValues.title;
             const titleInput = new TextInputBuilder()
             .setCustomId('titleinput')
-            .setLabel("Title")
+            .setLabel("Title | {id}")
             .setValue(titleString)
             .setStyle(TextInputStyle.Short);
             //Body
