@@ -31,7 +31,7 @@ module.exports = {
         let AdminUserConfessionBanned = new EmbedBuilder()
         .setTitle(`**${interaction.member.user.username} : Confession Banned**`)
         .setColor("#ff6961")
-        .setDescription(`I'm sorry, you are gloablly banned from using the confession feature on Meii.`)
+        .setDescription(`I'm sorry, you are globally banned from using the confession feature on Meii.`)
         .setFooter({text:`If you think this is a mistake, please join the support server.`})
         const userBansArray = botDocument[0].user_confession_bans || [] 
         let userBanindex = userBansArray.indexOf(`${interaction.member.user.id}`);
