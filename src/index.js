@@ -43,15 +43,14 @@ client.login(token)
 
 //Top.GG
 if(!IsDev){
-    try{
-        //Poster Var
-        const poster = AutoPoster(tokens.top_gg_token, client)
-        poster.on('posted', (stats) => { // ran when succesfully posted
-            console.log(`Posted stats to Top.gg | ${stats.serverCount} servers.`)
-        })
-    }catch{
+    //Poster Var
+    const poster = AutoPoster(tokens.top_gg_token, client)
+    poster.on('posted', (stats) => { // ran when succesfully posted
+        console.log(`Posted stats to Top.gg | ${stats.serverCount} servers.`)
+    })
+    poster.on('error', (err) => { 
         return console.log('Top.GG API Error')
-    }
+    }) 
 }
 
 //Auto Server Database Purge (Ran only on startup)
