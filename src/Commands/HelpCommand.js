@@ -52,8 +52,14 @@ module.exports = {
         //Collect Response
         const collector = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect});
         collector.on('collect', async i => {
+            //Old Message Handler (Critical Error w/o)
+            const fifteenMinutesAgo = 15 * 60 * 1000; // 15 minutes in milliseconds
+            const currentTime = new Date();
+            const messageTimestamp = i.message.createdTimestamp;
+            const differenceofTime = currentTime - messageTimestamp;
+            if (differenceofTime > fifteenMinutesAgo) return;
             const selection = i.values[0];
-            //Help Menues
+            //Help Menus
             switch (selection) {
                 //Confesion
                 case 'help_confessions':
