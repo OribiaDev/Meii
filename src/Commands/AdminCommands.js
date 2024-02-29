@@ -282,7 +282,6 @@ module.exports = {
                 } catch (error) {
                     //Critical Error Catch
                     interaction.reply({content:`I'm sorry, there has been a error editing this confession.`, ephemeral: true })
-                    console.log(error)
                     return;
                 }
             }
