@@ -11,10 +11,12 @@ module.exports = {
                 .setRequired(true)
 				.setDescription('The word to lookup')),
 	async execute(interaction) {
+        await interaction.deferReply();
         const word = interaction.options.getString('word');
         let data = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
-        if(!data.ok) return await interaction.reply({ content:"I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });        
-        if(data.statusText == 'Not Found') return await interaction.reply({ content: `I cannot find that word!`, allowedMentions: { repliedUser: false }, ephemeral: true })     
+        console.log(data)
+        if(data?.statusText == 'Not Found') return await interaction.editReply({ content: `I'm sorry, I cannot find that word.`, allowedMentions: { repliedUser: false }, ephemeral: true })
+        if(!data.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });        
         let info = await data.json();
         let result = info[0];         
         //Embed Data
@@ -44,6 +46,6 @@ module.exports = {
         )
         .setFooter({text:`Requested by ${interaction.member.user.username}`})
         .setTimestamp()
-        await interaction.reply({ embeds: [dicembed], allowedMentions: { repliedUser: false }})
+        await interaction.editReply({ embeds: [dicembed], allowedMentions: { repliedUser: false }})
 	},
 };
