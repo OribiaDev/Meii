@@ -11,6 +11,7 @@ module.exports = {
                 .setRequired(true)
                 .setDescription('The message you want to confess')),
 	async execute(interaction, db, databaseCollections, client, prefix) {
+        if(!interaction) return;
         await interaction.deferReply({ ephemeral: true });
         //Database Collections
         let server_data = databaseCollections.server_data;
