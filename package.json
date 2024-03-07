@@ -50,6 +50,7 @@
     "mongodb": "^5.7.0",
     "mootools": "^1.5.2",
     "node-fetch": "^2.6.9",
+    "node-schedule": "^2.1.1",
     "normalize-url": "^4.5.1",
     "once": "^1.4.0",
     "p-cancelable": "^2.1.0",

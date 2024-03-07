@@ -7,6 +7,7 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { MongoClient } = require('mongodb');
 const { AutoPoster } = require('topgg-autoposter')
+const schedule = require('node-schedule');
 const fs = require('fs');
 var ip = require("ip");
 
@@ -71,7 +72,7 @@ async function ServerDatabasePurge(){
     await console.log(`Successfully purged (${serverCounter}) server document(s). \n`)
 }
 
-//Auto Confession Database Purge
+//Confession Database Purge
 async function ConfessionDatabasePurge(){
     console.log('Attempting to purge the confession database..')
     //Database Variables
@@ -83,10 +84,6 @@ async function ConfessionDatabasePurge(){
     //Delete the documents
     const result = await confession_data.deleteMany({ document_date: { $lt: desiredDate } });
     console.log(`Successfully purged (${result.deletedCount}) confession document(s).`)
-    setTimeout(() => {
-        // Refresh every 24 Hours
-        ConfessionDatabasePurge();
-    }, 1000 * 60 * 60 * 24);
 }
 
 //Command Handler 
@@ -108,7 +105,7 @@ function CommandRefresh(){
     //Push Slash Commands to Discord API
     (async () => {
         try {
-            console.log('Attempting to refresh application (/) commands...');
+            console.log('Attempting to reload application (/) commands...');
             if(IsDev){
                 await rest.put(
                     //Dev Client
@@ -165,7 +162,8 @@ client.once(Events.ClientReady, async () => {
     console.log('Connected successfully to the database. \n');
     await CommandRefresh();
     await ServerDatabasePurge();
-    await ConfessionDatabasePurge();
+    await schedule.scheduleJob('0 0 * * *', () => {ConfessionDatabasePurge()}) // Ran everyday at midnight
+    await console.log('Successfully started the confession purge schedule.')
     await console.log('\n')
     await activityRefresh();
     await console.log("Launched!")
