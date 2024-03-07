@@ -133,6 +133,10 @@ module.exports = {
         .setDescription(`**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})||`)
         .setTimestamp()
         .setFooter({text: "Meii"})
-        confessionmodchannel.send({ embeds: [ConfessionLog], allowedMentions: {repliedUser: false}})    
+        try{
+            confessionmodchannel.send({ embeds: [ConfessionLog], allowedMentions: {repliedUser: false}})
+        }catch{
+            return
+        }    
 	},
 };
