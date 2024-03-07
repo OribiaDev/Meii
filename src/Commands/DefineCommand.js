@@ -14,7 +14,6 @@ module.exports = {
         await interaction.deferReply();
         const word = interaction.options.getString('word');
         let data = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
-        console.log(data)
         if(data?.statusText == 'Not Found') return await interaction.editReply({ content: `I'm sorry, I cannot find that word.`, allowedMentions: { repliedUser: false }, ephemeral: true })
         if(!data.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });        
         let info = await data.json();
