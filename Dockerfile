@@ -12,6 +12,9 @@ RUN npm install
 # Copys files excluding stuff in dockerignore
 COPY . .
 
+# Timezone Set
+ENV TZ America/New_York
+
 # Runs index.js using forever
 # npx is shortcut to node_modules folder
 # -a is for logging
