@@ -7,19 +7,19 @@ module.exports = {
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
 	async execute(interaction) {
 		const confessioncustomize = new ButtonBuilder()
-			.setCustomId(`cc-customize`)
+			.setCustomId(`customize-confession`)
 			.setLabel('Customize Confession Embed')
 			.setStyle(ButtonStyle.Primary);
         const replycustomize = new ButtonBuilder()
-            .setCustomId(`reply-customize`)
+            .setCustomId(`customize-reply`)
             .setLabel('Customize Confession Reply Embed')
             .setStyle(ButtonStyle.Primary);
 		const reset = new ButtonBuilder()
-			.setCustomId('reset-customize')
+			.setCustomId('customize-reset')
 			.setLabel('Reset Customization')
 			.setStyle(ButtonStyle.Danger);
         const cancel = new ButtonBuilder()
-        .setCustomId('cancel-customize')
+        .setCustomId('customize-cancel')
         .setLabel('Cancel')
         .setStyle(ButtonStyle.Secondary);
 		const row = new ActionRowBuilder()
@@ -52,7 +52,7 @@ module.exports = {
 
 
         //Customize Modal
-        if (interaction.customId === 'cc-customize') { 
+        if (interaction.customId === 'customize-confession') { 
             //Modal
             const ccModal = new ModalBuilder()
             .setCustomId(`ccModal-${interaction.user.id}`)
@@ -134,7 +134,7 @@ module.exports = {
             }).catch((e) => {
                 return
             }); 
-        }else if(interaction.customId === 'reply-customize'){
+        }else if(interaction.customId === 'customize-reply'){
             //Customize Relpy Embed Button
             //Modal
             const ReplyModal = new ModalBuilder()
@@ -217,7 +217,7 @@ module.exports = {
             }).catch((e) => {
                 return
             });
-        }else if(interaction.customId === 'reset-customize'){
+        }else if(interaction.customId === 'customize-reset'){
             //Reset Button
             //Check if document exists
             let serverNotFound = new EmbedBuilder()
@@ -227,21 +227,21 @@ module.exports = {
             .setFooter({text:`You can set it up with /set`})
             if(guildDocument[0]==undefined) return interaction.update({content: "", embeds: [serverNotFound], components: [], ephemeral: true }); 
             const confirmButton = new ButtonBuilder()
-            .setCustomId('resetConfirm-customize')
+            .setCustomId('customize-resetConfirm')
             .setLabel('Confirm')
             .setStyle(ButtonStyle.Danger);
             const cancelButton = new ButtonBuilder()
-            .setCustomId('cancel-customize')
+            .setCustomId('customize-cancel')
             .setLabel('Cancel')
             .setStyle(ButtonStyle.Secondary);
             const row = new ActionRowBuilder()
                 .addComponents(confirmButton, cancelButton);
             await interaction.update({content: `Are you sure you want to reset any and all customizations? \nThis will irreversibility reset any customizations to default.`, components: [row], });
-        }else if(interaction.customId === 'cancel-customize'){
+        }else if(interaction.customId === 'customize-cancel'){
             //Cancel Button
             await interaction.update({content: `cancelled.`, components: [], ephermal: true})
             return
-        }else if(interaction.customId === 'resetConfirm-customize'){
+        }else if(interaction.customId === 'customize-resetConfirm'){
             //Confirm Reset Button
             //Reset in document
             await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $unset: { customization: "" } });

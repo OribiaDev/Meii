@@ -171,7 +171,7 @@ client.once(Events.ClientReady, async () => {
     console.log("----")
 });
 
-//Slash Command Function
+//Interaction Handler
 client.on(Events.InteractionCreate, async interaction => {
     //Database Variables
     const db = mongoClient.db(database.name)
@@ -185,19 +185,28 @@ client.on(Events.InteractionCreate, async interaction => {
     const userBansArray = botDocument[0].user_bans || [] 
     let index = userBansArray.indexOf(`${interaction.user.id}`);
     if (index !== -1) return await interaction.reply({content:"I'm sorry, you are banned from using Meii.\n\nIf you think this is a mistake, please join the [support server](https://discord.gg/E23tPPTwSc).", ephemeral: true })
-    if(interaction.isButton() && interaction.customId.includes("customize")){
-        //Customize Button Handler (Modal) 
-        await client.commands.get('customize').handleButton(interaction, db, databaseCollections); 
-    }else{
+    //Button Handler (commandName-buttonFunction)
+    if(interaction.isButton()){ 
+        commandArgs = interaction.customId.toString().split('-');
+        try{
+            await client.commands.get(commandArgs[0]).handleButton(interaction, db, databaseCollections); 
+        }catch(e){
+            console.error(e)
+            return await interaction.reply({ content: 'There was an error while executing this button. Please try again later.', ephemeral: true });
+        }
+    }
+    //Command Handler
+    if(interaction.isCommand){
+        //Command Handler
         if (!interaction.isCommand()) return;
         if(!interaction.guild) return interaction.reply({content:"Im sorry, this command can only be ran in a server!", ephemeral: true })
-        //Existing Database Command Handler      
+        //Existing Database Command Handler       
         const { commandName } = interaction;
         if (!client.commands.has(commandName)) return;
         try {
             await client.commands.get(commandName).execute(interaction, db, databaseCollections, client, prefix);
-        } catch (error) {
-            console.error(error);
+        } catch (e) {
+            console.error(e);
             return await interaction.reply({ content: 'There was an error while executing this command. Please try again later.', ephemeral: true });
         }  
     }
