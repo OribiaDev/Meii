@@ -69,7 +69,7 @@ async function ServerDatabasePurge(){
             serverCounter++;
         }
     }
-    await console.log(`Successfully purged (${serverCounter}) server document(s). \n`)
+    console.log(`Successfully purged (${serverCounter}) server document(s). \n`)
 }
 
 //Confession Database Purge
@@ -133,7 +133,7 @@ function CommandRefresh(){
 
 //Activity Refresher
 async function activityRefresh(){
-    await client.user.setActivity(`${prefix}help`, { type: ActivityType.Listening })
+    client.user.setActivity(`${prefix}help`, { type: ActivityType.Listening })
     setTimeout(() => {
         //Refresh every 6 hours
         activityRefresh();
@@ -160,13 +160,14 @@ client.once(Events.ClientReady, async () => {
     console.log('Attempting to connect to the database...');
     await mongoClient.connect();
     console.log('Connected successfully to the database. \n');
-    await CommandRefresh();
+    CommandRefresh();
     await ServerDatabasePurge();
-    await schedule.scheduleJob('0 0 * * *', () => {ConfessionDatabasePurge()}) // Ran everyday at midnight
-    await console.log('Successfully started the confession purge schedule.')
-    await console.log('\n')
+    schedule.scheduleJob('0 0 * * *', () => { ConfessionDatabasePurge(); }) // Ran everyday at midnight
+ // Ran everyday at midnight
+    console.log('Successfully started the confession purge schedule.')
+    console.log('\n')
     await activityRefresh();
-    await console.log("Launched!")
+    console.log("Launched!")
     client.user.setStatus("online");
     console.log("----")
 });
