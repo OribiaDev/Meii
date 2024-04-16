@@ -132,7 +132,7 @@ module.exports = {
                             //Get message ID
                             const confessionMessageId = sentConfession.id;
                             //Send confession data to confession moderation database
-                            await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${guildObject.name}`, "id": `${guildObject.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}`, "isReply": true }});
+                            await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${guildObject.name}`, "id": `${guildObject.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}`, "isReply": `${givenconfessionID}` }});
                             //Confession Number Increase
                             let confessionNumber = botDocument[0].confession_number;
                             confessionNumber = confessionNumber + 1;
