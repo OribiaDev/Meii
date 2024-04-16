@@ -9,7 +9,11 @@ module.exports = {
             option
                 .setName('message')
                 .setRequired(true)
-                .setDescription('The message you want to confess')),
+                .setDescription('The message you want to confess'))
+        .addAttachmentOption((option)=> option
+            .setRequired(false)
+            .setName("attatchment")
+            .setDescription("the image/GIF to attach to the confession")),      
 	async execute(interaction, db, databaseCollections, client, prefix) {
         if(!interaction) return;
         await interaction.deferReply({ ephemeral: true });
@@ -66,6 +70,10 @@ module.exports = {
         //Getting Confession Info
         let confessionchannel = interaction.guild.channels.cache.get(guildDocument[0].confession_channel_id)
         let confessedmessage = interaction.options.getString('message');
+        const attachment = interaction.options.getAttachment("attatchment")
+        //Attatchment Image Check
+        let contentType = attachment?.contentType;
+        if(attachment?.url && !String(contentType).includes('image')) return await interaction.editReply({ content: `I'm sorry, the attatchment you attatched is not an image. Meii only supports images at this time.`, ephemeral: true });
         //Random ID Generator for moderation
         let confessionID = '';
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -100,17 +108,21 @@ module.exports = {
             //Confession Checks
             if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Embed Links\`, and \`Send Messages in Threads\` `, ephemeral: true }) }
             if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`Embed Links\`, and \`View Channel\``, ephemeral: true })
-            //Sending Confession
             let Confession = new EmbedBuilder()
             .setTitle(`${TitleParsed}`)
             .setColor(`${colorParsed}`)
             .setDescription(`${bodyParsed}`)
+            .setImage(attachment?.url)
             .setFooter({text: `✨  If this confession breaks TOS or is overtly hateful, you can report it with "${prefix}report ${confessionID}"`})
             const sentConfession = await confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}}) 
             //Get message ID
             const confessionMessageId = sentConfession.id;
-            //Send confession data to confession moderation database
-            await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}`, "isReply": false }});
+            //Log confession data
+            if(attachment?.url){
+                await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`, "confession_attatchment": `${attachment.url}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}`}});
+            }else {
+                await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}`}});
+            }
             //Confession Number Increase
             let confessionNumber = botDocument[0].confession_number;
             confessionNumber = confessionNumber + 1;
@@ -128,10 +140,15 @@ module.exports = {
         if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return
         if(confessionmodchannel.isThread()){ if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)){return}}
         //Sending the Confession Log
+        let LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})||`
+        if(attachment?.url){
+            LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**`
+        }
         let ConfessionLog = new EmbedBuilder()
         .setTitle(`:love_letter: **Anonymous Confession**`)
         .setColor(randomHexColor())
-        .setDescription(`**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})||`)
+        .setDescription(LogD)
+        .setImage(attachment?.url)
         .setTimestamp()
         .setFooter({text: "Meii"})
         try{
