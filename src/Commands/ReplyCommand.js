@@ -161,14 +161,13 @@ module.exports = {
                             //Sending the Confession Log
                             let LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})||`
                             if(attachment?.url){
-                                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**`
+                                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**\n${attachment?.url}`
                             }
                             let ConfessionLog = new EmbedBuilder()
                             .setTitle(`:love_letter: **Anonymous Reply to ${givenconfessionID}**`)
                             .setColor(randomHexColor())
                             .setDescription(LogD)
                             .setTimestamp()
-                            .setImage(attachment?.url)
                             .setFooter({text: "Meii"})
                             confessionmodchannel.send({ embeds: [ConfessionLog], allowedMentions: {repliedUser: false}})    
                             return;
