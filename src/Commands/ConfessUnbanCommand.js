@@ -59,7 +59,7 @@ module.exports = {
             const confessionID = interaction.options.getString('confession_id').toUpperCase();
             //Confesson Document
             const confessionDocument = await confession_data.find({ confession_id: confessionID }).toArray();
-            if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, ephemeral: true })
+            if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, ephemeral: true })
             //Get User
             let confession_author_id = confessionDocument[0].author.id;
             let confession_author_username = confessionDocument[0].author.username;

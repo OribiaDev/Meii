@@ -59,6 +59,7 @@ module.exports = {
             .setTitle('Confession Customization');
             //Title
             let titleString = dataExists ? titleData : defaultValues.title;
+            if(titleString==undefined) titleString = defaultValues.title;
             const titleInput = new TextInputBuilder()
             .setCustomId('titleinput')
             .setLabel("Title | {id}")
