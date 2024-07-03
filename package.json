@@ -1,6 +1,6 @@
 {
   "name": "meii",
-  "version": "1.14.3",
+  "version": "1.14.4",
   "description": "",
   "main": "./src/index.js",
   "dependencies": {
@@ -21,7 +21,7 @@
     "describe": "^1.2.0",
     "discord": "^0.8.2",
     "discord-api-types": "^0.22.0",
-    "discord.js": "^14.7.0",
+    "discord.js": "^14.15.3",
     "discordjs-logger": "^2.0.0",
     "end-of-stream": "^1.4.4",
     "event-target-shim": "^5.0.1",
