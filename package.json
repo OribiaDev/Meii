@@ -1,6 +1,6 @@
 {
   "name": "meii",
-  "version": "1.14.4",
+  "version": "1.15.0",
   "description": "",
   "main": "./src/index.js",
   "dependencies": {
@@ -49,6 +49,7 @@
     "moment-duration-format": "^2.3.2",
     "mongodb": "^5.7.0",
     "mootools": "^1.5.2",
+    "node": "^20.15.0",
     "node-fetch": "^2.6.9",
     "node-schedule": "^2.1.1",
     "normalize-url": "^4.5.1",

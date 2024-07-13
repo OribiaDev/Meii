@@ -21,7 +21,7 @@ module.exports = {
                     option.setName('channel')
                             .setDescription('Select a channel for the confession logging')
                             .setRequired(true))),
-	async execute(interaction, db, databaseCollections, client) {
+	async execute(interaction, db, databaseCollections, client, shardCollections) {
         //Database Collections
         let server_data = databaseCollections.server_data;
         //Sets Confession Channel
@@ -34,7 +34,7 @@ module.exports = {
             if(updateResult.matchedCount==0){
                 //Create New Document 
                 await server_data.insertOne({ "server_id": `${interaction.guild.id}`, "confession_channel_id": `${channel.id}` });
-                console.log(`New Database Document Created with GuildID: ${interaction.guild.id}`);
+                console.log(`(Shard ${shardCollections.shardID}): New Database Document Created with GuildID: ${interaction.guild.id}`);
                 let ChannelSet = new EmbedBuilder()
                 .setTitle(`**Confession Setup: Confession Channel Set**`)
                 .setColor("#77DD77")

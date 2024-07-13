@@ -22,7 +22,7 @@ module.exports = {
                         .setName('confession_id')
                         .setRequired(true)
                         .setDescription('The ID of the confession, found in the footer or title'))),
-	async execute(interaction, db, databaseCollections, client, prefix) {
+	async execute(interaction, db, databaseCollections, client, shardCollections, prefix) {
         //Database Collections
         let server_data = databaseCollections.server_data;
         let confession_data = databaseCollections.confession_data;

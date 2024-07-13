@@ -4,34 +4,34 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('admin')
 		.setDescription(`Bot Admin Controls`)
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('server')
-                .setDescription('Server Bot Moderation')
-                .addStringOption(option =>
-                    option.setName('moderation_type')
-                        .setDescription('Types of moderation')
-                        .setRequired(true)
-                        .addChoices(
-                            { name: 'Ban', value: 'serverban' },
-                            { name: 'Unban', value: 'serverunban' },
-                            { name: 'Confession Ban', value: 'serverconfessionban' },
-                            { name: 'Confession Unban', value: 'serverconfessionunban' },
-                            { name: 'Leave', value: 'serverleave' },
-                        ))
-                .addStringOption(option =>
-                    option.setName('id_type')
-                        .setDescription('Types of IDs')
-                        .setRequired(true)
-                        .addChoices(
-                            { name: 'Server ID', value: 'serverchoiceid' },
-                            { name: 'Confession ID', value: 'confessionchoiceid' },
-                        ))
-                .addStringOption(option =>
-                    option
-                        .setName('choiceid')
-                        .setRequired(true)
-                        .setDescription('The ID of your previous choice')))
+        // .addSubcommand(subcommand =>
+        //     subcommand
+        //         .setName('server')
+        //         .setDescription('Server Bot Moderation')
+        //         .addStringOption(option =>
+        //             option.setName('moderation_type')
+        //                 .setDescription('Types of moderation')
+        //                 .setRequired(true)
+        //                 .addChoices(
+        //                     { name: 'Ban', value: 'serverban' },
+        //                     { name: 'Unban', value: 'serverunban' },
+        //                     { name: 'Confession Ban', value: 'serverconfessionban' },
+        //                     { name: 'Confession Unban', value: 'serverconfessionunban' },
+        //                     { name: 'Leave', value: 'serverleave' },
+        //                 ))
+        //         .addStringOption(option =>
+        //             option.setName('id_type')
+        //                 .setDescription('Types of IDs')
+        //                 .setRequired(true)
+        //                 .addChoices(
+        //                     { name: 'Server ID', value: 'serverchoiceid' },
+        //                     { name: 'Confession ID', value: 'confessionchoiceid' },
+        //                 ))
+        //         .addStringOption(option =>
+        //             option
+        //                 .setName('choiceid')
+        //                 .setRequired(true)
+        //                 .setDescription('The ID of your previous choice')))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('user')
@@ -252,33 +252,31 @@ module.exports = {
             const givenConfessionID = interaction.options.getString('confessionid').toUpperCase();
             const confessionDocument = await confession_data.find({ confession_id: givenConfessionID }).toArray();
             if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${givenConfessionID}**.`, ephemeral: true })
-            if(confessionDocument[0].message==undefined) return interaction.reply({content:`I'm sorry, this is a legacy confession that does not have the message info stored.`, ephemeral: true })
             //Message Remove
             if(moderationType=='confessionremove'){
                 try{
-                    //Check if channel ID is valid
-                    try {
-                        let storedChannel = await client.channels.fetch(confessionDocument[0].message.channel_id);
-                        if (!storedChannel) return interaction.reply({content:`I'm sorry, the channel ID stored isnt valid.`, ephemeral: true })
-                    } catch (error) {
-                        interaction.reply({content:`I'm sorry, the channel ID thats stored isnt valid.`, ephemeral: true })
-                        return;
-                    }
-                    //Edit Message
-                    const storedChannel = await client.channels.fetch(confessionDocument[0].message.channel_id);
-                    if (storedChannel.isTextBased()) {
-                        //Get Message
-                        const confessionMessage = await storedChannel.messages.fetch(confessionDocument[0].message.id);
-                        //Editing Message
-                        const TOSMessage = "\n__**This confession has been removed for breaking Discord's And/or Meii's TOS.**__\n";
-                        await confessionMessage.edit({content: `${TOSMessage}`, embeds: []});
-                        interaction.reply({content:`The confession with the ID of **${givenConfessionID}** has been successfully edited/removed.`, ephemeral: false })
-                        return;
-                    } else {
-                        //Error for non text channel
-                        interaction.reply({content:`I'm sorry, this channel is not a text channel.`, ephemeral: true })
-                        return;
-                    }
+                    return client.shard.broadcastEval(async (c, { channelId, messageID }) => {
+                        const channel = c.channels.cache.get(channelId);
+                        if (channel) {
+                            //Get Message
+                            const confessionMessage = await channel.messages.fetch(messageID);
+                            if(confessionMessage){
+                                //Editing Message
+                                const TOSMessage = "\n__**This confession has been removed for breaking Discord's And/or Meii's TOS.**__\n";
+                                await confessionMessage.edit({content: `${TOSMessage}`, embeds: []});
+                                return true;
+                            }
+                            return false;
+                        }
+                        return false;
+                    }, { context: { channelId: confessionDocument[0].message.channel_id, messageID: confessionDocument[0].message.id } })
+                        .then(sentArray => {
+                            // Search for a non falsy value before providing feedback
+                            if (!sentArray.includes(true)) {
+                                return interaction.reply({content:`I'm sorry, I couldnt edit/delete that confession.`, ephemeral: true })
+                            }
+                            return interaction.reply({content:`The confession with the ID of **${givenConfessionID}** has been successfully edited/removed.`, ephemeral: false })
+                        });
                 } catch (error) {
                     //Critical Error Catch
                     interaction.reply({content:`I'm sorry, there has been a error editing this confession.`, ephemeral: true })

@@ -14,7 +14,7 @@ module.exports = {
                 .setName('additional_info')
                 .setRequired(true)
                 .setDescription('Additional information that would help with the report. (Context, evidence, etc.)')),
-	async execute(interaction, db, databaseCollections, client) {
+	async execute(interaction, db, databaseCollections, client, shardCollections) {
         await interaction.deferReply({ ephemeral: true });
         //Database Collection Vars
         let bot_data = databaseCollections.bot_data;
@@ -45,7 +45,20 @@ module.exports = {
         .setColor(`#ff6961`)
         .setDescription(`**Confession (${confession_id})**\n> ${confession_text}${confessionDocument[0].confession_attatchment ? `\n\n**Attatchment**\n${confession_attatchment}\n\n` : '\n\n'}**Date**\n${confession_date}\n\n**Author**\n${confession_author} (${confession_author_id})\n\n**Guild**\n${guild_name} (${guild_id})\n\n**Report Author**\n${report_author} (${report_author_id})\n\n${confessionDocument[0].message.isReply ? `**Is Reply**\n${confessionDocument[0].message.isReply}\n\n` : ''}**Additional Info**\n${additionalInfo}`)
         .setTimestamp()
-        client.channels.cache.get(confession_report_channel_id).send({ embeds: [reportEmbed], allowedMentions: {repliedUser: false}})
-        return interaction.editReply({content:`Thank you, the confession with the ID of **${confession_id}** has now been reported.`, ephemeral: true })
+        return client.shard.broadcastEval(async (c, { channelId, reportEmbed }) => {
+            const channel = c.channels.cache.get(channelId);
+            if (channel) {
+                await channel.send({ embeds: [reportEmbed], allowedMentions: {repliedUser: false}})
+                return true;
+            }
+            return false;
+        }, { context: { channelId: confession_report_channel_id, reportEmbed: reportEmbed } })
+        .then(sentArray => {
+            // Search for a non falsy value before providing feedback
+            if (!sentArray.includes(true)) {
+                return interaction.editReply({content:`I'm sorry, there seems to have been a problem reporting that confession. Please try again later.`, ephemeral: true })
+            }
+            return interaction.editReply({content:`Thank you, the confession with the ID of **${confession_id}** has now been reported.`, ephemeral: true })
+        });
 	},
 };

@@ -4,7 +4,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('help')
 		.setDescription(`Menu of all Meii's commands`),
-	async execute(interaction, db, databaseCollections, client, prefix) {
+	async execute(interaction, db, databaseCollections, client, shardCollections, prefix) {
 		const select = new StringSelectMenuBuilder()
         .setCustomId('help_menu')
         .setPlaceholder('Choose a help section!')
@@ -98,7 +98,7 @@ module.exports = {
                     let utilityHelpMenu = new EmbedBuilder()
                     .setTitle(":wrench:  **Utility Commands**")
                     .setColor("#C3B1E1")
-                    .setDescription(`**Commands:**\n:information_source: \`${prefix}info [user/server]\`: \n Gets information about a person or server \n\n :x: \`${prefix}delete_data\`: \n Deletes all data for the current server \n (Only usable by owner) \n\n :ping_pong: \`${prefix}ping\`: \n Tells the bots ping \n\n :robot: \`${prefix}stats\`: \n Shows the bots stats \n\n :timer: \`${prefix}uptime\`: \n Shows the uptime of Meii \n\n :sparkles: \`${prefix}support\`: \n Sends the invite to the support server \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
+                    .setDescription(`**Commands:**\n:information_source: \`${prefix}info [user/server]\`: \n Gets information about a person or server \n\n :x: \`${prefix}delete_data\`: \n Deletes all data for the current server \n (Only usable by owner) \n\n :ping_pong: \`${prefix}ping\`: \n Tells the bots ping \n\n :robot: \`${prefix}stats\`: \n Shows the bots stats \n\n :gem: \`${prefix}shards:\` \n Shows Meii's shard info \n\n :timer: \`${prefix}uptime\`: \n Shows the uptime of Meii \n\n :sparkles: \`${prefix}support\`: \n Sends the invite to the support server \n\n\n • Enjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote) \n`)
                     await interaction.editReply({ embeds: [utilityHelpMenu], allowedMentions: { repliedUser: false }})
                     break;           
             } 
