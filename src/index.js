@@ -4,7 +4,7 @@
 //Imports
 const { ShardingManager } = require('discord.js');
 const { MongoClient } = require('mongodb');
-var ip = require("ip");
+const os = require('os');
 const { AutoPoster } = require('topgg-autoposter')
 const schedule = require('node-schedule');
 
@@ -14,10 +14,11 @@ const { production_server_ip, tokens, database, settings } = require('./Jsons/co
 //Variables
 var database_url;
 var token;
+const ip = (Object.values(os.networkInterfaces()).flat().find(iface => iface.family === 'IPv4' && !iface.internal) || {}).address;
 
 //Dev Toggle
 var IsDev = null;
-if(ip.address()==production_server_ip){
+if(ip==production_server_ip){
     //Server IP
     IsDev = false
     token = tokens.production_token;

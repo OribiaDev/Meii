@@ -15,7 +15,5 @@ COPY . .
 # Timezone Set
 ENV TZ America/New_York
 
-# Runs index.js using forever
-# npx is shortcut to node_modules folder
-# -a is for logging
-CMD ["npx", "forever", "-a", "src/index.js"]
+# Runs index.js using node
+CMD ["node", "."]

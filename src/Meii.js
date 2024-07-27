@@ -7,7 +7,7 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { MongoClient } = require('mongodb');
 const fs = require('fs');
-var ip = require("ip");
+const os = require('os');
 
 //Config Import
 const { production_server_ip, tokens, database, settings } = require('./Jsons/config.json');
@@ -21,10 +21,11 @@ var token;
 var database_url;
 var shardID;
 var totalShards;
+const ip = (Object.values(os.networkInterfaces()).flat().find(iface => iface.family === 'IPv4' && !iface.internal) || {}).address;
 
 //Dev Toggle
 var IsDev = null;
-if(ip.address()==production_server_ip){
+if(ip==production_server_ip){
     //Server IP
     IsDev = false
     token = tokens.production_token;
@@ -84,7 +85,6 @@ function CommandRefresh(){
       }, 60000 * 360);
 }
 
-
 //Activity Refresher
 async function activityRefresh(){
     client.user.setActivity(`${prefix}help | meiibot.xyz`, { type: ActivityType.Listening })
@@ -93,6 +93,17 @@ async function activityRefresh(){
         activityRefresh();
       }, 60000 * 360);
 }
+
+//Message Event Handler
+process.on("message", message => {
+    if (!message.type) return false;
+    if (message.type == "shardId") {
+        shardID = message.data.shardId;
+    };
+    if (message.type == "shardTotal") {
+        totalShards = message.data.shardTotal
+    };
+});
 
 //Ready Function
 client.once(Events.ClientReady, async () => {
@@ -106,18 +117,8 @@ client.once(Events.ClientReady, async () => {
     await activityRefresh();
     //Startup Completed
     client.user.setStatus("online");
+    await new Promise(resolve => setTimeout(resolve, 500));
     console.log(`Successfully started shard ${shardID}.`)
-});
-
-//Message Event Handler
-process.on("message", message => {
-    if (!message.type) return false;
-    if (message.type == "shardId") {
-        shardID = message.data.shardId;
-    };
-    if (message.type == "shardTotal") {
-        totalShards = message.data.shardTotal
-    };
 });
 
 //Interaction Handler
