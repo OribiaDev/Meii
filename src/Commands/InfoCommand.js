@@ -16,12 +16,14 @@ module.exports = {
                 .setName('server')
                 .setDescription('Info about the server')),
 	async execute(interaction) {
+        await interaction.deferReply();
         if (interaction.options.getSubcommand() === 'user') {
             //User
-            const targetUser = interaction.options.getUser('user');
+            const targetUser = await interaction.options.getUser('user');
             if (targetUser) {
                 //Target User Info
-                let GuildMemberObject = interaction.guild.members.cache.get(targetUser.id)
+                let GuildMemberObject = await interaction.guild.members.cache.get(targetUser.id)
+                if(!GuildMemberObject) return await interaction.editReply({content:`I'm sorry, there seems to have been a problem. Please try again later.`, ephemeral: true });
                 let notselfInfoEmbed = new EmbedBuilder()
                 .setAuthor({ name: `User information for ${targetUser.username}`, iconURL: targetUser.displayAvatarURL()})
                 .setColor(randomHexColor())
@@ -37,7 +39,7 @@ module.exports = {
                 .setThumbnail(targetUser.displayAvatarURL())
                 .setFooter({text:`Requested by ${interaction.member.user.username}`})
                 .setTimestamp()
-                await interaction.reply({ embeds: [notselfInfoEmbed], allowedMentions: { repliedUser: false }})                        
+                await interaction.editReply({ embeds: [notselfInfoEmbed], allowedMentions: { repliedUser: false }})                        
             } else {
                 //Own Info
                 let selfInfoEmbed = new EmbedBuilder()
@@ -55,7 +57,7 @@ module.exports = {
                 .setThumbnail(interaction.member.displayAvatarURL())
                 .setFooter({text:`Requested by ${interaction.member.user.username}`})
                 .setTimestamp()
-                await interaction.reply({ embeds: [selfInfoEmbed], allowedMentions: { repliedUser: false }})        
+                await interaction.editReply({ embeds: [selfInfoEmbed], allowedMentions: { repliedUser: false }})        
             }
         } else if (interaction.options.getSubcommand() === 'server') {
             //Server
@@ -76,7 +78,7 @@ module.exports = {
             .setThumbnail(interaction.guild.iconURL())
             .setFooter({text:`Requested by ${interaction.member.user.username}`})
             .setTimestamp()
-            await interaction.reply({ embeds: [serverInfoEmbed], allowedMentions: { repliedUser: false }})       
+            await interaction.editReply({ embeds: [serverInfoEmbed], allowedMentions: { repliedUser: false }})       
         }
 	},
 };
