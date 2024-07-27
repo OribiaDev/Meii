@@ -4,34 +4,34 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('admin')
 		.setDescription(`Bot Admin Controls`)
-        // .addSubcommand(subcommand =>
-        //     subcommand
-        //         .setName('server')
-        //         .setDescription('Server Bot Moderation')
-        //         .addStringOption(option =>
-        //             option.setName('moderation_type')
-        //                 .setDescription('Types of moderation')
-        //                 .setRequired(true)
-        //                 .addChoices(
-        //                     { name: 'Ban', value: 'serverban' },
-        //                     { name: 'Unban', value: 'serverunban' },
-        //                     { name: 'Confession Ban', value: 'serverconfessionban' },
-        //                     { name: 'Confession Unban', value: 'serverconfessionunban' },
-        //                     { name: 'Leave', value: 'serverleave' },
-        //                 ))
-        //         .addStringOption(option =>
-        //             option.setName('id_type')
-        //                 .setDescription('Types of IDs')
-        //                 .setRequired(true)
-        //                 .addChoices(
-        //                     { name: 'Server ID', value: 'serverchoiceid' },
-        //                     { name: 'Confession ID', value: 'confessionchoiceid' },
-        //                 ))
-        //         .addStringOption(option =>
-        //             option
-        //                 .setName('choiceid')
-        //                 .setRequired(true)
-        //                 .setDescription('The ID of your previous choice')))
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('server')
+                .setDescription('Server Bot Moderation')
+                .addStringOption(option =>
+                    option.setName('moderation_type')
+                        .setDescription('Types of moderation')
+                        .setRequired(true)
+                        .addChoices(
+                            { name: 'Ban', value: 'serverban' },
+                            { name: 'Unban', value: 'serverunban' },
+                            { name: 'Confession Ban', value: 'serverconfessionban' },
+                            { name: 'Confession Unban', value: 'serverconfessionunban' },
+                            { name: 'Leave', value: 'serverleave' },
+                        ))
+                .addStringOption(option =>
+                    option.setName('id_type')
+                        .setDescription('Types of IDs')
+                        .setRequired(true)
+                        .addChoices(
+                            { name: 'Server ID', value: 'serverchoiceid' },
+                            { name: 'Confession ID', value: 'confessionchoiceid' },
+                        ))
+                .addStringOption(option =>
+                    option
+                        .setName('choiceid')
+                        .setRequired(true)
+                        .setDescription('The ID of your previous choice')))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('user')
@@ -117,13 +117,13 @@ module.exports = {
                 const confessionDocument = await confession_data.find({ confession_id: choiceId }).toArray();
                 if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${choiceId}**.`, ephemeral: true })
                 //ID Set
-                serverObject = client.guilds.cache.get(confessionDocument[0].guild.id);
+                serverObject = await client.guilds.fetch(confessionDocument[0].guild.id);
                 givenServerID = confessionDocument[0].guild.id;
             }
             //Server ID
             if(id_type=='serverchoiceid'){
                 givenServerID = interaction.options.getString('choiceid'); 
-                serverObject = client.guilds.cache.get(givenServerID);
+                serverObject = await client.guilds.fetch(givenServerID);
             }
             //Ban
             if(moderationType=='serverban'){
