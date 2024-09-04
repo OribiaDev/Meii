@@ -13,7 +13,7 @@ RUN npm install
 COPY . .
 
 # Timezone Set
-ENV TZ America/New_York
+ENV TZ=America/New_York
 
 # Runs index.js using node
 CMD ["node", "."]
