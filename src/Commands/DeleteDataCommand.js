@@ -24,7 +24,7 @@ module.exports = {
 			components: [row],
 		});      
         
-        client.on(Events.InteractionCreate, async interaction => {
+        const interactionListener = async (interaction) => {
             if (!interaction.isMessageComponent()) return;
             //Database Collections
             let server_data = databaseCollections.server_data;
@@ -41,8 +41,16 @@ module.exports = {
             } else if (interaction.customId === 'delete_data-cancel') {
                 //Cancel
                 await interaction.update({ content: 'Data deletion has been successfully cancelled.', components: [] });
+                client.removeListener(Events.InteractionCreate, interactionListener);
+                clearTimeout(autoRemoveTimeout);
             }
-        })
+        };
+
+        client.on(Events.InteractionCreate, interactionListener);
+
+        const autoRemoveTimeout = setTimeout(() => {
+            client.removeListener(Events.InteractionCreate, interactionListener);
+        }, 120000); // 2 minutes in milliseconds
 
     },
 };

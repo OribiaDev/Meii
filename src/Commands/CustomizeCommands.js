@@ -32,7 +32,7 @@ module.exports = {
 		});  
         
         
-        client.on(Events.InteractionCreate, async interaction => {
+        const interactionListener = async (interaction) => {
             if (!interaction.isMessageComponent()) return;
             //Database Collections
             let server_data = databaseCollections.server_data;
@@ -220,6 +220,8 @@ module.exports = {
                     await modalInteraction.update({content: ``, embeds: [customizationSaved], components: []});
                     return
                 }).catch((e) => {
+                    client.removeListener(Events.InteractionCreate, interactionListener);
+                    clearTimeout(autoRemoveTimeout);
                     return
                 });
             }else if(interaction.customId === 'customize-reset'){
@@ -245,6 +247,8 @@ module.exports = {
             }else if(interaction.customId === 'customize-cancel'){
                 //Cancel Button
                 await interaction.update({content: `cancelled.`, components: [], ephermal: true})
+                client.removeListener(Events.InteractionCreate, interactionListener);
+                clearTimeout(autoRemoveTimeout);
                 return
             }else if(interaction.customId === 'customize-resetConfirm'){
                 //Confirm Reset Button
@@ -258,12 +262,18 @@ module.exports = {
                 .setDescription(`Your customizations have been reset.`)
                 .setFooter({text:"You can redo them by using /customize"})  
                 await interaction.update({content: ``, embeds: [customizationReset], components: []});
+                client.removeListener(Events.InteractionCreate, interactionListener);
+                clearTimeout(autoRemoveTimeout);
                 return
             }
 
-        })
+        };
 
+        client.on(Events.InteractionCreate, interactionListener);
 
+        const autoRemoveTimeout = setTimeout(() => {
+            client.removeListener(Events.InteractionCreate, interactionListener);
+        }, 300000); // 5 minutes in milliseconds
 
 	},
 };
