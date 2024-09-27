@@ -33,8 +33,8 @@ module.exports = {
         .setTitle(`**Moderation Error: Confession Channel Not Set**`)
         .setColor("#ff6961")
         .setDescription(`Please setup the confession channel before using this commmand.`)
-        .setFooter({text:`You can set it up by doing ${prefix}set confession_channel`})  
-        if(guildDocument[0]==undefined) return await interaction.reply({ embeds: [ConfessionChannelNotSet], ephemeral: true, allowedMentions: {repliedUser: false}})  
+        .setFooter({text:`You can set it up by doing ${prefix}settings`})  
+        if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return await interaction.reply({ embeds: [ConfessionChannelNotSet], ephemeral: true, allowedMentions: {repliedUser: false}})  
         //Commands
         if (interaction.options.getSubcommand() === 'user') {
             //Confession Ban User

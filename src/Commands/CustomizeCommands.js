@@ -99,11 +99,11 @@ module.exports = {
                     const colorText = modalInteraction.fields.getTextInputValue('colorInput');
                     //Document Not Found
                     let serverNotFound = new EmbedBuilder()
-                    .setTitle(`**Customization: Server Not Found**`)
+                    .setTitle(`**Customization: Server Confessions Not Found**`)
                     .setColor("#ff6961")
                     .setDescription(`I'm sorry, this server hasnt setup confessions.`)
-                    .setFooter({text:`You can set it up with /set`})
-                    if(guildDocument[0]==undefined) return modalInteraction.update({content: "", embeds: [serverNotFound], components: [], ephemeral: true }); 
+                    .setFooter({text:`You can set it up with /settings`})
+                    if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return modalInteraction.update({content: "", embeds: [serverNotFound], components: [], ephemeral: true }); 
                     //Check if values are default 
                     if(titleText == defaultValues.title && bodyText == defaultValues.body && colorText == defaultValues.color){
                         //Values Default
@@ -182,11 +182,11 @@ module.exports = {
                     const colorText = modalInteraction.fields.getTextInputValue('colorInput');
                     //Document Not Found
                     let serverNotFound = new EmbedBuilder()
-                    .setTitle(`**Customization: Server Not Found**`)
+                    .setTitle(`**Customization: Server Confessions Not Found**`)
                     .setColor("#ff6961")
                     .setDescription(`I'm sorry, this server hasnt setup confessions.`)
-                    .setFooter({text:`You can set it up with /set`})
-                    if(guildDocument[0]==undefined) return modalInteraction.update({content: "", embeds: [serverNotFound], components: [], ephemeral: true }); 
+                    .setFooter({text:`You can set it up with /settings`})
+                    if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return modalInteraction.update({content: "", embeds: [serverNotFound], components: [], ephemeral: true }); 
                     //Check if values are default 
                     if(titleText == defaultValuesReply.title && bodyText == defaultValuesReply.body && colorText == defaultValuesReply.color){
                         //Values Default
@@ -228,11 +228,11 @@ module.exports = {
                 //Reset Button
                 //Check if document exists
                 let serverNotFound = new EmbedBuilder()
-                .setTitle(`**Customization: Server Not Found**`)
+                .setTitle(`**Customization: Server Confessions Not Found**`)
                 .setColor("#ff6961")
                 .setDescription(`I'm sorry, this server hasnt setup confessions.`)
-                .setFooter({text:`You can set it up with /set`})
-                if(guildDocument[0]==undefined) return interaction.update({content: "", embeds: [serverNotFound], components: [], ephemeral: true }); 
+                .setFooter({text:`You can set it up with /settings`})
+                if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return interaction.update({content: "", embeds: [serverNotFound], components: [], ephemeral: true }); 
                 const confirmButton = new ButtonBuilder()
                 .setCustomId('customize-resetConfirm')
                 .setLabel('Confirm')

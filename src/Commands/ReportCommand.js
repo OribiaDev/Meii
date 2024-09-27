@@ -31,7 +31,7 @@ module.exports = {
         //Database
         let confession_text = confessionDocument[0].confession_text;
         let confession_id = confessionDocument[0].confession_id;
-        let confession_attatchment = confessionDocument[0].confession_attatchment;
+        let confession_attachment = confessionDocument[0].confession_attachment;
         let confession_date = confessionDocument[0].document_date;
         let confession_author = confessionDocument[0].author.username;
         let confession_author_id = confessionDocument[0].author.id;
@@ -43,7 +43,7 @@ module.exports = {
         let reportEmbed = new EmbedBuilder()
         .setTitle(`Confession Report: ${confessionID}`)
         .setColor(`#ff6961`)
-        .setDescription(`**Confession (${confession_id})**\n> ${confession_text}${confessionDocument[0].confession_attatchment ? `\n\n**Attatchment**\n${confession_attatchment}\n\n` : '\n\n'}**Date**\n${confession_date}\n\n**Author**\n${confession_author} (${confession_author_id})\n\n**Guild**\n${guild_name} (${guild_id})\n\n**Report Author**\n${report_author} (${report_author_id})\n\n${confessionDocument[0].message.isReply ? `**Is Reply**\n${confessionDocument[0].message.isReply}\n\n` : ''}**Additional Info**\n${additionalInfo}`)
+        .setDescription(`**Confession (${confession_id})**\n> ${confession_text}${confessionDocument[0].confession_attachment ? `\n\n**Attachment**\n${confession_attachment}\n\n` : '\n\n'}**Date**\n${confession_date}\n\n**Author**\n${confession_author} (${confession_author_id})\n\n**Guild**\n${guild_name} (${guild_id})\n\n**Report Author**\n${report_author} (${report_author_id})\n\n${confessionDocument[0].message.isReply ? `**Is Reply**\n${confessionDocument[0].message.isReply}\n\n` : ''}**Additional Info**\n${additionalInfo}`)
         .setTimestamp()
         return client.shard.broadcastEval(async (c, { channelId, reportEmbed }) => {
             const channel = c.channels.cache.get(channelId);

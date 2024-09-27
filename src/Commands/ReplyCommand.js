@@ -17,7 +17,7 @@ module.exports = {
                 .setDescription('The message you want to confess'))
         .addAttachmentOption((option)=> option
             .setRequired(false)
-            .setName("attatchment")
+            .setName("attachment")
             .setDescription("the image/GIF to attach to the confession reply")),   
 	async execute(interaction, db, databaseCollections, client, shardCollections, prefix) {
         await interaction.deferReply({ ephemeral: true });
@@ -61,7 +61,7 @@ module.exports = {
         .setDescription(`I'm sorry, the confession channel is not setup for **${guildObject.name}**.`)
         .setFooter({text:`Ask a staff member to set it up with ${prefix}set confession_channel`})
         //No Confess Channel
-        if(guildDocument[0]==undefined) return await interaction.editReply({ embeds: [ConfessionNotSet], ephemeral: true, allowedMentions: {repliedUser: false}})   
+        if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return await interaction.editReply({ embeds: [ConfessionNotSet], ephemeral: true, allowedMentions: {repliedUser: false}})   
         //Check if user is banned from confessions
         let ConfessionIsBanned = new EmbedBuilder()
         .setTitle(`**${guildObject.name}: Confession Banned**`)
@@ -77,14 +77,14 @@ module.exports = {
         .setColor('#ff6961')
         .setDescription(`I'm sorry, i'm having trouble finding the confession channel in **${guildObject.name}**.`)
         .setFooter({text:`Tell a staff member to re-set the confession channel!`})
-        if(!client.channels.cache.get(guildDocument[0].confession_channel_id)) return await interaction.editReply({ embeds: [channelNotFound], ephemeral: true})
+        if(!client.channels.cache.get(confessionDocument[0].message.channel_id)) return await interaction.editReply({ embeds: [channelNotFound], ephemeral: true})
         //Getting Confession Info
         let confessionchannel = client.channels.cache.get(guildDocument[0].confession_channel_id)
         let confessedmessage = interaction.options.getString('message');
-        const attachment = interaction.options.getAttachment("attatchment")
-        //Attatchment Image Check
+        const attachment = interaction.options.getAttachment("attachment")
+        //Attachment Image Check
         let contentType = attachment?.contentType;
-        if(attachment?.url && !String(contentType).includes('image')) return await interaction.editReply({ content: `I'm sorry, the attatchment you attatched is not an image. Meii only supports images at this time.`, ephemeral: true });
+        if(attachment?.url && !String(contentType).includes('image')) return await interaction.editReply({ content: `I'm sorry, the attachment you attatched is not an image. Meii only supports images at this time.`, ephemeral: true });
         //Random ID Generator for moderation
         let confessionID = '';
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -142,7 +142,7 @@ module.exports = {
                             const confessionMessageId = sentConfession.id;
                             //Log confession data
                             if(attachment?.url){
-                                await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`, "confession_attatchment": `${attachment.url}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${guildObject.name}`, "id": `${guildObject.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}`, "isReply": `${givenconfessionID}` }});
+                                await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`, "confession_attachment": `${attachment.url}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${guildObject.name}`, "id": `${guildObject.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}`, "isReply": `${givenconfessionID}` }});
                             }else {
                                 await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${guildObject.name}`, "id": `${guildObject.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}`, "isReply": `${givenconfessionID}` }});
                             }

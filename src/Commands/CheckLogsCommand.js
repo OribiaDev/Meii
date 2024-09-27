@@ -9,9 +9,9 @@ module.exports = {
         let server_data = databaseCollections.server_data;
         //No Document for guild (Thus no log channel)
         const guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
-        if(guildDocument[0]==undefined) return await interaction.reply({ content: `Confessions are not logged or setup on ${interaction.guild.name}.`, ephemeral: true });
+        if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return await interaction.reply({ content: `Confessions are not logged or setup on ${interaction.guild.name}.`, ephemeral: true });
         //Checks if log channel exists in document
-        if(guildDocument[0].confession_modlog_id==undefined){
+        if(guildDocument[0]?.settings?.confession_log_channel_id==undefined){
             //If No Mod Log
             await interaction.reply({ content: `Confessions are not logged on ${interaction.guild.name}.`, ephemeral: true }); 
         }else{
