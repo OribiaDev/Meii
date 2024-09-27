@@ -123,7 +123,7 @@ client.once(Events.ClientReady, async () => {
 
 //Interaction Handler
 client.on(Events.InteractionCreate, async interaction => {
-    //Database Variables
+    //Database Variables 
     const db = mongoClient.db(database.name)
     var databaseCollections = {
         server_data: db.collection(database.server_collection_name),
@@ -139,15 +139,6 @@ client.on(Events.InteractionCreate, async interaction => {
     const userBansArray = botDocument[0].user_bans || [] 
     let index = userBansArray.indexOf(`${interaction.user.id}`);
     if (index !== -1) return await interaction.reply({content:"I'm sorry, you are banned from using Meii.\n\nIf you think this is a mistake, please join the [support server](https://discord.gg/E23tPPTwSc).", ephemeral: true })
-    //Button Handler
-    if(interaction.isButton()){ 
-        try{
-            await client.commands.get(interaction.message.interaction.commandName).handleButton(interaction, db, databaseCollections); 
-        }catch(e){
-            console.error(e)
-            return await interaction.reply({ content: 'There was an error while executing this button. Please try again later.', ephemeral: true });
-        }
-    }
     //Command Handler
     if (!interaction.isCommand()) return;
     if(!interaction.guild) return interaction.reply({content:"Im sorry, this command can only be ran in a server!", ephemeral: true })
@@ -193,6 +184,7 @@ client.on("warn", function (info) {
 });
 
 client.on("error", function (error) {
+    if(error.code === 10062 || 40060 ) return;
     console.error(
         `Error (Shard ${shardID}): ${error}`
     );
