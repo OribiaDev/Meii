@@ -40,10 +40,11 @@ module.exports = {
 			content: `Please select an option..`,
 			components: [confessrow],
 		});  
-        
+        let OrignalUserID = interaction.user.id;
         
         const interactionListener = async (interaction) => {
             if (!interaction.isMessageComponent()) return;
+            if(interaction.message.interactionMetadata.user.id != OrignalUserID) return;
             //Database Collections
             let server_data = databaseCollections.server_data;
             //Command
