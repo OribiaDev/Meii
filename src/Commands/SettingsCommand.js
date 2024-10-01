@@ -293,7 +293,7 @@ module.exports = {
                         const { embed, components } = await this.generateConfessionChannelEmbed(interaction, db, databaseCollections, client, shardCollections);
                         await interaction.update({ embeds: embed, components: components});
                     }
-                    //Set Confession Channels
+                    //Set Confession Log Channels
                     if (interaction.customId === 'settings-confession-log-channel') { 
                         const { embed, components } = await this.generateConfessionLogChannelEmbed(interaction, db, databaseCollections, client, shardCollections);
                         await interaction.update({ embeds: embed, components: components});
