@@ -1,4 +1,4 @@
-const { Events, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder  } = require('discord.js')
+const { Events, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder, ChannelType  } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -15,12 +15,21 @@ module.exports = {
                 let preselectedChannelIds = guildDocument[0]?.settings?.confession_channel_ids;            
                 //Fetch all channels
                 const channels = interaction.guild.channels.cache;
+                //Filter for number of channels
                 // Create the select menu
+                let maxNumber = 0;
+                channels.forEach((channel) => {
+                    if (channel.isTextBased()) {
+                        if(channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) && channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) && channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
+                            maxNumber++;
+                        }
+                    }
+                });
                 const selectMenu = new StringSelectMenuBuilder()
                     .setCustomId('confession_channel_select')
                     .setPlaceholder('Select one or more channels')
                     .setMinValues(1)
-                    .setMaxValues(5);
+                    .setMaxValues(maxNumber);
                 // Loop through channels and add them to the menu
                 channels.forEach((channel) => {
                     if (channel.isTextBased()) {
@@ -46,7 +55,7 @@ module.exports = {
                 .setLabel('Disable/Reset')
                 .setStyle(ButtonStyle.Danger);
 
-                // Create menu action row
+                // Create menu ac tion row
                 const menuRow = new ActionRowBuilder().addComponents(selectMenu)
                 //create button action row
                 const buttonRow = new ActionRowBuilder().addComponents(confessionDisableButton, backButton)
