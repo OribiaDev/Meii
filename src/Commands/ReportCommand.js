@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder} = require('discord.js')
+const { Events, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder  } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -45,14 +45,90 @@ module.exports = {
         .setColor(`#ff6961`)
         .setDescription(`**Confession (${confession_id})**\n> ${confession_text}${confessionDocument[0].confession_attachment ? `\n\n**Attachment**\n${confession_attachment}\n\n` : '\n\n'}**Date**\n${confession_date}\n\n**Author**\n${confession_author} (${confession_author_id})\n\n**Guild**\n${guild_name} (${guild_id})\n\n**Report Author**\n${report_author} (${report_author_id})\n\n${confessionDocument[0].message.isReply ? `**Is Reply**\n${confessionDocument[0].message.isReply}\n\n` : ''}**Additional Info**\n${additionalInfo}`)
         .setTimestamp()
-        return client.shard.broadcastEval(async (c, { channelId, reportEmbed }) => {
+
+        //Confession Delete Button
+        const confessionDeleteButton = new ButtonBuilder()
+        .setCustomId('confession-delete')
+        .setLabel('Delete/Edit Confession')
+        .setStyle(ButtonStyle.Primary);
+
+        //Confession Ban Button
+        const confessionBanButton = new ButtonBuilder()
+        .setCustomId('confessions-ban')
+        .setLabel('Confession Ban')
+        .setStyle(ButtonStyle.Secondary);
+        
+        //Dismiss Button
+        const confessionDismiss = new ButtonBuilder()
+        .setCustomId('confessions-dismiss')
+        .setLabel('Dismiss')
+        .setStyle(ButtonStyle.Danger);
+
+        //create button action row
+        const buttonRow = new ActionRowBuilder().addComponents(confessionDeleteButton, confessionBanButton, confessionDismiss)
+
+        const interactionListener = async (interaction) => {
+            if (!interaction.isMessageComponent()) return;
+            if(interaction.isButton()){
+                //Confession Delete Button
+                if (interaction.customId === 'confession-delete') { 
+                    try{
+                        return client.shard.broadcastEval(async (c, { channelId, messageID }) => {
+                            const channel = c.channels.cache.get(channelId);
+                            if (channel) {
+                                //Get Message
+                                const confessionMessage = await channel.messages.fetch(messageID);
+                                if(confessionMessage){
+                                    //Editing Message
+                                    const TOSMessage = "\n__**This confession has been removed for breaking Discord's And/or Meii's TOS.**__\n";
+                                    await confessionMessage.edit({content: `${TOSMessage}`, embeds: []});
+                                    return true;
+                                }
+                                return false;
+                            }
+                            return false;
+                        }, { context: { channelId: confessionDocument[0].message.channel_id, messageID: confessionDocument[0].message.id } })
+                            .then(sentArray => {
+                                // Search for a non falsy value before providing feedback
+                                if (!sentArray.includes(true)) {
+                                    return interaction.reply({content:`I'm sorry, I couldnt edit/delete that confession.`, ephemeral: true })
+                                }
+                                return interaction.reply({content:`The confession with the ID of **${confession_id}** has been successfully edited/removed.`, ephemeral: false })
+                            });
+                    } catch (error) {
+                        //Critical Error Catch
+                        interaction.reply({content:`I'm sorry, there has been a error editing this confession.`, ephemeral: true })
+                        return;
+                    }
+
+                }
+                //Confession Ban Button
+                if (interaction.customId === 'confessions-ban') {   
+                    let confessionBansArray = botDocument[0].user_confession_bans || []
+                    let index = confessionBansArray.indexOf(`${confession_author_id}`);
+                    if (index !== -1) return await interaction.reply({ content:`This user is already banned from using confessions.`, ephemeral: true })
+                    confessionBansArray.push(`${confession_author_id}`)  
+                    await bot_data.updateOne({ type: `prod` }, { $set: { user_confession_bans: confessionBansArray } });
+                    return interaction.reply({content:`The user with the ID of \`${confession_author_id}\` is now banned from using confessions.`, ephemeral: false })
+                }
+                //Dismiss Button
+                if (interaction.customId === 'confessions-dismiss') { 
+                    client.removeListener(Events.InteractionCreate, interactionListener);
+                    await interaction.update({ components: [] })
+                }
+            }
+        };
+
+        client.on(Events.InteractionCreate, interactionListener);
+
+        return client.shard.broadcastEval(async (c, { channelId, reportEmbed, components }) => {
             const channel = c.channels.cache.get(channelId);
             if (channel) {
-                await channel.send({ embeds: [reportEmbed], allowedMentions: {repliedUser: false}})
+                await channel.send({ embeds: [reportEmbed], components: [components], allowedMentions: {repliedUser: false}})
                 return true;
             }
             return false;
-        }, { context: { channelId: confession_report_channel_id, reportEmbed: reportEmbed } })
+        }, { context: { channelId: confession_report_channel_id, reportEmbed: reportEmbed, components: buttonRow } })
         .then(sentArray => {
             // Search for a non falsy value before providing feedback
             if (!sentArray.includes(true)) {
