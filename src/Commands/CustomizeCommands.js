@@ -26,6 +26,16 @@ module.exports = {
         .setStyle(ButtonStyle.Secondary);
 		const confessrow = new ActionRowBuilder()
 			.addComponents(confessioncustomize, replycustomize, reset, cancel);
+
+        const guildDocument = await databaseCollections.server_data.find({ server_id: interaction.guild.id }).toArray();
+        //Document Not Found
+        let serverNotFound = new EmbedBuilder()
+        .setTitle(`**Customization: Confessions Not Setup**`)
+        .setColor("#ff6961")
+        .setDescription(`I'm sorry, this server has not setup confessions.`)
+        .setFooter({text:`You can set it up with /settings`})
+        if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return interaction.reply({embeds: [serverNotFound], ephemeral: true }); 
+
 		await interaction.reply({
 			content: `Please select an option..`,
 			components: [confessrow],
