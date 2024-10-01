@@ -25,6 +25,7 @@ module.exports = {
                         }
                     }
                 });
+                if(maxNumber>25) maxNumber=25;
                 const selectMenu = new StringSelectMenuBuilder()
                     .setCustomId('confession_channel_select')
                     .setPlaceholder('Select one or more channels')
@@ -65,7 +66,6 @@ module.exports = {
                 }else{
                     preselectedChannelIds = preselectedChannelIds.map(id => `<#${id}>`).join(', ')
                 }
-
                 let ConfessionChannelEmbeds = new EmbedBuilder()
                 .setColor("#C3B1E1")
                 .setTitle("**Settings: Confession Channels**")
@@ -286,15 +286,15 @@ module.exports = {
         },
 
         async execute(interaction, db, databaseCollections, client, shardCollections) {
-
+            let OrignalUserID = interaction.user.id;
             const { embed, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
             await interaction.reply({ embeds: embed, components: components});
-
             //Component Handler
             const interactionListener = async (interaction) => {
                 let server_data = databaseCollections.server_data;
                 let guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
                 if (!interaction.isMessageComponent()) return;
+                if(interaction.message.interactionMetadata.user.id != OrignalUserID) return;
                 //Buttons
                 if(interaction.isButton()){
                     //Set Confession Channels
