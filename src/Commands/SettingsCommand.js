@@ -32,14 +32,18 @@ module.exports = {
                     .setMinValues(1)
                     .setMaxValues(maxNumber);
                 // Loop through channels and add them to the menu
+                let counter = 0;
                 channels.forEach((channel) => {
-                    if (channel.isTextBased()) {
+                    if (channel.isTextBased() && !channel.isVoiceBased()) {
                         if(channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) && channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) && channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
-                            selectMenu.addOptions({
-                                label: `#${channel.name}`,
-                                value: channel.id,
-                                default: preselectedChannelIds?.includes(channel.id), // Preselect if channel ID is in the array
-                            });
+                            if(counter<25){
+                                selectMenu.addOptions({
+                                    label: `#${channel.name}`,
+                                    value: channel.id,
+                                    default: preselectedChannelIds?.includes(channel.id), // Preselect if channel ID is in the array
+                                });
+                                counter++;
+                            }
                         }
                     }
                 });
@@ -98,14 +102,18 @@ module.exports = {
                 .setMinValues(1)
                 .setMaxValues(1);
             // Loop through channels and add them to the menu
+            let counter = 0;
             channels.forEach((channel) => {
-                if (channel.isTextBased()) {
+                if (channel.isTextBased() && !channel.isVoiceBased()) {
                     if(channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) && channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) && channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
-                        selectMenu.addOptions({
-                            label: `#${channel.name}`,
-                            value: channel.id,
-                            default: channel.id === preselectedChannelId
-                        });
+                        if(counter<25){
+                            selectMenu.addOptions({
+                                label: `#${channel.name}`,
+                                value: channel.id,
+                                default: channel.id === preselectedChannelId
+                            });
+                            counter++;
+                        }
                     }
                 }
             });
