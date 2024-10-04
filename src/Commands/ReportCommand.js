@@ -66,10 +66,8 @@ module.exports = {
 
         //create button action row
         const buttonRow = new ActionRowBuilder().addComponents(confessionDeleteButton, confessionBanButton, confessionDismiss)
-        let OrignalUserID = interaction.user.id;
         const interactionListener = async (interaction) => {
             if (!interaction.isMessageComponent()) return;
-            if(interaction.message.interactionMetadata.user.id != OrignalUserID) return;
             if(interaction.isButton()){
                 //Confession Delete Button
                 if (interaction.customId === 'confession-delete') { 
