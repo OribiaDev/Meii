@@ -184,7 +184,7 @@ client.on("warn", function (info) {
 });
 
 client.on("error", function (error) {
-    if(error.code === 10062 || 40060 ) return;
+    if(error.code === 10062 || error.code === 40060 ) return;
     console.error(
         `Error (Shard ${shardID}): ${error}`
     );
