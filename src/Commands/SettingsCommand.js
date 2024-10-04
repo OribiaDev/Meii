@@ -19,7 +19,7 @@ module.exports = {
                 // Create the select menu
                 let maxNumber = 0;
                 channels.forEach((channel) => {
-                    if (channel.isTextBased()) {
+                    if (channel.isTextBased() && !channel.isVoiceBased()) {
                         if(channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) && channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) && channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
                             maxNumber++;
                         }
@@ -144,7 +144,7 @@ module.exports = {
             let ConfessionLogChannelEmbeds = new EmbedBuilder()
             .setColor("#C3B1E1")
             .setTitle("**Settings: Confession Log Channel**")
-            .setDescription(`Use the dropdown menu to select a confession log channel. \n\n If the channel you're wanting to use isnt showing up, make sure Meii has permissions to use it!`)
+            .setDescription(`Use the dropdown menu to select a confession log channel. \n\n If the channel you're wanting to use isnt showing up, make sure Meii has permissions to use it!\n_or try to move the channel to the top of your channel list_`)
             .addFields(
                 { name: '\u200B', value: ' ' },
                 { name: '**Confession Log Channel**', value: preselectedChannelId, inline: true }, 
@@ -294,7 +294,6 @@ module.exports = {
         },
 
         async execute(interaction, db, databaseCollections, client, shardCollections) {
-            let OrignalUserID = interaction.user.id;
             const { embed, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
             await interaction.reply({ embeds: embed, components: components});
             //Component Handler
@@ -302,7 +301,7 @@ module.exports = {
                 let server_data = databaseCollections.server_data;
                 let guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
                 if (!interaction.isMessageComponent()) return;
-                if(interaction.message.interactionMetadata.user.id != OrignalUserID) return;
+                if(interaction.message.interactionMetadata.user.id != interaction.user.id) return;
                 //Buttons
                 if(interaction.isButton()){
                     //Set Confession Channels
