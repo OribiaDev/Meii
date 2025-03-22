@@ -15,7 +15,7 @@ module.exports = {
                 .setRequired(true)
                 .setDescription('Additional information that would help with the report. (Context, evidence, etc.)')),
 	async execute(interaction, db, databaseCollections, client, shardCollections) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         //Database Collection Vars
         let bot_data = databaseCollections.bot_data;
         let confession_data = databaseCollections.confession_data;

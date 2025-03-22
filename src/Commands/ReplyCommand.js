@@ -20,7 +20,7 @@ module.exports = {
             .setName("attachment")
             .setDescription("the image/GIF to attach to the confession reply")),   
 	async execute(interaction, db, databaseCollections, client, shardCollections, prefix) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         //Database Collections
         let server_data = databaseCollections.server_data;
         let bot_data = databaseCollections.bot_data;

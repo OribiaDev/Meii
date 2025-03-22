@@ -10,7 +10,7 @@ module.exports = {
                 .setRequired(true)
                 .setDescription('The ID of the confession, found in the footer or title')),
 	async execute(interaction, db, databaseCollections, client) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         //Database Collection Vars
         let confession_data = databaseCollections.confession_data;
         //Given Vars

@@ -21,7 +21,7 @@ module.exports = {
                 .addChannelTypes(ChannelType.GuildText)),
 	async execute(interaction, db, databaseCollections, client, shardCollections, prefix) {
         if(!interaction) return;
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         //Database Collections
         let server_data = databaseCollections.server_data;
         let bot_data = databaseCollections.bot_data;
