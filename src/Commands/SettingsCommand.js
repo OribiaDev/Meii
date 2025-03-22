@@ -1,4 +1,4 @@
-const { Events, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder, ChannelType  } = require('discord.js')
+const { Events, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -26,6 +26,7 @@ module.exports = {
                     }
                 });
                 if(maxNumber>25) maxNumber=25;
+                if(maxNumber < 1) maxNumber = 1;
                 const selectMenu = new StringSelectMenuBuilder()
                     .setCustomId('confession_channel_select')
                     .setPlaceholder('Select one or more channels')
@@ -43,6 +44,13 @@ module.exports = {
                                     default: preselectedChannelIds?.includes(channel.id), // Preselect if channel ID is in the array
                                 });
                                 counter++;
+                            }
+                            if (counter === 0) {
+                                selectMenu.addOptions({
+                                    label: "No available channels",
+                                    value: "no_channels",
+                                    default: true
+                                });
                             }
                         }
                     }
@@ -113,6 +121,13 @@ module.exports = {
                                 default: channel.id === preselectedChannelId
                             });
                             counter++;
+                        }
+                        if (counter === 0) {
+                            selectMenu.addOptions({
+                                label: "No available channels",
+                                value: "no_channels",
+                                default: true
+                            });
                         }
                     }
                 }
