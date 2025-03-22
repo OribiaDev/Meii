@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -10,13 +10,13 @@ module.exports = {
                   .setRequired(true)),
 	async execute(interaction) {     
         let KillUser = interaction.options.getMember('user');
-        if(KillUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, ephemeral: true })
-        if(KillUser.id==interaction.member.id) return await interaction.reply({ content: `n-no- don't do that--`, allowedMentions: { repliedUser: false }, ephemeral: true })
+        if(KillUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
+        if(KillUser.id==interaction.member.id) return await interaction.reply({ content: `n-no- don't do that--`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
         let KillUserID = KillUser.id
         const Killgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/kill`)
         .then(async (res) => {
-            if(!res.ok) return await interaction.reply({ content:"I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });
+            if(!res.ok) return await interaction.reply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
             const responseBody = await res.text();
             json = JSON.parse(responseBody);
             let image = json.url;

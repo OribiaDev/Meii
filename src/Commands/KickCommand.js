@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js')
+const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder, MessageFlags } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -15,12 +15,12 @@ module.exports = {
 				  .setRequired(false)),
 	async execute(interaction, db, databaseCollections, client) {
 		//Permissions Check
-		if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.KickMembers)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions.\nI need.. \`Kick Members\``, ephemeral: true }).catch(() => {return});
+		if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.KickMembers)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions.\nI need.. \`Kick Members\``, flags: MessageFlags.Ephemeral  }).catch(() => {return});
 		//Get Target User
 		let targetUser = interaction.options.getMember('user');
-		if(targetUser.id==client.user.id) return await interaction.reply({content:"You can't kick me silly~!", ephemeral: true })
+		if(targetUser.id==client.user.id) return await interaction.reply({content:"You can't kick me silly~!", flags: MessageFlags.Ephemeral  })
 		//Target User Permissions Check
-		if(!targetUser.kickable) return await interaction.reply({ content:"I'm unable to kick this person as they either have the \`Kick Members\` permission or they have a higher role than me.", ephemeral: true });
+		if(!targetUser.kickable) return await interaction.reply({ content:"I'm unable to kick this person as they either have the \`Kick Members\` permission or they have a higher role than me.", flags: MessageFlags.Ephemeral  });
 		//Reason Check
 		let reason = interaction.options.getString('reason');
 		if(reason==null){

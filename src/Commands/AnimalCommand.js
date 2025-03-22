@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
+const { EmbedBuilder, SlashCommandBuilder, MessageFlags } = require('discord.js')
  
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -24,7 +24,7 @@ module.exports = {
         const category = interaction.options.getString('category');
 		fetch(`https://some-random-api.com/animal/${category}`)
 		.then(async (res) => {
-			if(!res.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });
+			if(!res.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
 			const responseBody = await res.text();
 			json = JSON.parse(responseBody);
 			let animalemb = new EmbedBuilder()

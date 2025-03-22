@@ -1,4 +1,4 @@
-const { Events, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder  } = require('discord.js')
+const { Events, SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, MessageFlags  } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -24,7 +24,7 @@ module.exports = {
         let additionalInfo = interaction.options.getString('additional_info');
         //Confession Document
         const confessionDocument = await confession_data.find({ confession_id: confessionID }).toArray();
-        if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, ephemeral: true })
+        if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, flags: MessageFlags.Ephemeral  })
         //Confession Channel Lookup
         const botDocument = await bot_data.find({ type: 'prod' }).toArray();
         const confession_report_channel_id = botDocument[0].report_channel_id;
@@ -90,13 +90,13 @@ module.exports = {
                             .then(sentArray => {
                                 // Search for a non falsy value before providing feedback
                                 if (!sentArray.includes(true)) {
-                                    return interaction.reply({content:`I'm sorry, I couldnt edit/delete that confession.`, ephemeral: true })
+                                    return interaction.reply({content:`I'm sorry, I couldnt edit/delete that confession.`, flags: MessageFlags.Ephemeral  })
                                 }
-                                return interaction.reply({content:`The confession with the ID of **${confession_id}** has been successfully edited/removed.`, ephemeral: false })
+                                return interaction.reply({content:`The confession with the ID of **${confession_id}** has been successfully edited/removed.` })
                             });
                     } catch (error) {
                         //Critical Error Catch
-                        interaction.reply({content:`I'm sorry, there has been a error editing this confession.`, ephemeral: true })
+                        interaction.reply({content:`I'm sorry, there has been a error editing this confession.`, flags: MessageFlags.Ephemeral  })
                         return;
                     }
 
@@ -105,10 +105,10 @@ module.exports = {
                 if (interaction.customId === 'confessions-ban') {   
                     let confessionBansArray = botDocument[0].user_confession_bans || []
                     let index = confessionBansArray.indexOf(`${confession_author_id}`);
-                    if (index !== -1) return await interaction.reply({ content:`This user is already banned from using confessions.`, ephemeral: true })
+                    if (index !== -1) return await interaction.reply({ content:`This user is already banned from using confessions.`, flags: MessageFlags.Ephemeral  })
                     confessionBansArray.push(`${confession_author_id}`)  
                     await bot_data.updateOne({ type: `prod` }, { $set: { user_confession_bans: confessionBansArray } });
-                    return interaction.reply({content:`The user with the ID of \`${confession_author_id}\` is now banned from using confessions.`, ephemeral: false })
+                    return interaction.reply({content:`The user with the ID of \`${confession_author_id}\` is now banned from using confessions.` })
                 }
                 //Dismiss Button
                 if (interaction.customId === 'confessions-dismiss') { 
@@ -131,9 +131,9 @@ module.exports = {
         .then(sentArray => {
             // Search for a non falsy value before providing feedback
             if (!sentArray.includes(true)) {
-                return interaction.editReply({content:`I'm sorry, there seems to have been a problem reporting that confession. Please try again later.`, ephemeral: true })
+                return interaction.editReply({content:`I'm sorry, there seems to have been a problem reporting that confession. Please try again later.`, flags: MessageFlags.Ephemeral  })
             }
-            return interaction.editReply({content:`Thank you, the confession with the ID of **${confession_id}** has now been reported.`, ephemeral: true })
+            return interaction.editReply({content:`Thank you, the confession with the ID of **${confession_id}** has now been reported.`, flags: MessageFlags.Ephemeral  })
         });
 	},
 };

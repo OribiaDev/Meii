@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js')
+const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder, MessageFlags } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -34,14 +34,14 @@ module.exports = {
         .setColor("#ff6961")
         .setDescription(`Please setup the confession channel before using this commmand.`)
         .setFooter({text:`You can set it up by doing ${prefix}settings`})  
-        if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return await interaction.reply({ embeds: [ConfessionChannelNotSet], ephemeral: true, allowedMentions: {repliedUser: false}})  
+        if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return await interaction.reply({ embeds: [ConfessionChannelNotSet], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})  
         //Commands
         if (interaction.options.getSubcommand() === 'user') {
             //Confession Unban Command User
             let confessbans = guildDocument[0].confession_userbans_id || []
             let targetUser = interaction.options.getMember('user');
             let index = confessbans.indexOf(`${targetUser.id}`);
-            if (index == -1) return await interaction.reply({content:`This user isnt banned from confessions on ${interaction.guild.name}.`, ephemeral: true })
+            if (index == -1) return await interaction.reply({content:`This user isnt banned from confessions on ${interaction.guild.name}.`, flags: MessageFlags.Ephemeral  })
             confessbans.splice(index, 1);
             //Update Database
             await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { confession_userbans_id: confessbans } });
@@ -59,15 +59,15 @@ module.exports = {
             const confessionID = interaction.options.getString('confession_id').toUpperCase();
             //Confesson Document
             const confessionDocument = await confession_data.find({ confession_id: confessionID }).toArray();
-            if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, ephemeral: true })
+            if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, flags: MessageFlags.Ephemeral  })
             //Get User
             let confession_author_id = confessionDocument[0].author.id;
             let confession_author_username = confessionDocument[0].author.username;
             let targetUser = await client.users.fetch(confession_author_id);
-            if(confession_author_id==client.user.id) return await interaction.reply({content:"You can't ban me silly~!", ephemeral: true })
+            if(confession_author_id==client.user.id) return await interaction.reply({content:"You can't ban me silly~!", flags: MessageFlags.Ephemeral  })
             //Push Unban
             let index = confessbans.indexOf(`${targetUser.id}`);
-            if (index == -1) return await interaction.reply({content:`This user isnt banned from confessions on ${interaction.guild.name}.`, ephemeral: true })
+            if (index == -1) return await interaction.reply({content:`This user isnt banned from confessions on ${interaction.guild.name}.`, flags: MessageFlags.Ephemeral  })
             confessbans.splice(index, 1);
             await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { confession_userbans_id: confessbans } });
             //Output

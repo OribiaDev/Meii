@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js')
 const randomHexColor = require('random-hex-color')
 
 module.exports = {
@@ -14,8 +14,8 @@ module.exports = {
         await interaction.deferReply();
         const word = interaction.options.getString('word');
         let data = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
-        if(data?.statusText == 'Not Found') return await interaction.editReply({ content: `I'm sorry, I cannot find that word.`, allowedMentions: { repliedUser: false }, ephemeral: true })
-        if(!data.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });        
+        if(data?.statusText == 'Not Found') return await interaction.editReply({ content: `I'm sorry, I cannot find that word.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
+        if(!data.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });        
         let info = await data.json();
         let result = info[0];         
         //Embed Data

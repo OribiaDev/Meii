@@ -1,4 +1,4 @@
-const { Events, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder } = require('discord.js')
+const { Events, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle, ActionRowBuilder, MessageFlags } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -8,7 +8,7 @@ module.exports = {
 	async execute(interaction, db, databaseCollections, client, shardCollections) {
         //Command
         let serverOwner = await interaction.guild.fetchOwner().catch(err=>err)
-        if(!interaction.member.user.id==serverOwner.id)return await interaction.reply({ content: `Only the server owner may use this command.`, allowedMentions: { repliedUser: false }, ephemeral: true })
+        if(!interaction.member.user.id==serverOwner.id)return await interaction.reply({ content: `Only the server owner may use this command.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
 		const confirm = new ButtonBuilder()
 			.setCustomId('delete_data-confirm')
 			.setLabel('Confirm Deletion')
@@ -30,7 +30,7 @@ module.exports = {
             //Database Collections
             let server_data = databaseCollections.server_data;
             //Permission Check
-            if(interaction.user.id !== interaction.message.interaction.user.id) return interaction.reply({content:"Im sorry, you cannot use this button!", ephemeral: true })
+            if(interaction.user.id !== interaction.message.interaction.user.id) return interaction.reply({content:"Im sorry, you cannot use this button!", flags: MessageFlags.Ephemeral  })
             //Buttons
             if (interaction.customId === 'delete_data-confirm') {
                 //Confirm 

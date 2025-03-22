@@ -1,4 +1,4 @@
-const { Events, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, InteractionResponse } = require('discord.js')
+const { Events, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, MessageFlags } = require('discord.js')
  
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -34,7 +34,7 @@ module.exports = {
         .setColor("#ff6961")
         .setDescription(`I'm sorry, this server has not setup confessions.`)
         .setFooter({text:`You can set it up with /settings`})
-        if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return interaction.reply({embeds: [serverNotFound], ephemeral: true }); 
+        if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return interaction.reply({embeds: [serverNotFound], flags: MessageFlags.Ephemeral  }); 
 
 		await interaction.reply({
 			content: `Please select an option..`,
@@ -47,7 +47,7 @@ module.exports = {
             //Database Collections
             let server_data = databaseCollections.server_data;
             //Command
-            if(interaction.user.id !== interaction.message.interaction.user.id) return interaction.reply({content:"Im sorry, you cannot use this button!", ephemeral: true })
+            if(interaction.user.id !== interaction.message.interaction.user.id) return interaction.reply({content:"Im sorry, you cannot use this button!", flags: MessageFlags.Ephemeral  })
             const guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
             //Variables
             let defaultValues = { "title": "**:love_letter: Anonymous Confession** ({id})", "body": "> {confession}", "color": "{random}"}
@@ -113,7 +113,7 @@ module.exports = {
                     .setColor("#ff6961")
                     .setDescription(`I'm sorry, this server hasnt setup confessions.`)
                     .setFooter({text:`You can set it up with /settings`})
-                    if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return modalInteraction.update({content: "", embeds: [serverNotFound], components: [], ephemeral: true }); 
+                    if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return modalInteraction.update({content: "", embeds: [serverNotFound], components: [], flags: MessageFlags.Ephemeral  }); 
                     //Check if values are default 
                     if(titleText == defaultValues.title && bodyText == defaultValues.body && colorText == defaultValues.color){
                         //Values Default
@@ -196,7 +196,7 @@ module.exports = {
                     .setColor("#ff6961")
                     .setDescription(`I'm sorry, this server hasnt setup confessions.`)
                     .setFooter({text:`You can set it up with /settings`})
-                    if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return modalInteraction.update({content: "", embeds: [serverNotFound], components: [], ephemeral: true }); 
+                    if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return modalInteraction.update({content: "", embeds: [serverNotFound], components: [], flags: MessageFlags.Ephemeral  }); 
                     //Check if values are default 
                     if(titleText == defaultValuesReply.title && bodyText == defaultValuesReply.body && colorText == defaultValuesReply.color){
                         //Values Default
@@ -242,7 +242,7 @@ module.exports = {
                 .setColor("#ff6961")
                 .setDescription(`I'm sorry, this server hasnt setup confessions.`)
                 .setFooter({text:`You can set it up with /settings`})
-                if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return interaction.update({content: "", embeds: [serverNotFound], components: [], ephemeral: true }); 
+                if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return interaction.update({content: "", embeds: [serverNotFound], components: [], flags: MessageFlags.Ephemeral  }); 
                 const confirmButton = new ButtonBuilder()
                 .setCustomId('customize-resetConfirm')
                 .setLabel('Confirm')

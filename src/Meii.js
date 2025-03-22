@@ -2,7 +2,7 @@
 //If you see this, have a great day :3 - OribiaDev
 
 //Imports
-const { Client, GatewayIntentBits, Partials, Collection, Events, ActivityType } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, Events, ActivityType, MessageFlags } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { MongoClient } = require('mongodb');
@@ -138,10 +138,10 @@ client.on(Events.InteractionCreate, async interaction => {
     const botDocument = await databaseCollections.bot_data.find({ type: 'prod' }).toArray();
     const userBansArray = botDocument[0].user_bans || [] 
     let index = userBansArray.indexOf(`${interaction.user.id}`);
-    if (index !== -1) return await interaction.reply({content:"I'm sorry, you are banned from using Meii.\n\nIf you think this is a mistake, please join the [support server](https://discord.gg/E23tPPTwSc).", ephemeral: true })
+    if (index !== -1) return await interaction.reply({content:"I'm sorry, you are banned from using Meii.\n\nIf you think this is a mistake, please join the [support server](https://discord.gg/E23tPPTwSc).", flags: MessageFlags.Ephemeral  })
     //Command Handler
     if (!interaction.isCommand()) return;
-    if(!interaction.guild) return interaction.reply({content:"Im sorry, this command can only be ran in a server!", ephemeral: true })
+    if(!interaction.guild) return interaction.reply({content:"Im sorry, this command can only be ran in a server!", flags: MessageFlags.Ephemeral  })
     //Existing Database Command Handler       
     const { commandName } = interaction;
     if (!client.commands.has(commandName)) return;
@@ -149,7 +149,7 @@ client.on(Events.InteractionCreate, async interaction => {
         await client.commands.get(commandName).execute(interaction, db, databaseCollections, client, shardCollections, prefix);
     } catch (e) {
         console.error(e);
-        return await interaction.reply({ content: 'There was an error while executing this command. Please try again later.', ephemeral: true });
+        return await interaction.reply({ content: 'There was an error while executing this command. Please try again later.', flags: MessageFlags.Ephemeral  });
     }   
 });
 

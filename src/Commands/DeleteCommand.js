@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder} = require('discord.js')
+const { SlashCommandBuilder, MessageFlags} = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -17,9 +17,9 @@ module.exports = {
         const confessionID = interaction.options.getString('confession_id').toUpperCase();
         //Confession Document
         const confessionDocument = await confession_data.find({ confession_id: confessionID }).toArray();
-        if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, ephemeral: true })
+        if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, flags: MessageFlags.Ephemeral  })
         //Check if the user is authorized to delete
-        if(interaction.user.id!==confessionDocument[0].author.id) return interaction.editReply({content:`I'm sorry, but you are not allowed to delete the confession with the ID of **${confessionID}** as it was not sent by you.`, ephemeral: true })
+        if(interaction.user.id!==confessionDocument[0].author.id) return interaction.editReply({content:`I'm sorry, but you are not allowed to delete the confession with the ID of **${confessionID}** as it was not sent by you.`, flags: MessageFlags.Ephemeral  })
         //Deleting
         try{
             return client.shard.broadcastEval(async (c, { channelId, messageID }) => {
@@ -42,13 +42,13 @@ module.exports = {
             .then(sentArray => {
                 // Search for a non falsy value before providing feedback
                 if (!sentArray.includes(true)) {
-                    return interaction.editReply({content:`I'm sorry, I cannot find this confession. Has it already been deleted?`, ephemeral: true })
+                    return interaction.editReply({content:`I'm sorry, I cannot find this confession. Has it already been deleted?`, flags: MessageFlags.Ephemeral  })
                 }
-                return interaction.editReply({content:`The confession with the ID of **${confessionID}** has been successfully removed.`, ephemeral: true })
+                return interaction.editReply({content:`The confession with the ID of **${confessionID}** has been successfully removed.`, flags: MessageFlags.Ephemeral  })
             });
         } catch (error) {
             //Critical Error Catch
-            interaction.editReply({content:`I'm sorry, there has been a error deleting this confession.`, ephemeral: true })
+            interaction.editReply({content:`I'm sorry, there has been a error deleting this confession.`, flags: MessageFlags.Ephemeral  })
             return;
         }
 	},

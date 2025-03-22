@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,6 +9,6 @@ module.exports = {
 		.setColor("#ffdac1")
 		.setTitle("**Utility: Support Server**")
 		.setDescription(`:sparkles:  [Click Me](https://meiibot.xyz/discord) to join the Support Server! :sparkles: `)
-		await interaction.reply({ embeds: [SupportEmb], allowedMentions: { repliedUser: false }, ephemeral: true })
+		await interaction.reply({ embeds: [SupportEmb], allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
 	},
 };

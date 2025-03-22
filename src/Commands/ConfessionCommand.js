@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChannelType } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChannelType, MessageFlags } = require('discord.js')
 const randomHexColor = require('random-hex-color')
 
 module.exports = {
@@ -36,7 +36,7 @@ module.exports = {
         .setFooter({text:`If you think this is a mistake, please join the support server.`})
         const serverBansArray = botDocument[0].server_confession_bans || [] 
         let serverBanindex = serverBansArray.indexOf(`${interaction.guild.id}`);
-        if (serverBanindex !== -1) return await interaction.editReply({ embeds: [AdminServerConfessionBanned], ephemeral: true, allowedMentions: {repliedUser: false}})
+        if (serverBanindex !== -1) return await interaction.editReply({ embeds: [AdminServerConfessionBanned], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
         //Admin Confession User Ban
         let AdminUserConfessionBanned = new EmbedBuilder()
         .setTitle(`**${interaction.member.user.username} : Confession Banned**`)
@@ -45,7 +45,7 @@ module.exports = {
         .setFooter({text:`If you think this is a mistake, please join the support server.`})
         const userBansArray = botDocument[0].user_confession_bans || [] 
         let userBanindex = userBansArray.indexOf(`${interaction.member.user.id}`);
-        if (userBanindex !== -1) return await interaction.editReply({ embeds: [AdminUserConfessionBanned], ephemeral: true, allowedMentions: {repliedUser: false}})
+        if (userBanindex !== -1) return await interaction.editReply({ embeds: [AdminUserConfessionBanned], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
         //Guild Document
         const guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
         //Database Document Check
@@ -55,7 +55,7 @@ module.exports = {
         .setDescription(`I'm sorry, the confession channel is not setup for **${interaction.guild.name}**.`)
         .setFooter({text:`Ask a staff member to set it up with ${prefix}set confession_channel`})
         //No Confess Channel
-        if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return await interaction.editReply({ embeds: [ConfessionNotSet], ephemeral: true, allowedMentions: {repliedUser: false}})   
+        if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return await interaction.editReply({ embeds: [ConfessionNotSet], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})   
         //Check if user is banned from confessions
         let ConfessionIsBanned = new EmbedBuilder()
         .setTitle(`**${interaction.guild.name}: Confession Banned**`)
@@ -64,7 +64,7 @@ module.exports = {
         .setFooter({text:`If you think this is a mistake, please contact a staff member.`})
         const userbans = guildDocument[0].confession_userbans_id || [] //returns empty array if userbans is not present
         let index = userbans.indexOf(`${interaction.member.user.id}`);
-        if (index !== -1) return await interaction.editReply({ embeds: [ConfessionIsBanned], ephemeral: true, allowedMentions: {repliedUser: false}})
+        if (index !== -1) return await interaction.editReply({ embeds: [ConfessionIsBanned], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
         //Multiple Channel Logic
         let givenChannel = interaction.options.getChannel("channel");
         let channels = guildDocument[0].settings.confession_channel_ids;
@@ -74,14 +74,14 @@ module.exports = {
         .setColor("#ff6961")
         .setDescription(`I'm sorry, this server has multiple confession channels. \n\n Please specify which channel you want to submit to in the command options.`)
         .setFooter({text:`If you think this is a mistake, please contact a staff member.`})
-        if(channels.length > 1 && givenChannel == null) return await interaction.editReply({ embeds: [noChannelGiven], ephemeral: true, allowedMentions: {repliedUser: false}})
+        if(channels.length > 1 && givenChannel == null) return await interaction.editReply({ embeds: [noChannelGiven], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
         //Check if channel is a valid confession channel
         let notvalidChannel = new EmbedBuilder()
         .setTitle(`**${interaction.guild.name}: Confession Channel Error**`)
         .setColor("#ff6961")
         .setDescription(`I'm sorry, the channel you have selected is not a valid confession channel.`)
         .setFooter({text:`If you think this is a mistake, please contact a staff member or run /settings to change the channels.`})
-        if(channels.length > 1 && !channels.includes(givenChannel.id)) return await interaction.editReply({ embeds: [notvalidChannel], ephemeral: true, allowedMentions: {repliedUser: false}})
+        if(channels.length > 1 && !channels.includes(givenChannel.id)) return await interaction.editReply({ embeds: [notvalidChannel], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
         let confessionchannel;
         if(channels.length > 1){
             confessionchannel = givenChannel.id;
@@ -94,7 +94,7 @@ module.exports = {
         .setColor('#ff6961')
         .setDescription(`I'm sorry, i'm having trouble finding the confession channel in **${interaction.guild.name}**.`)
         .setFooter({text:`Tell a staff member to re-set the confession channel!`})
-        if(!client.channels.cache.get(confessionchannel)) return await interaction.editReply({ embeds: [channelNotFound], ephemeral: true})
+        if(!client.channels.cache.get(confessionchannel)) return await interaction.editReply({ embeds: [channelNotFound], flags: MessageFlags.Ephemeral })
 
             
         //Getting Confession Info
@@ -104,9 +104,9 @@ module.exports = {
 
 
         //Attachment Image Check
-        if(attachment != null && guildDocument[0]?.settings?.attachment_toggle === false ) return await interaction.editReply({ content: `I'm sorry, this server does not allow attachments within confessions.`, ephemeral: true });
+        if(attachment != null && guildDocument[0]?.settings?.attachment_toggle === false ) return await interaction.editReply({ content: `I'm sorry, this server does not allow attachments within confessions.`, flags: MessageFlags.Ephemeral  });
         let contentType = attachment?.contentType;
-        if(attachment?.url && !String(contentType).includes('image')) return await interaction.editReply({ content: `I'm sorry, the attachment you attached is not an image. Meii only supports images at this time.`, ephemeral: true });
+        if(attachment?.url && !String(contentType).includes('image')) return await interaction.editReply({ content: `I'm sorry, the attachment you attached is not an image. Meii only supports images at this time.`, flags: MessageFlags.Ephemeral  });
          
         //Random ID Generator for moderation
         let confessionID = '';
@@ -134,14 +134,14 @@ module.exports = {
         .setColor('#ff6961')
         .setDescription(`I'm sorry, your confession is too long.\nThe limit is **4096** characters, currently its **${bodyParsed.length}** characters.`)
         .setFooter({text:`Please shorten and try again!`})
-        if(4096 < bodyParsed.length) return await interaction.editReply({ embeds: [confessionTooLong], ephemeral: true})
+        if(4096 < bodyParsed.length) return await interaction.editReply({ embeds: [confessionTooLong], flags: MessageFlags.Ephemeral })
         //Test if Hex Code is valid
         var hexRegex = /^#(?:[0-9a-fA-F]{3}){1,2}$/
         if(!hexRegex.test(colorParsed)) colorParsed = randomHexColor();
         try{
             //Confession Checks
-            if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Embed Links\`, and \`Send Messages in Threads\` `, ephemeral: true }) }
-            if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`Embed Links\`, and \`View Channel\``, ephemeral: true })
+            if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Embed Links\`, and \`Send Messages in Threads\` `, flags: MessageFlags.Ephemeral  }) }
+            if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`Embed Links\`, and \`View Channel\``, flags: MessageFlags.Ephemeral  })
             let Confession = new EmbedBuilder()
             .setTitle(`${TitleParsed}`)
             .setColor(`${colorParsed}`)
@@ -162,9 +162,9 @@ module.exports = {
             confessionNumber = confessionNumber + 1;
             await bot_data.updateOne({ type: `prod` }, { $set: { confession_number: confessionNumber } });
         }catch( error ){
-            return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, ephemeral: true })
+            return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, flags: MessageFlags.Ephemeral  })
         }
-        await interaction.editReply({ content: `Your confession has now been added to **${confessionchannel}**  :thumbsup: `, ephemeral: true });
+        await interaction.editReply({ content: `Your confession has now been added to **${confessionchannel}**  :thumbsup: `, flags: MessageFlags.Ephemeral  });
         //Check if server has Confession Logging 
         if(guildDocument[0].settings.confession_log_channel_id==undefined) return
         if(!client.channels.cache.get(guildDocument[0].settings.confession_log_channel_id)) return

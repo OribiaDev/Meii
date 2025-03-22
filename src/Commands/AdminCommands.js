@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js')
+const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder, MessageFlags } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -100,9 +100,9 @@ module.exports = {
         const botDocument = await bot_data.find({ type: 'prod' }).toArray();
         const adminArray = botDocument[0].admins || [] 
         let index = adminArray.indexOf(`${interaction.member.user.id}`);
-        if (index == -1) return await interaction.reply({content:"I'm sorry, this command can only be ran by the developers and admins of Meii.", ephemeral: true })
+        if (index == -1) return await interaction.reply({content:"I'm sorry, this command can only be ran by the developers and admins of Meii.", flags: MessageFlags.Ephemeral  })
         const moderationType = interaction.options.getString('moderation_type');
-        if(botDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find the bot data document.`, ephemeral: true })
+        if(botDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find the bot data document.`, flags: MessageFlags.Ephemeral  })
         if (interaction.options.getSubcommand() === 'server') {
             //Server
             //Check if User or Confession ID
@@ -115,7 +115,7 @@ module.exports = {
             if(id_type=='confessionchoiceid'){
                 //ID Lookup
                 const confessionDocument = await confession_data.find({ confession_id: choiceId }).toArray();
-                if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${choiceId}**.`, ephemeral: true })
+                if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${choiceId}**.`, flags: MessageFlags.Ephemeral  })
                 //ID Set
                 serverObject = await client.guilds.fetch(confessionDocument[0].guild.id);
                 givenServerID = confessionDocument[0].guild.id;
@@ -129,48 +129,48 @@ module.exports = {
             if(moderationType=='serverban'){
                 let botBansArray = botDocument[0].server_bans || []
                 let index = botBansArray.indexOf(`${givenServerID}`);
-                if (index !== -1) return await interaction.reply({ content:`This server is already banned from using Meii.`, ephemeral: true })
+                if (index !== -1) return await interaction.reply({ content:`This server is already banned from using Meii.`, flags: MessageFlags.Ephemeral  })
                 botBansArray.push(`${givenServerID}`)  
                 await bot_data.updateOne({ type: `prod` }, { $set: { server_bans: botBansArray } });
-                if(serverObject==undefined) return await interaction.reply({content:`The server with the ID of \`${givenServerID}\` is now banned from using Meii.`, ephemeral: true })        
+                if(serverObject==undefined) return await interaction.reply({content:`The server with the ID of \`${givenServerID}\` is now banned from using Meii.`, flags: MessageFlags.Ephemeral  })        
                 await serverObject.leave();
-                return interaction.reply({content:`\`${serverObject.name} (${serverObject.id})\` is now banned from using Meii.`, ephemeral: true })
+                return interaction.reply({content:`\`${serverObject.name} (${serverObject.id})\` is now banned from using Meii.`, flags: MessageFlags.Ephemeral  })
             }
             //Unban
             if(moderationType=='serverunban'){
                 let botBansArray = botDocument[0].server_bans || []
                 let index = botBansArray.indexOf(`${givenServerID}`);
-                if (index == -1) return await interaction.reply({ content:`This server isn't banned from using Meii.`, ephemeral: true })
+                if (index == -1) return await interaction.reply({ content:`This server isn't banned from using Meii.`, flags: MessageFlags.Ephemeral  })
                 botBansArray.splice(index, 1);
                 await bot_data.updateOne({ type: `prod` }, { $set: { server_bans: botBansArray } });
-                if(serverObject==undefined) return interaction.reply({content:`The server with the the ID of \`${givenServerID}\` is now unbanned from using Meii.`, ephemeral: true })
-                return interaction.reply({content:`\`${serverObject.name} (${serverObject.id})\` is now unbanned from using Meii.`, ephemeral: true })
+                if(serverObject==undefined) return interaction.reply({content:`The server with the the ID of \`${givenServerID}\` is now unbanned from using Meii.`, flags: MessageFlags.Ephemeral  })
+                return interaction.reply({content:`\`${serverObject.name} (${serverObject.id})\` is now unbanned from using Meii.`, flags: MessageFlags.Ephemeral  })
             }
             //Confession Ban
             if(moderationType=='serverconfessionban'){
                 let confessionBotBansArray = botDocument[0].server_confession_bans || []
                 let index = confessionBotBansArray.indexOf(`${givenServerID}`);
-                if (index !== -1) return await interaction.reply({ content:`This server is already banned from using confessions.`, ephemeral: true })
+                if (index !== -1) return await interaction.reply({ content:`This server is already banned from using confessions.`, flags: MessageFlags.Ephemeral  })
                 confessionBotBansArray.push(`${givenServerID}`)  
                 await bot_data.updateOne({ type: `prod` }, { $set: { server_confession_bans: confessionBotBansArray } });
-                if(serverObject==undefined) return await interaction.reply({content:`The server with the ID of \`${givenServerID}\` is now banned from using confessions.`, ephemeral: true })        
-                return interaction.reply({content:`\`${serverObject.name} (${serverObject.id})\` is now banned from using confessions.`, ephemeral: true })
+                if(serverObject==undefined) return await interaction.reply({content:`The server with the ID of \`${givenServerID}\` is now banned from using confessions.`, flags: MessageFlags.Ephemeral  })        
+                return interaction.reply({content:`\`${serverObject.name} (${serverObject.id})\` is now banned from using confessions.`, flags: MessageFlags.Ephemeral  })
             }
             //Confession Unban
             if(moderationType=='serverconfessionunban'){
                 let confessionBotBansArray = botDocument[0].server_confession_bans || []
                 let index = confessionBotBansArray.indexOf(`${givenServerID}`);
-                if (index == -1) return await interaction.reply({ content:`This server isn't banned from using confessions.`, ephemeral: true })
+                if (index == -1) return await interaction.reply({ content:`This server isn't banned from using confessions.`, flags: MessageFlags.Ephemeral  })
                 confessionBotBansArray.splice(index, 1);
                 await bot_data.updateOne({ type: `prod` }, { $set: { server_confession_bans: confessionBotBansArray } });
-                if(serverObject==undefined) return interaction.reply({content:`The server with the the ID of \`${givenServerID}\` is now unbanned from using confessions.`, ephemeral: true })
-                return interaction.reply({content:`\`${serverObject.name} (${serverObject.id})\` is now unbanned from using confessions.`, ephemeral: true })
+                if(serverObject==undefined) return interaction.reply({content:`The server with the the ID of \`${givenServerID}\` is now unbanned from using confessions.`, flags: MessageFlags.Ephemeral  })
+                return interaction.reply({content:`\`${serverObject.name} (${serverObject.id})\` is now unbanned from using confessions.`, flags: MessageFlags.Ephemeral  })
             }
             //Leave
             if(moderationType=='serverleave'){
-                if(serverObject==undefined) return interaction.reply({content:`I cannot find a server with that ID.`, ephemeral: true })
+                if(serverObject==undefined) return interaction.reply({content:`I cannot find a server with that ID.`, flags: MessageFlags.Ephemeral  })
                 await serverObject.leave();
-                return interaction.reply({content:`Meii has now left \`${serverObject.name} (${serverObject.id})\`.`, ephemeral: false })
+                return interaction.reply({content:`Meii has now left \`${serverObject.name} (${serverObject.id})\`.` })
             }
         } else if (interaction.options.getSubcommand() === 'user'){ 
             //Check if User or Confession ID
@@ -182,7 +182,7 @@ module.exports = {
             if(id_type=='confessionchoiceid'){
                 //ID Lookup
                 const confessionDocument = await confession_data.find({ confession_id: choiceId }).toArray();
-                if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${choiceId}**.`, ephemeral: true })
+                if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${choiceId}**.`, flags: MessageFlags.Ephemeral  })
                 //ID Set
                 givenUserID = confessionDocument[0].author.id;
             }
@@ -194,37 +194,37 @@ module.exports = {
             if(moderationType=='botban'){
                 let userBansArray = botDocument[0].user_bans || []
                 let index = userBansArray.indexOf(`${givenUserID}`);
-                if (index !== -1) return await interaction.reply({ content:`This user is already banned from using Meii.`, ephemeral: true })
+                if (index !== -1) return await interaction.reply({ content:`This user is already banned from using Meii.`, flags: MessageFlags.Ephemeral  })
                 userBansArray.push(`${givenUserID}`)  
                 await bot_data.updateOne({ type: `prod` }, { $set: { user_bans: userBansArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now banned from using Meii.`, ephemeral: false })
+                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now banned from using Meii.` })
             }
             //Bot Unban
             if(moderationType=='botunban'){
                 let userBansArray = botDocument[0].user_bans || []
                 let index = userBansArray.indexOf(`${givenUserID}`);
-                if (index == -1) return await interaction.reply({ content:`This user isn't banned from using Meii.`, ephemeral: true })
+                if (index == -1) return await interaction.reply({ content:`This user isn't banned from using Meii.`, flags: MessageFlags.Ephemeral  })
                 userBansArray.splice(index, 1);
                 await bot_data.updateOne({ type: `prod` }, { $set: { user_bans: userBansArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now unbanned from using Meii.`, ephemeral: false })
+                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now unbanned from using Meii.` })
             }
             //Confession Ban
             if(moderationType=='confessionban'){
                 let confessionBansArray = botDocument[0].user_confession_bans || []
                 let index = confessionBansArray.indexOf(`${givenUserID}`);
-                if (index !== -1) return await interaction.reply({ content:`This user is already banned from using confessions.`, ephemeral: true })
+                if (index !== -1) return await interaction.reply({ content:`This user is already banned from using confessions.`, flags: MessageFlags.Ephemeral  })
                 confessionBansArray.push(`${givenUserID}`)  
                 await bot_data.updateOne({ type: `prod` }, { $set: { user_confession_bans: confessionBansArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now banned from using confessions.`, ephemeral: false })
+                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now banned from using confessions.` })
             }
             //Confession Unban
             if(moderationType=='confessionunban'){
                 let confessionBansArray = botDocument[0].user_confession_bans || []
                 let index = confessionBansArray.indexOf(`${givenUserID}`);
-                if (index == -1) return await interaction.reply({ content:`This user isn't banned from using confessions.`, ephemeral: true })
+                if (index == -1) return await interaction.reply({ content:`This user isn't banned from using confessions.`, flags: MessageFlags.Ephemeral  })
                 confessionBansArray.splice(index, 1);
                 await bot_data.updateOne({ type: `prod` }, { $set: { user_confession_bans: confessionBansArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now unbanned from using confessions.`, ephemeral: false })
+                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now unbanned from using confessions.` })
             }
         } else if (interaction.options.getSubcommand() === 'bot'){ 
             //Bot
@@ -233,25 +233,25 @@ module.exports = {
             if(moderationType=='adminadd'){
                 let adminArray = botDocument[0].admins || []
                 let index = adminArray.indexOf(`${givenUserID}`);
-                if (index !== -1) return await interaction.reply({ content:`This user is already an admin of Meii.`, ephemeral: true })
+                if (index !== -1) return await interaction.reply({ content:`This user is already an admin of Meii.`, flags: MessageFlags.Ephemeral  })
                 adminArray.push(`${givenUserID}`)  
                 await bot_data.updateOne({ type: `prod` }, { $set: { admins: adminArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now an admin of Meii.`, ephemeral: false })
+                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now an admin of Meii.` })
             }
             //Admin Remove
             if(moderationType=='adminremove'){
                 let adminArray = botDocument[0].admins || []
                 let index = adminArray.indexOf(`${givenUserID}`);
-                if (index == -1) return await interaction.reply({ content:`This user isn't an admin of Meii.`, ephemeral: true })
+                if (index == -1) return await interaction.reply({ content:`This user isn't an admin of Meii.`, flags: MessageFlags.Ephemeral  })
                 adminArray.splice(index, 1);
                 await bot_data.updateOne({ type: `prod` }, { $set: { admins: adminArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now removed as an admin of Meii.`, ephemeral: false })
+                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now removed as an admin of Meii.` })
             }
         } else if (interaction.options.getSubcommand() === 'message'){ 
             //ID Lookup
             const givenConfessionID = interaction.options.getString('confessionid').toUpperCase();
             const confessionDocument = await confession_data.find({ confession_id: givenConfessionID }).toArray();
-            if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${givenConfessionID}**.`, ephemeral: true })
+            if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${givenConfessionID}**.`, flags: MessageFlags.Ephemeral  })
             //Message Remove
             if(moderationType=='confessionremove'){
                 try{
@@ -273,13 +273,13 @@ module.exports = {
                         .then(sentArray => {
                             // Search for a non falsy value before providing feedback
                             if (!sentArray.includes(true)) {
-                                return interaction.reply({content:`I'm sorry, I couldnt edit/delete that confession.`, ephemeral: true })
+                                return interaction.reply({content:`I'm sorry, I couldnt edit/delete that confession.`, flags: MessageFlags.Ephemeral  })
                             }
-                            return interaction.reply({content:`The confession with the ID of **${givenConfessionID}** has been successfully edited/removed.`, ephemeral: false })
+                            return interaction.reply({content:`The confession with the ID of **${givenConfessionID}** has been successfully edited/removed.` })
                         });
                 } catch (error) {
                     //Critical Error Catch
-                    interaction.reply({content:`I'm sorry, there has been a error editing this confession.`, ephemeral: true })
+                    interaction.reply({content:`I'm sorry, there has been a error editing this confession.`, flags: MessageFlags.Ephemeral  })
                     return;
                 }
             }

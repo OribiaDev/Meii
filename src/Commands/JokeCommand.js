@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js')
+const { SlashCommandBuilder, MessageFlags } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,10 +12,10 @@ module.exports = {
 				},
 		})
 		.then(async (res) => {
-            if(!res.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", ephemeral: true });
+            if(!res.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
             const responseBody = await res.text();
             json = JSON.parse(responseBody);
-			await interaction.editReply({ content: `${json.joke}`, ephemeral: false });
+			await interaction.editReply({ content: `${json.joke}` });
 			return      
         });
 	},

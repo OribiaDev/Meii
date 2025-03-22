@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js')
 const randomHexColor = require('random-hex-color')
 const moment = require("moment");
 
@@ -23,7 +23,7 @@ module.exports = {
             if (targetUser) {
                 //Target User Info
                 let GuildMemberObject = await interaction.guild.members.cache.get(targetUser.id)
-                if(!GuildMemberObject) return await interaction.editReply({content:`I'm sorry, there seems to have been a problem. Please try again later.`, ephemeral: true });
+                if(!GuildMemberObject) return await interaction.editReply({content:`I'm sorry, there seems to have been a problem. Please try again later.`, flags: MessageFlags.Ephemeral  });
                 let notselfInfoEmbed = new EmbedBuilder()
                 .setAuthor({ name: `User information for ${targetUser.username}`, iconURL: targetUser.displayAvatarURL()})
                 .setColor(randomHexColor())
