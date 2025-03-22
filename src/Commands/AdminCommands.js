@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder, MessageFlags } = require('discord.js')
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, MessageFlags, Events } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -76,6 +76,15 @@ module.exports = {
                         .setName('userid')
                         .setRequired(true)
                         .setDescription('The ID of the user')))
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('confession')
+                .setDescription('Quick Confession Moderation')
+                .addStringOption(option =>
+                    option
+                        .setName('confessionid')
+                        .setRequired(true)
+                        .setDescription('The ID of the confession')))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('message')
@@ -262,7 +271,7 @@ module.exports = {
                             const confessionMessage = await channel.messages.fetch(messageID);
                             if(confessionMessage){
                                 //Editing Message
-                                const TOSMessage = "\n__**This confession has been removed for breaking Discord's And/or Meii's TOS.**__\n";
+                                const TOSMessage = "\n__**This confession has been removed for breaking Discord's and/or Meii's TOS.**__\n";
                                 await confessionMessage.edit({content: `${TOSMessage}`, embeds: []});
                                 return true;
                             }
@@ -283,6 +292,93 @@ module.exports = {
                     return;
                 }
             }
-        }
+        } else if (interaction.options.getSubcommand() == 'confession'){
+            //ID Lookup
+            const givenConfessionID = interaction.options.getString('confessionid').toUpperCase();
+            const confessionDocument = await confession_data.find({ confession_id: givenConfessionID }).toArray();
+            if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${givenConfessionID}**.`, flags: MessageFlags.Ephemeral  })
+           //Buttons
+           //Confession Delete Button
+            const confessionDeleteButton = new ButtonBuilder()
+            .setCustomId('confession-delete')
+            .setLabel('Delete/Edit Confession')
+            .setStyle(ButtonStyle.Primary);
+    
+            //Confession Ban Button
+            const confessionBanButton = new ButtonBuilder()
+            .setCustomId('confessions-ban')
+            .setLabel('Confession Ban')
+            .setStyle(ButtonStyle.Secondary);
+            
+            //Dismiss Button
+            const confessionDismiss = new ButtonBuilder()
+            .setCustomId('confessions-dismiss')
+            .setLabel('Dismiss')
+            .setStyle(ButtonStyle.Danger);
+    
+            //create button action row
+            const buttonRow = new ActionRowBuilder().addComponents(confessionDeleteButton, confessionBanButton, confessionDismiss)
+            const interactionListener = async (interaction) => {
+                if (!interaction.isMessageComponent()) return;
+                if(interaction.isButton()){
+                    //Confession Delete Button
+                    if (interaction.customId === 'confession-delete') { 
+                        try{
+                            return client.shard.broadcastEval(async (c, { channelId, messageID }) => {
+                                const channel = c.channels.cache.get(channelId);
+                                if (channel) {
+                                    //Get Message
+                                    const confessionMessage = await channel.messages.fetch(messageID);
+                                    if(confessionMessage){
+                                        //Editing Message
+                                        const TOSMessage = "\n__**This confession has been removed for breaking Discord's and/or Meii's TOS.**__\n";
+                                        await confessionMessage.edit({content: `${TOSMessage}`, embeds: []});
+                                        return true;
+                                    }
+                                    return false;
+                                }
+                                return false;
+                            }, { context: { channelId: confessionDocument[0].message.channel_id, messageID: confessionDocument[0].message.id } })
+                                .then(sentArray => {
+                                    // Search for a non falsy value before providing feedback
+                                    if (!sentArray.includes(true)) {
+                                        return interaction.reply({content:`I'm sorry, I couldnt edit/delete that confession.`, flags: MessageFlags.Ephemeral  })
+                                    }
+                                    return interaction.reply({content:`The confession with the ID of **${givenConfessionID}** has been successfully edited/removed.` })
+                                });
+                        } catch (error) {
+                            //Critical Error Catch
+                            interaction.reply({content:`I'm sorry, there has been a error editing this confession.`, flags: MessageFlags.Ephemeral  })
+                            return;
+                        }
+    
+                    }
+                    //Confession Ban Button
+                    if (interaction.customId === 'confessions-ban') {   
+                        let confessionBansArray = botDocument[0].user_confession_bans || []
+                        let confession_author_id = confessionDocument[0].author.id;
+                        let index = confessionBansArray.indexOf(`${confession_author_id}`);
+                        if (index !== -1) return await interaction.reply({ content:`This user is already banned from using confessions.`, flags: MessageFlags.Ephemeral  })
+                        confessionBansArray.push(`${confession_author_id}`)  
+                        await bot_data.updateOne({ type: `prod` }, { $set: { user_confession_bans: confessionBansArray } });
+                        return interaction.reply({content:`The user with the ID of \`${confession_author_id}\` is now banned from using confessions.` })
+                    }
+                    //Dismiss Button
+                    if (interaction.customId === 'confessions-dismiss') { 
+                        client.removeListener(Events.InteractionCreate, interactionListener);
+                        await interaction.update({ content:`Dismissed.`, components: [], embeds:[] })
+                    }
+                }
+            };
+    
+            client.on(Events.InteractionCreate, interactionListener);
+            //Embed
+            let quickMenuEmbed = new EmbedBuilder()
+            .setTitle(`Confession Quick Moderation Menu: ${givenConfessionID}`)
+            .setColor(`#ff6961`)
+            .setDescription(`**Please select an option.**`)
+            .setTimestamp()
+            await interaction.reply({ embeds: [quickMenuEmbed], components: [buttonRow], allowedMentions: {repliedUser: false}})
+         }
 	},
 }; 
