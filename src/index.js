@@ -89,31 +89,31 @@ manager.on('shardCreate', shard => {
 
 //Meii Startup
 async function MeiiStartup(){
+    //Meii Logos
+    if(!IsDev){
+        //Not Dev
+        console.log(" _____     _ _ ")
+        console.log("|     |___|_|_|")
+        console.log("| | | | -_| | |")
+        console.log("|_|_|_|___|_|_|")
+    }else{
+        //Dev
+        console.log(" _____     _ _ ____          ")
+        console.log("|     |___|_|_|    \ ___ _ _ ")
+        console.log("| | | | -_| | |  |  | -_| | |")
+        console.log("|_|_|_|___|_|_|____/|___|\_/ ")
+    }
+    //Database Connect
+    console.log('Attempting to connect to the database...' );
+    await mongoClient.connect();
+    console.log('Connected successfully to the database.\n');
+    schedule.scheduleJob('0 0 * * *', () => { ConfessionDatabasePurge(); }) // Ran everyday at midnight
+    console.log('Successfully started the confession purge schedule.')
+    console.log('\nAttempting to start shards...')
     try{
-        //Meii Logos
-        if(!IsDev){
-            //Not Dev
-            console.log(" _____     _ _ ")
-            console.log("|     |___|_|_|")
-            console.log("| | | | -_| | |")
-            console.log("|_|_|_|___|_|_|")
-        }else{
-            //Dev
-            console.log(" _____     _ _ ____          ")
-            console.log("|     |___|_|_|    \ ___ _ _ ")
-            console.log("| | | | -_| | |  |  | -_| | |")
-            console.log("|_|_|_|___|_|_|____/|___|\_/ ")
-        }
-        //Database Connect
-        console.log('Attempting to connect to the database...' );
-        await mongoClient.connect();
-        console.log('Connected successfully to the database.\n');
-        schedule.scheduleJob('0 0 * * *', () => { ConfessionDatabasePurge(); }) // Ran everyday at midnight
-        console.log('Successfully started the confession purge schedule.')
-        console.log('\nAttempting to start shards...')
         manager.spawn();
     } catch (error) {
-        console.error('Error Starting Shard:', error.message);
+        console.error('Error Starting Shards:', error.message);
     }
 }
 //Start Startup Function
