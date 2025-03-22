@@ -73,7 +73,7 @@ module.exports = {
                 let ConfessionChannelEmbeds = new EmbedBuilder()
                 .setColor("#C3B1E1")
                 .setTitle("**Settings: Confession Channels**")
-                .setDescription(`Use the dropdown menu to select one or more confession channels. \n\n If you select multiple confession channels, there will be an option at the end of the confession command to select what channel you want to use. \n\n If the channel you're wanting to use isnt showing up, make sure Meii has permissions to use it!`)
+                .setDescription(`Use the dropdown menu to select one or more confession channels. \n\n If you select multiple confession channels, there will be an option at the end of the confession command to select what channel you want to use. \n\n **If the channel is not showing up (Common Issue):**\n Try changing permissions so that Meii only has access to the channel(s) you want to use. If that doesnt work join the support server and ask for help :) \n\n `)
                 .addFields(
                     { name: '\u200B', value: ' ' },
                     { name: '**Confession Channel(s)**', value: preselectedChannelIds, inline: true }, 
@@ -144,7 +144,7 @@ module.exports = {
             let ConfessionLogChannelEmbeds = new EmbedBuilder()
             .setColor("#C3B1E1")
             .setTitle("**Settings: Confession Log Channel**")
-            .setDescription(`Use the dropdown menu to select a confession log channel. \n\n If the channel you're wanting to use isnt showing up, make sure Meii has permissions to use it!\n_or try to move the channel to the top of your channel list_`)
+            .setDescription(`Use the dropdown menu to select a confession log channel. \n\n **If the channel is not showing up (Common Issue):**\n Try changing permissions so that Meii only has access to the channel you want to use. If that doesnt work join the support server and ask for help :) \n\n `)
             .addFields(
                 { name: '\u200B', value: ' ' },
                 { name: '**Confession Log Channel**', value: preselectedChannelId, inline: true }, 
