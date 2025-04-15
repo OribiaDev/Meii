@@ -22,23 +22,23 @@ module.exports = {
         const binarytext = interaction.options.getString('text');
         //Encode
         if(binaryfunction=="binary_encode"){          
-            fetch(`https://some-random-api.com/binary?encode=${binarytext}`)
+            fetch(`https://api.some-random-api.com/binary?encode=${binarytext}`)
             .then(async (res) => {
                 if(!res.ok) return await interaction.reply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
                 const responseBody = await res.text();
-                json = JSON.parse(responseBody);
-                let str = json.binary.slice(0, 1950) //1950 char limit
+                let json = JSON.parse(responseBody);
+                let str = json.encoded.slice(0, 1950) //1950 char limit
                 await interaction.reply({ content: `Here you go.. \n \`${str}\``, flags: MessageFlags.Ephemeral  });
             });
         }
         //Decode
         if(binaryfunction=="binary_decode"){     
-            fetch(`https://some-random-api.com/binary?decode=${binarytext}`)
+            fetch(`https://api.some-random-api.com/binary?decode=${binarytext}`)
             .then(async (res) => {
                 if(!res.ok) return await interaction.reply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
                 const responseBody = await res.text();
-                json = JSON.parse(responseBody);
-                let str = json.text.slice(0, 1950) //1950 char limit
+                let json = JSON.parse(responseBody);
+                let str = json.decoded.slice(0, 1950) //1950 char limit
                 await interaction.reply({ content: `Here you go.. \n \`${str}\``, flags: MessageFlags.Ephemeral  });
             })
         }

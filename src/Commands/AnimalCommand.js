@@ -22,7 +22,7 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
         const category = interaction.options.getString('category');
-		fetch(`https://some-random-api.com/animal/${category}`)
+		fetch(`https://api.some-random-api.com/animal/${category}`)
 		.then(async (res) => {
 			if(!res.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
 			const responseBody = await res.text();
