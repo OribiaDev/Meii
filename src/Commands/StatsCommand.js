@@ -12,7 +12,7 @@ module.exports = {
 		//Database Collection Vars
 		let bot_data = databaseCollections.bot_data;
 		//Updated Date
-		let updatedDate = '3/21/2025'
+		let updatedDate = '5/29/2025'
 		//Memory Math
 		function getMemoryArray (){
 			return client.shard.broadcastEval(async (c) => {
@@ -24,6 +24,13 @@ module.exports = {
 		}
 		totalMemoryArray = await getMemoryArray();
 		totalMemory = totalMemoryArray.reduce((acc, memCount) => acc + memCount, 0)
+		let memString;
+		if(totalMemory>1000){
+			totalMemory = totalMemory/1000
+			memString = `${totalMemory.toFixed(2)}GB`;
+		}else{
+			memString = `${totalMemory}MB`
+		} 
 		//Bot Data
 		const botDocument = await bot_data.find({ type: 'prod' }).toArray();
 		let confessionNumber = botDocument[0].confession_number;
@@ -34,7 +41,7 @@ module.exports = {
 		let InfoEmb = new EmbedBuilder()
 		.setColor("#C3B1E1")
 		.setTitle("**Utility: Stats**")
-		.setDescription(`Servers: **${guildNumber.reduce((acc, guildCount) => acc + guildCount, 0).toLocaleString()}** \n Total Shards: **${shardCollections.totalShards}** ~ (Current Shard ID: **${updatedShardNumber}**) \n Total Confessions Sent: **${confessionNumber.toLocaleString()}** \n\n Ping: \`${client.ws.ping}ms\` \n Total Memory Usage: \`${totalMemory}MB\` \n\n Last Updated: **${updatedDate}** \n Date Created: **3/08/2023** \n Version: **${packageFile.version}** \n\n Author: **oribia.dev** \n Website: https://meiibot.xyz \n\n **Uptime**: \`${uptime}\` \n\n`)
+		.setDescription(`Servers: **${guildNumber.reduce((acc, guildCount) => acc + guildCount, 0).toLocaleString()}** \n Total Shards: **${shardCollections.totalShards}** ~ (Current Shard ID: **${updatedShardNumber}**) \n Total Confessions Sent: **${confessionNumber.toLocaleString()}** \n\n Ping: \`${client.ws.ping}ms\` \n Total Memory Usage: \`${memString}\` \n\n Last Updated: **${updatedDate}** \n Date Created: **3/08/2023** \n Version: **${packageFile.version}** \n\n Author: **oribia.dev** \n Website: https://meiibot.xyz \n\n **Uptime**: \`${uptime}\` \n\n`)
 		await interaction.reply({ embeds: [InfoEmb], allowedMentions: { repliedUser: false }})
 	},
 };
