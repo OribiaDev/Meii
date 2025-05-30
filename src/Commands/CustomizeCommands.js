@@ -37,7 +37,7 @@ module.exports = {
         if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return interaction.reply({embeds: [serverNotFound], flags: MessageFlags.Ephemeral  }); 
 
 		await interaction.reply({
-			content: `Please select an option..`,
+			content: `Please select an option.. \n **Anything that is surrounded by {} is a bot provided variable**`,
 			components: [confessrow],
 		});  
         
