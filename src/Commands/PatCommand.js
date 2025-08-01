@@ -9,13 +9,14 @@ module.exports = {
                   .setDescription('Select a user to head pat')
                   .setRequired(true)),
 	async execute(interaction) {
+        await interaction.deferReply();
         let PatUser = interaction.options.getMember('user');
-        if(PatUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
+        if(PatUser==null) return await interaction.editReply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
         let PatUserID = PatUser.id
         const patgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/pat`)
         .then(async (res) => {
-            if(!res.ok) return await interaction.reply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
+            if(!res.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
             const responseBody = await res.text();
             json = JSON.parse(responseBody);
             let image = json.url;
@@ -23,7 +24,7 @@ module.exports = {
             patgif.setImage(String(image))
             patgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             patgif.setTimestamp()
-            await interaction.reply({ embeds: [patgif], allowedMentions: {repliedUser: true, users: [PatUserID]}, content: `${interaction.guild.members.cache.get(PatUserID)}`}) 
+            await interaction.editReply({ embeds: [patgif], allowedMentions: {repliedUser: true, users: [PatUserID]}, content: `${interaction.guild.members.cache.get(PatUserID)}`}) 
         });
 	},
 };

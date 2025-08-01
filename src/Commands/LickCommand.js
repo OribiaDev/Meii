@@ -9,9 +9,10 @@ module.exports = {
                   .setDescription('Select a user to lick')
                   .setRequired(true)),
 	async execute(interaction) {
+        await interaction.deferReply();
         let LickUser = interaction.options.getMember('user');
-        if(LickUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
-        if(LickUser.id==interaction.member.id) return await interaction.reply({ content: `_do that in private- not here_`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
+        if(LickUser==null) return await interaction.editReply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
+        if(LickUser.id==interaction.member.id) return await interaction.editReply({ content: `_do that in private- not here_`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
         let LickUserID = LickUser.id
         const lickgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/lick`)
@@ -24,7 +25,7 @@ module.exports = {
             lickgif.setImage(String(image))
             lickgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             lickgif.setTimestamp()
-            await interaction.reply({ embeds: [lickgif], allowedMentions: {repliedUser: true, users: [LickUserID]}, content: `${interaction.guild.members.cache.get(LickUserID)}`}) 
+            await interaction.editReply({ embeds: [lickgif], allowedMentions: {repliedUser: true, users: [LickUserID]}, content: `${interaction.guild.members.cache.get(LickUserID)}`}) 
         });
 	},
 };
