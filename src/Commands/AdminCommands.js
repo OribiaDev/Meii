@@ -397,7 +397,7 @@ module.exports = {
                 let channelProblemEmbed = new EmbedBuilder()
                 .setTitle(`Channel not showing up in the settings command:`)
                 .setColor(`#ff6961`)
-                .setDescription(`Please follow these solutions, if they don't work please feel free to reply and let me know! \n\n **__Fix 1:__** \n Due to discords limit on dropdown menus there can only be a maximum of 25 channels listed. To fix this please change the permissions on all your channels so that Meii **only** has access to the channel(s) you're wanting to use. \n\n **__Fix 2:__** \n Meii only shows channels that have the necessary permissions. Please make sure Meii has the permissions \`Send Messages\`, \`View Channel\`, and \`Embed Links\` on the channel(s) you're wanting to use. \n\n`)
+                .setDescription(`Please follow these solutions, if they don't work please feel free to reply and let me know! \n\n **__Fix 1:__**\nTry moving the channel(s) you're wanting to use to the very top of your channel list.\n\n  **__Fix 2:__** \n Due to discords limit on dropdown menus there can only be a maximum of 25 channels listed. To fix this please change the permissions on all your channels so that Meii **only** has access to the channel(s) you're wanting to use. \n\n **__Fix 3:__** \n Meii only shows channels that have the necessary permissions. Please make sure Meii has the permissions \`Send Messages\`, \`View Channel\`, and \`Embed Links\` on the channel(s) you're wanting to use. \n\n`)
                 .setTimestamp()
                 await interaction.reply({ embeds: [channelProblemEmbed]})
             }
