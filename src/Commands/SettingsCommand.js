@@ -83,7 +83,7 @@ module.exports = {
                 let ConfessionChannelEmbeds = new EmbedBuilder()
                 .setColor("#C3B1E1")
                 .setTitle("**Settings: Confession Channels**")
-                .setDescription(`Use the dropdown menu to select one or more confession channels. \n\n If you select multiple confession channels, there will be an option at the end of the confession command to select what channel you want to use. \n\n **If the channel is not showing up (Common Issue):**\n Try changing permissions so that Meii only has access to the channel(s) you want to use. If that doesnt work join the support server and ask for help :) \n\n `)
+                .setDescription(`Use the dropdown menu to select one or more confession channels. If you select multiple confession channels, there will be an option at the end of the confession command to select what channel you want to use. \n\n **If your channel is not showing up:**\n_(If all else fails, join the support server for assistance!)_\n __Fix 1:__ \n Due to discords limit on dropdown menus there can only be a maximum of 25 channels listed.  To fix this please change the permissions on all your channels so that Meii **only** has access to the channel(s) you're wanting to use. \n\n __Fix 2:__ \n Meii only shows channels that have the necessary permissions. Please make sure Meii has the permissions \`Send Messages\`, \`View Channel\`, and \`Embed Links\` on the channel(s) you're wanting to use. \n\n`)
                 .addFields(
                     { name: '\u200B', value: ' ' },
                     { name: '**Confession Channel(s)**', value: preselectedChannelIds, inline: true }, 
@@ -162,7 +162,7 @@ module.exports = {
             let ConfessionLogChannelEmbeds = new EmbedBuilder()
             .setColor("#C3B1E1")
             .setTitle("**Settings: Confession Log Channel**")
-            .setDescription(`Use the dropdown menu to select a confession log channel. \n\n **If the channel is not showing up (Common Issue):**\n Try changing permissions so that Meii only has access to the channel you want to use. If that doesnt work join the support server and ask for help :) \n\n `)
+            .setDescription(`Use the dropdown menu to select a confession log channel. \n\n **If your channel is not showing up:**\n_(If all else fails, join the support server for assistance!)_\n __Fix 1:__ \n Due to discords limit on dropdown menus there can only be a maximum of 25 channels listed.  To fix this please change the permissions on all your channels so that Meii **only** has access to the channel you're wanting to use. \n\n __Fix 2:__ \n Meii only shows channels that have the necessary permissions. Please make sure Meii has the permissions \`Send Messages\`, \`View Channel\`, and \`Embed Links\` on the channel you're wanting to use. \n\n`)
             .addFields(
                 { name: '\u200B', value: ' ' },
                 { name: '**Confession Log Channel**', value: preselectedChannelId, inline: true }, 
