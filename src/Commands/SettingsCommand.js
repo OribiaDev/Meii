@@ -20,7 +20,8 @@ module.exports = {
                 let maxNumber = 0;
                 channels.forEach((channel) => {
                     if (channel.isTextBased() && !channel.isVoiceBased()) {
-                        if(channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) && channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) && channel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)){
+                        const perms = channel?.permissionsFor(client.user);
+                        if (perms && perms?.has(PermissionFlagsBits.SendMessages) && perms?.has(PermissionFlagsBits.ViewChannel) && perms?.has(PermissionFlagsBits.EmbedLinks)){
                             maxNumber++;
                         }
                     }
@@ -36,8 +37,8 @@ module.exports = {
                 let counter = 0;
                 channels.forEach((channel) => {
                     if (channel.isTextBased() && !channel.isVoiceBased()) {
-                        const perms = channel.permissionsFor(client.user);
-                        if (perms && perms.has(PermissionFlagsBits.SendMessages) && perms.has(PermissionFlagsBits.ViewChannel) && perms.has(PermissionFlagsBits.EmbedLinks)){
+                        const perms = channel?.permissionsFor(client.user);
+                        if (perms && perms?.has(PermissionFlagsBits.SendMessages) && perms?.has(PermissionFlagsBits.ViewChannel) && perms?.has(PermissionFlagsBits.EmbedLinks)){
                             if(counter<25){
                                 selectMenu.addOptions({
                                     label: `#${channel.name}`,
@@ -114,8 +115,8 @@ module.exports = {
             let counter = 0;
             channels.forEach((channel) => {
                 if (channel.isTextBased() && !channel.isVoiceBased()) {
-                    const perms = channel.permissionsFor(client.user);
-                    if (perms && perms.has(PermissionFlagsBits.SendMessages) && perms.has(PermissionFlagsBits.ViewChannel) && perms.has(PermissionFlagsBits.EmbedLinks)){
+                    const perms = channel?.permissionsFor(client.user);
+                    if (perms && perms?.has(PermissionFlagsBits.SendMessages) && perms?.has(PermissionFlagsBits.ViewChannel) && perms?.has(PermissionFlagsBits.EmbedLinks)){
                         if(counter<25){
                             selectMenu.addOptions({
                                 label: `#${channel.name}`,
