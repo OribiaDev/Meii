@@ -87,6 +87,17 @@ module.exports = {
                         .setDescription('The ID of the confession')))
         .addSubcommand(subcommand =>
             subcommand
+                .setName('quickreply')
+                .setDescription('Quick replys to common messages')
+                .addStringOption(option =>
+                    option.setName('reply_preset')
+                        .setDescription('type of preset message')
+                        .setRequired(true)
+                        .addChoices(
+                            { name: 'Confession Channel Problems', value: 'channelproblems' },
+                        )))
+        .addSubcommand(subcommand =>
+            subcommand
                 .setName('message')
                 .setDescription('Message Moderation')
                 .addStringOption(option =>
@@ -379,6 +390,17 @@ module.exports = {
             .setDescription(`**Please select an option.**`)
             .setTimestamp()
             await interaction.reply({ embeds: [quickMenuEmbed], components: [buttonRow], allowedMentions: {repliedUser: false}})
+         } else if(interaction.options.getSubcommand() == 'quickreply'){
+            //Quick Replys
+            const replyPreset = interaction.options.getString('reply_preset');
+            if(replyPreset === "channelproblems"){
+                let channelProblemEmbed = new EmbedBuilder()
+                .setTitle(`Channel not showing up in the settings command:`)
+                .setColor(`#ff6961`)
+                .setDescription(`Please follow these solutions, if they don't work please feel free to reply and let me know! \n\n **__Fix 1:__** \n Due to discords limit on dropdown menus there can only be a maximum of 25 channels listed. To fix this please change the permissions on all your channels so that Meii **only** has access to the channel(s) you're wanting to use. \n\n **__Fix 2:__** \n Meii only shows channels that have the necessary permissions. Please make sure Meii has the permissions \`Send Messages\`, \`View Channel\`, and \`Embed Links\` on the channel(s) you're wanting to use. \n\n`)
+                .setTimestamp()
+                await interaction.reply({ embeds: [channelProblemEmbed]})
+            }
          }
 	},
 }; 
