@@ -12,7 +12,7 @@ module.exports = {
         await interaction.deferReply();
         let KillUser = interaction.options.getMember('user');
         if(KillUser==null) return await interaction.editReply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
-        if(KillUser.id==interaction.member.id) return await interaction.reply({ content: `n-no- don't do that--`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
+        if(KillUser.id==interaction.member.id) return await interaction.editReply({ content: `n-no- don't do that--`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
         let KillUserID = KillUser.id
         const Killgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/kill`)

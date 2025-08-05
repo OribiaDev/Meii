@@ -17,7 +17,7 @@ module.exports = {
         const lickgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/lick`)
         .then(async (res) => {
-            if(!res.ok) return await interaction.reply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
+            if(!res.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
             const responseBody = await res.text();
             json = JSON.parse(responseBody);
             let image = json.url;

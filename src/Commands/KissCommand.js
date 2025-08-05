@@ -12,7 +12,7 @@ module.exports = {
         await interaction.deferReply();
         let KissUser = interaction.options.getMember('user');
         if(KissUser==null) return await interaction.editReply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
-        if(KissUser.id==interaction.member.id) return await interaction.reply({ content: `Do you need a kiss ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
+        if(KissUser.id==interaction.member.id) return await interaction.editReply({ content: `Do you need a kiss ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
         let KissUserID = KissUser.id
         const KissGif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/kiss`)

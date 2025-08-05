@@ -12,7 +12,7 @@ module.exports = {
         await interaction.deferReply();
         let HoldUser = interaction.options.getMember('user');
         if(HoldUser==null) return await interaction.editReply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
-        if(HoldUser.id==interaction.member.id) return await interaction.reply({ content: `Do you need some affection ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
+        if(HoldUser.id==interaction.member.id) return await interaction.editReply({ content: `Do you need some affection ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
         let HoldUserID = HoldUser.id
         const holdgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/handhold`)

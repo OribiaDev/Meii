@@ -12,7 +12,7 @@ module.exports = {
         await interaction.deferReply();
         let BullyUser = interaction.options.getMember('user');
         if(BullyUser==null) return await interaction.editReply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
-        if(BullyUser.id==interaction.member.id) return await interaction.reply({ content: `i- do you need anger management-?`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
+        if(BullyUser.id==interaction.member.id) return await interaction.editReply({ content: `i- do you need anger management-?`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
         let BullyUserID = BullyUser.id
         const bullygif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/bully`)

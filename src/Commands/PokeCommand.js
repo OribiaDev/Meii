@@ -12,7 +12,7 @@ module.exports = {
         await interaction.deferReply();
         let PokeUser = interaction.options.getMember('user');
         if(PokeUser==null) return await interaction.editReply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
-        if(PokeUser.id==interaction.member.id) return await interaction.reply({ content: `i- don't poke yourself-`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
+        if(PokeUser.id==interaction.member.id) return await interaction.editReply({ content: `i- don't poke yourself-`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
         let PokeUserID = PokeUser.id
         const pokegif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/poke`)

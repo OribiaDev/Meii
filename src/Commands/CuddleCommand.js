@@ -11,13 +11,13 @@ module.exports = {
 	async execute(interaction) {   
         await interaction.deferReply();
         let CuddleUser = interaction.options.getMember('user');
-        if(CuddleUser==null) return await interaction.reply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
-        if(CuddleUser.id==interaction.member.id) return await interaction.reply({ content: `Do you need a cuddle ${interaction.member.displayName}..?`, flags: MessageFlags.Ephemeral , allowedMentions: { repliedUser: false }})
+        if(CuddleUser==null) return await interaction.editReply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
+        if(CuddleUser.id==interaction.member.id) return await interaction.editReply({ content: `Do you need a cuddle ${interaction.member.displayName}..?`, flags: MessageFlags.Ephemeral , allowedMentions: { repliedUser: false }})
         let CuddleUserID = CuddleUser.id
         const Cuddlegif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/cuddle`)
         .then(async (res) => {
-            if(!res.ok) return await interaction.reply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
+            if(!res.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
             const responseBody = await res.text();
             json = JSON.parse(responseBody);
             let image = json.url;

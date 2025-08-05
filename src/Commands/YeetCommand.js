@@ -12,7 +12,7 @@ module.exports = {
         await interaction.deferReply();
         let YeetUser = interaction.options.getMember('user');
         if(YeetUser==null) return await interaction.editReply({ content: `I'm sorry, there has been an error. Please try again.`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
-        if(YeetUser.id==interaction.member.id) return await interaction.reply({ content: `p-pls- n-no- ${interaction.member.displayName}`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
+        if(YeetUser.id==interaction.member.id) return await interaction.editReply({ content: `p-pls- n-no- ${interaction.member.displayName}`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
         let YeetUserID = YeetUser.id
         const yeetgif = new EmbedBuilder()
         fetch(`https://api.waifu.pics/sfw/yeet`)
