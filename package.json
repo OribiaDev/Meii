@@ -1,6 +1,6 @@
 {
   "name": "meii",
-  "version": "1.17.0",
+  "version": "1.17.1",
   "description": "",
   "main": "./src/index.js",
   "dependencies": {
@@ -35,7 +35,7 @@
     "js": "^0.1.0",
     "json-buffer": "^3.0.1",
     "keypress": "^0.2.1",
-    "keyv": "^5.4.0",
+    "keyv": "^5.5.0",
     "lowercase-keys": "^3.0.0",
     "mime-db": "^1.54.0",
     "mime-types": "^3.0.1",
