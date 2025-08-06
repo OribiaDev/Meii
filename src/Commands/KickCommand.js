@@ -15,12 +15,12 @@ module.exports = {
 				  .setRequired(false)),
 	async execute(interaction, db, databaseCollections, client) {
 		//Permissions Check
-		if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.KickMembers)) return await interaction.editReply({ content: `I'm sorry, I do not have enough permissions.\nI need.. \`Kick Members\``, flags: MessageFlags.Ephemeral  }).catch(() => {return});
+		if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.KickMembers)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions.\nI need.. \`Kick Members\``, flags: MessageFlags.Ephemeral  }).catch(() => {return});
 		//Get Target User
 		let targetUser = interaction.options.getMember('user');
-		if(targetUser.id==client.user.id) return await interaction.editReply({content:"You can't kick me silly~!", flags: MessageFlags.Ephemeral  })
+		if(targetUser.id==client.user.id) return await interaction.reply({content:"You can't kick me silly~!", flags: MessageFlags.Ephemeral  })
 		//Target User Permissions Check
-		if(!targetUser.kickable) return await interaction.editReply({ content:"I'm unable to kick this person as they either have the \`Kick Members\` permission or they have a higher role than me.", flags: MessageFlags.Ephemeral  });
+		if(!targetUser.kickable) return await interaction.reply({ content:"I'm unable to kick this person as they either have the \`Kick Members\` permission or they have a higher role than me.", flags: MessageFlags.Ephemeral  });
 		//Reason Check
 		let reason = interaction.options.getString('reason');
 		if(reason==null){
@@ -31,7 +31,7 @@ module.exports = {
 			.setColor("#ff6961")
 			.setDescription(`${targetUser} has been kicked from ${interaction.guild.name}!`)
 			.setFooter({text: 'This. Is. SPARTA!'})
-			await interaction.editReply({ embeds: [Kicked], allowedMentions: {repliedUser: false}})
+			await interaction.reply({ embeds: [Kicked], allowedMentions: {repliedUser: false}})
 		}else{
 			//  w/ Reason
 			targetUser.kick({ reason: `${reason}` });
@@ -40,7 +40,7 @@ module.exports = {
 			.setColor("#ff6961")
 			.setDescription(`${targetUser} has been kicked from ${interaction.guild.name}! \n\n **Reason** \n ${reason}`)
 			.setFooter({text: 'This. Is. SPARTA!'})
-			await interaction.editReply({ embeds: [Kicked], allowedMentions: {repliedUser: false}})  
+			await interaction.reply({ embeds: [Kicked], allowedMentions: {repliedUser: false}})  
 		}
 	},
 };
