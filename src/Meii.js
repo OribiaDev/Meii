@@ -149,7 +149,7 @@ client.on(Events.InteractionCreate, async interaction => {
         await client.commands.get(commandName).execute(interaction, db, databaseCollections, client, shardCollections, prefix);
     } catch (e) {
         console.error(e);
-        return await interaction.reply({ content: 'There was an error while executing this command. Please try again later.', flags: MessageFlags.Ephemeral  });
+        return await interaction.reply({ content: 'There was an error while executing this command. Please try again later or contact support.', flags: MessageFlags.Ephemeral  });
     }   
 });
 
