@@ -63,7 +63,6 @@ module.exports = {
             if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, flags: MessageFlags.Ephemeral  })
             //Get User
             let confession_author_id = confessionDocument[0].author.id;
-            let confession_author_username = confessionDocument[0].author.username;
             let targetUser = await client.users.fetch(confession_author_id);
             if(confession_author_id==client.user.id) return await interaction.reply({content:"You can't ban me silly~!", flags: MessageFlags.Ephemeral  })
             //Push Ban
