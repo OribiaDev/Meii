@@ -43,7 +43,7 @@ module.exports = {
         let initialHelpMenu = new EmbedBuilder()
         .setTitle(":question: **Meii Help Menu**")
         .setColor("#C3B1E1")
-        .setDescription(`**Info**:\nPlease use the dropdown menu below to\nselect the section which you need help with.\n\n _____ \n **Website:** \n https://meiibot.xyz \n\n Need help? Join the [support server.](https://discord.gg/E23tPPTwSc)`)
+        .setDescription(`Please use the dropdown menu below to select a help section.\n _ \n Need help? Join the [support server.](https://discord.gg/E23tPPTwSc)`)
 		const response = await interaction.reply({
             embeds: [initialHelpMenu],
 			components: [row],
