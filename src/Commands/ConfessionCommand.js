@@ -72,7 +72,7 @@ module.exports = {
         let noChannelGiven = new EmbedBuilder()
         .setTitle(`**${interaction.guild.name}: Multiple Confession Channel Error**`)
         .setColor("#ff6961")
-        .setDescription(`I'm sorry, this server has multiple confession channels. \n\n Please specify which channel you want to submit to in the command options.`)
+        .setDescription(`I'm sorry, this server has multiple confession channels. Please specify which channel you want to submit to in the command options.`)
         .setFooter({text:`If you think this is a mistake, please contact a staff member.`})
         if(channels.length > 1 && givenChannel == null) return await interaction.editReply({ embeds: [noChannelGiven], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
         //Check if channel is a valid confession channel
