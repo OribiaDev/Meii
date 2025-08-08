@@ -16,7 +16,7 @@ const { production_server_ip, tokens, database, settings } = require('./Jsons/co
 const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
 
 //Variables
-const prefix = '/'
+const prefix = undefined;
 var token;
 var database_url;
 var shardID;
@@ -146,7 +146,7 @@ client.on(Events.InteractionCreate, async interaction => {
     const { commandName } = interaction;
     if (!client.commands.has(commandName)) return;
     try {
-        await client.commands.get(commandName).execute(interaction, db, databaseCollections, client, shardCollections, prefix);
+        await client.commands.get(commandName).execute(interaction, db, databaseCollections, client, shardCollections);
     } catch (e) {
         console.error(e);
         return await interaction.reply({ content: 'There was an error while executing this command. Please try again later or contact support.', flags: MessageFlags.Ephemeral  });

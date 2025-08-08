@@ -19,7 +19,7 @@ module.exports = {
                 .setDescription('The channel to submit the confession too (Only use if this server has multiple confession channels)')
                 .setRequired(false)
                 .addChannelTypes(ChannelType.GuildText)),
-	async execute(interaction, db, databaseCollections, client, shardCollections, prefix) {
+	async execute(interaction, db, databaseCollections, client, shardCollections) {
         if(!interaction) return;
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         //Database Collections

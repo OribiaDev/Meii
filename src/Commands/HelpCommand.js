@@ -4,7 +4,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('help')
 		.setDescription(`Menu of all Meii's commands`),
-	async execute(interaction, db, databaseCollections, client, shardCollections, prefix) {
+	async execute(interaction, db, databaseCollections, client, shardCollections) {
 		const select = new StringSelectMenuBuilder()
         .setCustomId('help_menu')
         .setPlaceholder('Choose a help section')
