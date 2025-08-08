@@ -89,13 +89,13 @@ module.exports = {
             if(interaction.user.id !== interaction.message.interaction.user.id) return
             const guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
             //Variables
-            let defaultValues = { "title": "**:love_letter: Anonymous Confession** ({id})", "body": "> {confession}", "color": "{random-hex}"}
+            let defaultValues = { "title": "**:love_letter: Anonymous Confession** ({id})", "body": "> {confession}", "color": "{random}"}
             let dataExists = false;
             if(guildDocument[0]?.customization) dataExists = true;
             let titleData = guildDocument[0]?.customization?.title;
             let bodyData = guildDocument[0]?.customization?.body;
             let colorData = guildDocument[0]?.customization?.color;
-            let defaultValuesReply = { "title": ":love_letter: Anonymous Reply to {reply_id}", "body": "> {confession}", "color": "{random-hex}"}
+            let defaultValuesReply = { "title": ":love_letter: Anonymous Reply to {reply_id}", "body": "> {confession}", "color": "{random}"}
             let dataExistsReply = false;
             if(guildDocument[0]?.customization_reply) dataExistsReply = true;
             let titleDataReply = guildDocument[0]?.customization_reply?.title;
@@ -127,7 +127,7 @@ module.exports = {
                 let colorString = dataExists ? colorData : defaultValues.color;
                 const colorInput = new TextInputBuilder()
                 .setCustomId('colorInput')
-                .setLabel("Color (#hex-code) | {random-hex}")
+                .setLabel("Color (#hex-code) | {random}")
                 .setValue(colorString)
                 .setStyle(TextInputStyle.Short);
                 //Action Rows
@@ -187,7 +187,7 @@ module.exports = {
                 let colorString = dataExistsReply ? colorDataReply : defaultValuesReply.color;
                 const colorInput = new TextInputBuilder()
                 .setCustomId('colorInput')
-                .setLabel("Color (#hex-code) | {random-hex}")
+                .setLabel("Color (#hex-code) | {random}")
                 .setValue(colorString)
                 .setStyle(TextInputStyle.Short);
                 //Action Rows
