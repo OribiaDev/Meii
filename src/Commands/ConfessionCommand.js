@@ -164,7 +164,9 @@ module.exports = {
         }catch( error ){
             return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, flags: MessageFlags.Ephemeral  })
         }
-        await interaction.editReply({ content: `Your confession has now been added to **${confessionchannel}**  :thumbsup: `, flags: MessageFlags.Ephemeral  });
+        //Vote Chance
+        const voteChance = Math.random() < 0.5 ? `\n\nEnjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote)` : ``;
+        await interaction.editReply({ content: `Your confession has now been added to **${confessionchannel}**  :thumbsup: ${voteChance}`, flags: MessageFlags.SuppressEmbeds  });
         //Check if server has Confession Logging 
         if(guildDocument[0].settings.confession_log_channel_id==undefined) return
         if(!client.channels.cache.get(guildDocument[0].settings.confession_log_channel_id)) return
