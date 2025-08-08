@@ -25,7 +25,7 @@ module.exports = {
         const now = new Date();
         const diffMs = now - time; // difference in milliseconds
         const diffMinutes = diffMs / (1000 * 60); // convert ms to minutes
-        if (diffMinutes >= 30) return interaction.editReply({content:`I'm sorry, but you're only allowed to delete confessions up to 30min after its sent.`, flags: MessageFlags.Ephemeral  })
+        if (diffMinutes >= 30) return interaction.editReply({content:`I'm sorry, but you're only allowed to delete confessions up to 30min after its originally sent.`, flags: MessageFlags.Ephemeral  })
         //Deleting
         try{
             return client.shard.broadcastEval(async (c, { channelId, messageID }) => {
