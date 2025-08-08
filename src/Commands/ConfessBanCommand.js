@@ -33,7 +33,7 @@ module.exports = {
         .setTitle(`**Moderation Error: Confession Channel Not Set**`)
         .setColor("#ff6961")
         .setDescription(`Please setup the confession channel before using this commmand.`)
-        .setFooter({text:`You can set it up by doing ${prefix}settings`})  
+        .setFooter({text:`You can set it up by doing /settings`})  
         if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return await interaction.reply({ embeds: [ConfessionChannelNotSet], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})  
         //Commands
         if (interaction.options.getSubcommand() === 'user') {
@@ -50,7 +50,7 @@ module.exports = {
             .setTitle(`**Confession: User Banned**`)
             .setColor("#ff6961")
             .setDescription(`${targetUser} (${targetUser.user.username}) has now been banned from using confessions on ${interaction.guild.name}.`)
-            .setFooter({text:`To unban this user please use ${prefix}confessunban`})
+            .setFooter({text:`To unban this user please use /confessunban`})
             await interaction.reply({ embeds: [ConfessBanned], allowedMentions: {repliedUser: false}})   
             return
         } else if (interaction.options.getSubcommand() === 'confession'){
@@ -78,7 +78,7 @@ module.exports = {
                 .setTitle(`**Confession: User Banned**`)
                 .setColor("#ff6961")
                 .setDescription(`${targetUser} (${targetUser.username}) has now been banned from using confessions on ${interaction.guild.name}.`)
-                .setFooter({text:`To unban this user please use ${prefix}confessunban`})
+                .setFooter({text:`To unban this user please use /confessunban`})
                 await interaction.reply({ embeds: [ConfessBanned], allowedMentions: {repliedUser: false}})   
                 return
             }else{
@@ -87,7 +87,7 @@ module.exports = {
                 .setTitle(`**Confession: User Banned**`)
                 .setColor("#ff6961")
                 .setDescription(`${confession_author_username} has now been banned from using confessions on ${interaction.guild.name}.`)
-                .setFooter({text:`To unban this user please use ${prefix}confessunban`})
+                .setFooter({text:`To unban this user please use /confessunban`})
                 await interaction.reply({ embeds: [ConfessBanned], allowedMentions: {repliedUser: false}})   
                 return
             }

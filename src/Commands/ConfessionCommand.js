@@ -53,7 +53,7 @@ module.exports = {
         .setTitle(`**Confession Channel Not Set**`)
         .setColor('#ff6961')
         .setDescription(`I'm sorry, the confession channel is not setup for **${interaction.guild.name}**.`)
-        .setFooter({text:`Ask a staff member to set it up with ${prefix}set confession_channel`})
+        .setFooter({text:`Ask a staff member to set it up with /set confession_channel`})
         //No Confess Channel
         if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return await interaction.editReply({ embeds: [ConfessionNotSet], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})   
         //Check if user is banned from confessions
@@ -147,7 +147,7 @@ module.exports = {
             .setColor(`${colorParsed}`)
             .setDescription(`${bodyParsed}`)
             .setImage(attachment?.url)
-            .setFooter({text: `✨  If this confession breaks TOS or is overtly hateful, you can report it with "${prefix}report ${confessionID}"`})
+            .setFooter({text: `✨  If this confession breaks TOS or is overtly hateful, you can report it with "/report ${confessionID}"`})
             const sentConfession = await confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}}) 
             //Get message ID
             const confessionMessageId = sentConfession.id;
