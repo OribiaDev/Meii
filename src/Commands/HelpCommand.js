@@ -7,7 +7,7 @@ module.exports = {
 	async execute(interaction, db, databaseCollections, client, shardCollections, prefix) {
 		const select = new StringSelectMenuBuilder()
         .setCustomId('help_menu')
-        .setPlaceholder('Choose a help section!')
+        .setPlaceholder('Choose a help section')
         .addOptions( 
             new StringSelectMenuOptionBuilder()
                 .setLabel('Confessions')
