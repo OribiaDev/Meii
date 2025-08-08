@@ -291,13 +291,3 @@ module.exports = {
 
 	},
 };
-
-
-
-
-                //Customize not saving when removing
-
-                //reply not showing changes
-                //not saving when removing
-
-                //Change hex default
