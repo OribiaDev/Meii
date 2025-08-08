@@ -1,233 +1,10 @@
-const { Events, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder } = require('discord.js')
+const { MessageFlags, Events, TextDisplayBuilder, ContainerBuilder, ChannelSelectMenuBuilder, ChannelType, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('settings')
 		.setDescription('All the customizable settings for Meii')
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
-
-        async generateConfessionChannelEmbed(interaction, db, databaseCollections, client, shardCollections){
-                //Get Channels from DB
-                let server_data = databaseCollections.server_data;
-                let guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
-
-                //Preselected Channels Array
-                let preselectedChannelIds = guildDocument[0]?.settings?.confession_channel_ids;            
-                //Fetch all channels
-                const channels = interaction.guild.channels.cache;
-                //Filter for number of channels
-                // Create the select menu
-                let maxNumber = 0;
-                channels.forEach((channel) => {
-                    if (channel.isTextBased() && !channel.isVoiceBased()) {
-                        const perms = channel?.permissionsFor(client.user);
-                        if (perms && perms?.has(PermissionFlagsBits.SendMessages) && perms?.has(PermissionFlagsBits.ViewChannel) && perms?.has(PermissionFlagsBits.EmbedLinks)){
-                            maxNumber++;
-                        }
-                    }
-                });
-                if(maxNumber>25) maxNumber=25;
-                if(maxNumber < 1) maxNumber = 1;
-                const selectMenu = new StringSelectMenuBuilder()
-                    .setCustomId('confession_channel_select')
-                    .setPlaceholder('Select one or more channels')
-                    .setMinValues(1)
-                    .setMaxValues(maxNumber);
-                // Loop through channels and add them to the menu
-                let counter = 0;
-                channels.forEach((channel) => {
-                    if (channel.isTextBased() && !channel.isVoiceBased()) {
-                        const perms = channel?.permissionsFor(client.user);
-                        if (perms && perms?.has(PermissionFlagsBits.SendMessages) && perms?.has(PermissionFlagsBits.ViewChannel) && perms?.has(PermissionFlagsBits.EmbedLinks)){
-                            if(counter<25){
-                                selectMenu.addOptions({
-                                    label: `#${channel.name}`,
-                                    value: channel.id,
-                                    default: preselectedChannelIds?.includes(channel.id), // Preselect if channel ID is in the array
-                                });
-                                counter++;
-                            }
-                            if (counter === 0) {
-                                selectMenu.addOptions({
-                                    label: "No available channels",
-                                    value: "no_channels",
-                                    default: true
-                                });
-                            }
-                        }
-                    }
-                });
-
-                //Back Button
-                const backButton = new ButtonBuilder()
-                .setCustomId('settings-back')
-                .setLabel('Back')
-                .setStyle(ButtonStyle.Secondary);
-
-                //Disable Button
-                const confessionDisableButton = new ButtonBuilder()
-                .setCustomId('settings-confessions-disable')
-                .setLabel('Disable/Reset')
-                .setStyle(ButtonStyle.Danger);
-
-                // Create menu ac tion row
-                const menuRow = new ActionRowBuilder().addComponents(selectMenu)
-                //create button action row
-                const buttonRow = new ActionRowBuilder().addComponents(confessionDisableButton, backButton)
-
-                if(preselectedChannelIds==undefined){
-                    preselectedChannelIds="Not Setup"
-                }else{
-                    preselectedChannelIds = preselectedChannelIds.map(id => `<#${id}>`).join(', ')
-                }
-                let ConfessionChannelEmbeds = new EmbedBuilder()
-                .setColor("#C3B1E1")
-                .setTitle("**Settings: Confession Channels**")
-                .setDescription(`Use the dropdown menu to select one or more confession channels. If you select multiple confession channels, there will be an option at the end of the confession command to select what channel you want to use. \n\n **If your channel is not showing up:**\n_(If all else fails, join the support server for assistance!)_\n __Fix 1:__ \n Due to discords limit on dropdown menus there can only be a maximum of 25 channels listed.  To fix this please change the permissions on all your channels so that Meii **only** has access to the channel(s) you're wanting to use. \n\n __Fix 2:__ \n Meii only shows channels that have the necessary permissions. Please make sure Meii has the permissions \`Send Messages\`, \`View Channel\`, and \`Embed Links\` on the channel(s) you're wanting to use. \n\n`)
-                .addFields(
-                    { name: '\u200B', value: ' ' },
-                    { name: '**Confession Channel(s)**', value: preselectedChannelIds, inline: true }, 
-                    { name: '\u200B', value: ' ' },
-                )
-
-            return {
-                embed: [ConfessionChannelEmbeds],
-                components: [menuRow, buttonRow],
-            };
-        },
-
-        async generateConfessionLogChannelEmbed(interaction, db, databaseCollections, client, shardCollections){
-            //Get Channels from DB
-            let server_data = databaseCollections.server_data;
-            let guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
-
-            //Preselected Channels Array
-            let preselectedChannelId = guildDocument[0]?.settings?.confession_log_channel_id;            
-            //Fetch all channels
-            const channels = interaction.guild.channels.cache;
-            // Create the select menu
-            const selectMenu = new StringSelectMenuBuilder()
-                .setCustomId('confession_log_channel_select')
-                .setPlaceholder('Select a channel')
-                .setMinValues(1)
-                .setMaxValues(1);
-            // Loop through channels and add them to the menu
-            let counter = 0;
-            channels.forEach((channel) => {
-                if (channel.isTextBased() && !channel.isVoiceBased()) {
-                    const perms = channel?.permissionsFor(client.user);
-                    if (perms && perms?.has(PermissionFlagsBits.SendMessages) && perms?.has(PermissionFlagsBits.ViewChannel) && perms?.has(PermissionFlagsBits.EmbedLinks)){
-                        if(counter<25){
-                            selectMenu.addOptions({
-                                label: `#${channel.name}`,
-                                value: channel.id,
-                                default: channel.id === preselectedChannelId
-                            });
-                            counter++;
-                        }
-                        if (counter === 0) {
-                            selectMenu.addOptions({
-                                label: "No available channels",
-                                value: "no_channels",
-                                default: true
-                            });
-                        }
-                    }
-                }
-            });
-
-            //Back Button
-            const backButton = new ButtonBuilder()
-            .setCustomId('settings-back')
-            .setLabel('Back')
-            .setStyle(ButtonStyle.Secondary);
-
-            //Disable Button
-            const confessionlogDisableButton = new ButtonBuilder()
-            .setCustomId('settings-confession-log-disable')
-            .setLabel('Disable/Reset')
-            .setStyle(ButtonStyle.Danger);
-
-            // Create menu action row
-            const menuRow = new ActionRowBuilder().addComponents(selectMenu)
-            //create button action row
-            const buttonRow = new ActionRowBuilder().addComponents(confessionlogDisableButton, backButton)
-
-            if(preselectedChannelId==undefined){
-                preselectedChannelId="Not Setup"
-            }else{
-                preselectedChannelId = `<#${preselectedChannelId}>`
-            }
-
-            let ConfessionLogChannelEmbeds = new EmbedBuilder()
-            .setColor("#C3B1E1")
-            .setTitle("**Settings: Confession Log Channel**")
-            .setDescription(`Use the dropdown menu to select a confession log channel. \n\n **If your channel is not showing up:**\n_(If all else fails, join the support server for assistance!)_\n __Fix 1:__ \n Due to discords limit on dropdown menus there can only be a maximum of 25 channels listed.  To fix this please change the permissions on all your channels so that Meii **only** has access to the channel you're wanting to use. \n\n __Fix 2:__ \n Meii only shows channels that have the necessary permissions. Please make sure Meii has the permissions \`Send Messages\`, \`View Channel\`, and \`Embed Links\` on the channel you're wanting to use. \n\n`)
-            .addFields(
-                { name: '\u200B', value: ' ' },
-                { name: '**Confession Log Channel**', value: preselectedChannelId, inline: true }, 
-                { name: '\u200B', value: ' ' },
-            )
-
-            return {
-            embed: [ConfessionLogChannelEmbeds],
-            components: [menuRow, buttonRow],
-            };
-        },
-
-        async generateAttachmentEmbed(interaction, db, databaseCollections, client, shardCollections){
-            //Get Channels from DB
-
-            let server_data = databaseCollections.server_data;
-            let guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
-
-            //Attachment Status
-            let attachmentStatus = guildDocument[0]?.settings?.attachment_toggle;            
-            //Create Buttons
-            //Enable Button
-            const enableButton = new ButtonBuilder()
-            .setCustomId('settings-attachment-enable')
-            .setLabel('Enable Attachments')
-            .setStyle(ButtonStyle.Success)
-            .setDisabled(attachmentStatus);
-
-            //Disable Button
-            const disableButton = new ButtonBuilder()
-            .setCustomId('settings-attachment-disable')
-            .setLabel('Disable Attachments')
-            .setStyle(ButtonStyle.Danger)
-            .setDisabled(!attachmentStatus);
-
-            //Back Button
-            const backButton = new ButtonBuilder()
-            .setCustomId('settings-back')
-            .setLabel('Back')
-            .setStyle(ButtonStyle.Secondary);
-
-            //Attachment Status String
-            let AttachmentStatusString;
-            if(attachmentStatus){
-                AttachmentStatusString = 'Enabled';
-            }else{
-                AttachmentStatusString = 'Disabled';
-            }
-
-            //create button action row
-            const buttonRow = new ActionRowBuilder().addComponents(enableButton, disableButton, backButton)
-            let ConfessionAttachmentEmbed = new EmbedBuilder()
-            .setColor("#C3B1E1")
-            .setTitle("**Settings: Confession Attachments**")
-            .setDescription(`Use the buttons below to toggle attachments in confessions. \n\n __Please Note:__ Attachments are enabled by default.`)
-            .addFields(
-                { name: '\u200B', value: ' ' },
-                { name: '**Confession Attachments**', value: `${AttachmentStatusString}`, inline: true }, 
-                { name: '\u200B', value: ' ' },
-            )
-            return {
-                embed: [ConfessionAttachmentEmbed],
-                components: [buttonRow],
-            };
-        },
 
         async generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections){
             // Database collections and document logic
@@ -239,81 +16,142 @@ module.exports = {
             }
             //Get Vars
             let preselectedChannelIds = guildDocument[0]?.settings?.confession_channel_ids;
+            let preselectedConfessionChannelIds = guildDocument[0]?.settings?.confession_channel_ids;       
             let preselectedChannelId = guildDocument[0]?.settings?.confession_log_channel_id;
+            let preselectedConfessionLogChannelId = guildDocument[0]?.settings?.confession_log_channel_id;
             let attachmentToggle = guildDocument[0]?.settings?.attachment_toggle;  
             let confessionchannelcheck = false;
             //Check if Confession Setup
             if(preselectedChannelIds==undefined){
-                preselectedChannelIds="Not Setup"
+                preselectedChannelIds="**Channel Not Setup**"
                 confessionchannelcheck = true;
+                preselectedConfessionChannelIds=[];
             }else{
                 preselectedChannelIds = preselectedChannelIds.map(id => `<#${id}>`).join(', ')
             }
             //Check if Confession Log Setup
             if(preselectedChannelId==undefined){
-                preselectedChannelId="Not Setup"
+                preselectedChannelId="**Channel Not Setup**"
+                preselectedConfessionLogChannelId=[];
             }else{
                 preselectedChannelId = `<#${preselectedChannelId}>`
             }
-            if(attachmentToggle==undefined){
-                attachmentToggle="Not Setup"
-            }else if(attachmentToggle==true){
-                attachmentToggle = "Enabled"
-            }else if(attachmentToggle==false){
-                attachmentToggle = "Disabled"
-            }
-            //Create Buttons
-            const settingsconfessionchannel = new ButtonBuilder()
-                .setCustomId('settings-confession-channels')
-                .setLabel('Set Confession Channels')
-                .setStyle(ButtonStyle.Primary);
-                
+            //Create Container 
+            const settingsContainer = new ContainerBuilder()
+                .setAccentColor(0xC3B1E1)
+                //Titles
+                .addTextDisplayComponents(
+		            textDisplay => textDisplay
+			        .setContent('## **Utility: Settings**'),
+                    textDisplay => textDisplay
+			        .setContent('Please use the dropdown menu and buttons below to configure Meii. Make sure Meii has permission to send messages, or these wont work!'),
+	            )
+                .addSeparatorComponents(
+                    separator => separator,
+                )
+                //Confession Channels
+                .addTextDisplayComponents(
+		            textDisplay => textDisplay
+			        .setContent(' ### **Confession Channel(s)**'),
+                    textDisplay => textDisplay
+			        .setContent('Use the dropdown menu to select or remove one or more confession channels. If you select multiple channels, there will be an option at the end of the confession command to select which channel you want to use.'),
+	            )
+                .addTextDisplayComponents(
+                    textDisplay => textDisplay
+                        .setContent(preselectedChannelIds),
+	            )
+                .addActionRowComponents(
+                    actionRow => actionRow
+                        .setComponents(
+                            new ChannelSelectMenuBuilder()
+                                .setCustomId('confession_channel_select')
+                                .setDefaultChannels(preselectedConfessionChannelIds)
+                                .setPlaceholder('Select one or more channels')
+                                .setMinValues(0)
+                                .setMaxValues(25)
+                                .addChannelTypes(
+                                    ChannelType.GuildText
+                                ),
+                        ),
+                )
+                .addSeparatorComponents(
+                    separator => separator,
+                )
+                //Confession Logging Channel
+                .addTextDisplayComponents(
+		            textDisplay => textDisplay
+			        .setContent(' ### **Confession Logging Channel**'),
+                    textDisplay => textDisplay
+			        .setContent('Use the dropdown menu to select or remove a confession log channel.'),
+	            )
+                .addTextDisplayComponents(
+                    textDisplay => textDisplay
+                        .setContent(preselectedChannelId),
+	            )
+                .addActionRowComponents(
+                    actionRow => actionRow
+                        .setComponents(
+                            new ChannelSelectMenuBuilder()
+                                .setCustomId('confession_log_channel_select')
+                                .setDefaultChannels(preselectedConfessionLogChannelId)
+                                .setPlaceholder('Select a channel.')
+                                .setMinValues(0)
+                                .setMaxValues(1)
+                                .setDisabled(confessionchannelcheck)
+                                .addChannelTypes(
+                                    ChannelType.GuildText
+                                ),
+                        ),
+                )
+                .addSeparatorComponents(
+                    separator => separator,
+                )
+                //Attachment Toggles
+                .addTextDisplayComponents(
+		            textDisplay => textDisplay
+			        .setContent(' ### **Confession Attachments**'), 
+                    textDisplay => textDisplay
+			        .setContent('Use the buttons below to toggle the use of attachments in confessions. Please note attatchments are **enabled by default**.'),
+	            )
+                .addActionRowComponents(
+                    actionRow => actionRow
+                        .setComponents(
+                            new ButtonBuilder()
+                            .setCustomId('settings-attachment-enable')
+                            .setLabel('Enable')
+                            .setDisabled(confessionchannelcheck || attachmentToggle)
+                            .setStyle(ButtonStyle.Success),
 
-            const settingsconfessionlogchannel = new ButtonBuilder()
-                .setCustomId('settings-confession-log-channel')
-                .setLabel('Set Confession Log Channel')
-                .setStyle(ButtonStyle.Secondary)
-                .setDisabled(confessionchannelcheck);
-
-            const settingsconfessionattachment = new ButtonBuilder()
-                .setCustomId('settings-confession-attachment')
-                .setLabel('Toggle Confession Attachments')
-                .setStyle(ButtonStyle.Secondary)
-                .setDisabled(confessionchannelcheck);
-
-            const cancel = new ButtonBuilder()
-                .setCustomId('settings-cancel')
-                .setLabel('Cancel')
-                .setStyle(ButtonStyle.Danger);
-
-            const settingsRow = new ActionRowBuilder()
-                .addComponents(settingsconfessionchannel, settingsconfessionlogchannel);
-
-            const settingsRow2 = new ActionRowBuilder()
-                .addComponents(settingsconfessionattachment, cancel);
-
-            let SettingsEmbed = new EmbedBuilder()
-                .setColor("#C3B1E1")
-                .setTitle("**Utility: Settings**")
-                .setDescription(`Below are the customizable settings for Meii. \n\n Please use the buttons at the bottom to customize them!`)
-                .addFields(
-                    { name: '\u200B', value: ' ' },
-                    { name: '**Confession Channels**', value: preselectedChannelIds, inline: true },
-                    { name: '**Confession Log Channel**', value: preselectedChannelId, inline: true },
-                    { name: '\u200B', value: ' ' },
-                    { name: '**Confession Attachments **', value: attachmentToggle, inline: true },
-                    { name: '\u200B', value: ' ' },
-                );
+                            new ButtonBuilder()
+                            .setCustomId('settings-attachment-disable')
+                            .setLabel('Disable')
+                            .setDisabled(confessionchannelcheck || !attachmentToggle)
+                            .setStyle(ButtonStyle.Danger)
+                        ),
+                )
+                .addSeparatorComponents(
+                    separator => separator,
+                )
+                //Cancel Button
+                .addActionRowComponents(
+                    actionRow => actionRow
+                        .setComponents(
+                            new ButtonBuilder()
+                            .setCustomId('settings-cancel')
+                            .setLabel('Done/Cancel')
+                            .setStyle(ButtonStyle.Danger)
+                        ),
+                )
 
             return {
-                embed: [SettingsEmbed],
-                components: [settingsRow, settingsRow2],
+                flags: MessageFlags.IsComponentsV2,
+                components: [settingsContainer],
             };
         },
 
         async execute(interaction, db, databaseCollections, client, shardCollections) {
-            const { embed, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
-            await interaction.reply({ embeds: embed, components: components});
+            const { flags, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
+            await interaction.reply({ flags: flags, components: components});
             //Component Handler
             const interactionListener = async (interaction) => {
                 let server_data = databaseCollections.server_data;
@@ -322,84 +160,66 @@ module.exports = {
                 if(interaction.message.interactionMetadata.user.id != interaction.user.id) return;
                 //Buttons
                 if(interaction.isButton()){
-                    //Set Confession Channels
-                    if (interaction.customId === 'settings-confession-channels') { 
-                        const { embed, components } = await this.generateConfessionChannelEmbed(interaction, db, databaseCollections, client, shardCollections);
-                        await interaction.update({ embeds: embed, components: components});
-                    }
-                    //Set Confession Log Channels
-                    if (interaction.customId === 'settings-confession-log-channel') { 
-                        const { embed, components } = await this.generateConfessionLogChannelEmbed(interaction, db, databaseCollections, client, shardCollections);
-                        await interaction.update({ embeds: embed, components: components});
-                    }
-                    //Set Confession Attachment
-                    if (interaction.customId === 'settings-confession-attachment') { 
-                        const { embed, components } = await this.generateAttachmentEmbed(interaction, db, databaseCollections, client, shardCollections);
-                        await interaction.update({ embeds: embed, components: components})
-                    }
-                    //Confession Disable Button Handler
-                    if (interaction.customId === 'settings-confessions-disable') { 
-                        await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $unset: { 'settings.confession_channel_ids': ' ' } });
-                        const { embed, components } = await this.generateConfessionChannelEmbed(interaction, db, databaseCollections, client, shardCollections);
-                        await interaction.update({ embeds: embed, components: components});
-                    }
-                    //Confession Logs Disable Button Handler
-                    if (interaction.customId === 'settings-confession-log-disable') { 
-                        await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $unset: { 'settings.confession_log_channel_id': ' '} });
-                        const { embed, components } = await this.generateConfessionLogChannelEmbed(interaction, db, databaseCollections, client, shardCollections);
-                        await interaction.update({ embeds: embed, components: components});
-                    }
                     //Confession Attachment Enable Button Handler
                     if (interaction.customId === 'settings-attachment-enable') { 
                         await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { 'settings.attachment_toggle': true } });
-                        const { embed, components } = await this.generateAttachmentEmbed(interaction, db, databaseCollections, client, shardCollections);
-                        await interaction.update({ embeds: embed, components: components});
+                        const { flags, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
+                        await interaction.update({ flags: flags, components: components});
                     }
                     //Confession Attachment Disable Button Handler
                     if (interaction.customId === 'settings-attachment-disable') { 
                         await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { 'settings.attachment_toggle': false } });
-                        const { embed, components } = await this.generateAttachmentEmbed(interaction, db, databaseCollections, client, shardCollections);
-                        await interaction.update({ embeds: embed, components: components});
-                    }
-                    //Back Button Handler
-                    if (interaction.customId === 'settings-back') {
-                        const { embed, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
-                        await interaction.update({ embeds: embed, components: components});
+                        const { flags, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
+                        await interaction.update({ flags: flags, components: components});
                     }
                     if(interaction.customId === 'settings-cancel'){
                         //Cancel Button
-                        await interaction.update({content: `cancelled.`, embeds: [], components: [], ephermal: true})
+                        const CancelTextDisplay = new TextDisplayBuilder()
+	                        .setContent('Completed :)');
+                        await interaction.update({ flags: MessageFlags.IsComponentsV2, components: [CancelTextDisplay]});
                         client.removeListener(Events.InteractionCreate, interactionListener);
                         clearTimeout(autoRemoveTimeout);
                         return
                     }
-        
                 }
-                //String Menu Handler
-                if(interaction.isStringSelectMenu()){
+                //Channel Menu Handler
+                if(interaction.isChannelSelectMenu()){
                     //Confession Channel Menu
                     if(interaction.customId === 'confession_channel_select'){
                         let confessionChannelIDs = interaction.values;
-                        if(guildDocument[0]?.settings===undefined){
-                            //Add attachment Toggle
-                            await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { settings: { attachment_toggle: true, confession_channel_ids: confessionChannelIDs } } });
+                        //Check if nothing is selected
+                        if(!confessionChannelIDs || confessionChannelIDs.length === 0){
+                            await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $unset: { 'settings.confession_channel_ids': ' ' } });
+                            const { flags, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
+                            await interaction.update({ flags: flags, components: components});
                         }else{
-                            //Ignore attachment Toggle
-                            await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { 'settings.confession_channel_ids': confessionChannelIDs } });
+                            if(guildDocument[0]?.settings===undefined){
+                                //Add attachment Toggle
+                                await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { settings: { attachment_toggle: true, confession_channel_ids: confessionChannelIDs } } });
+                            }else{
+                                //Ignore attachment Toggle
+                                await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { 'settings.confession_channel_ids': confessionChannelIDs } });
+                            }
+                            const { flags, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
+                            await interaction.update({ flags: flags, components: components});
                         }
-                        const { embed, components } = await this.generateConfessionChannelEmbed(interaction, db, databaseCollections, client, shardCollections);
-                        await interaction.update({ embeds: embed, components: components});
                     }
-                    //Confession Channel Menu
                     if(interaction.customId === 'confession_log_channel_select'){
-                        let confessionChannelID = interaction.values.toString();
-                        await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { 'settings.confession_log_channel_id': confessionChannelID } });
-                        const { embed, components } = await this.generateConfessionLogChannelEmbed(interaction, db, databaseCollections, client, shardCollections);
-                        await interaction.update({ embeds: embed, components: components});
+                        let confessionChannelID = interaction.values;
+                        //Check if nothing is selected
+                        if(!confessionChannelID || confessionChannelID.length === 0){
+                            await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $unset: { 'settings.confession_log_channel_id': ' '} });
+                            const { flags, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
+                            await interaction.update({ flags: flags, components: components});
+                        }else{
+                            let confessionChannelID = interaction.values.toString();
+                            await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { 'settings.confession_log_channel_id': confessionChannelID } });
+                            const { flags, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
+                            await interaction.update({ flags: flags, components: components});
+                        }
                     }
-                } 
 
-
+                }
             };
             
             client.on(Events.InteractionCreate, interactionListener);
