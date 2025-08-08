@@ -77,7 +77,7 @@ module.exports = {
                 let ConfessBanned = new EmbedBuilder()
                 .setTitle(`**Confession: User Banned**`)
                 .setColor("#ff6961")
-                .setDescription(`${targetUser} (${targetUser.username}) has now been banned from using confessions on ${interaction.guild.name}.`)
+                .setDescription(`That user has now been banned from using confessions on ${interaction.guild.name}.`)
                 .setFooter({text:`To unban this user please use /confessunban`})
                 await interaction.reply({ embeds: [ConfessBanned], allowedMentions: {repliedUser: false}})   
                 return
@@ -86,7 +86,7 @@ module.exports = {
                 let ConfessBanned = new EmbedBuilder()
                 .setTitle(`**Confession: User Banned**`)
                 .setColor("#ff6961")
-                .setDescription(`${confession_author_username} has now been banned from using confessions on ${interaction.guild.name}.`)
+                .setDescription(`That user has now been banned from using confessions on ${interaction.guild.name}.`)
                 .setFooter({text:`To unban this user please use /confessunban`})
                 await interaction.reply({ embeds: [ConfessBanned], allowedMentions: {repliedUser: false}})   
                 return
