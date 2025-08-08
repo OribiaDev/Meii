@@ -16,7 +16,6 @@ const { production_server_ip, tokens, database, settings } = require('./Jsons/co
 const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
 
 //Variables
-const prefix = undefined;
 var token;
 var database_url;
 var shardID;
