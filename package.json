@@ -1,6 +1,6 @@
 {
   "name": "meii",
-  "version": "1.17.1",
+  "version": "1.18.0",
   "description": "",
   "main": "./src/index.js",
   "dependencies": {
@@ -10,7 +10,7 @@
     "balanced-match": "^3.0.1",
     "brace-expansion": "^4.0.1",
     "cacheable-lookup": "^7.0.0",
-    "cacheable-request": "^13.0.8",
+    "cacheable-request": "^13.0.9",
     "clone-response": "^2.0.0",
     "combined-stream": "^1.0.8",
     "commander": "^14.0.0",
