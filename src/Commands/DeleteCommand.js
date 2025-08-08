@@ -3,7 +3,7 @@ const { SlashCommandBuilder, MessageFlags} = require('discord.js')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('delete')
-		.setDescription(`Deletes a confession (Must be a confession you posted)`)
+		.setDescription(`Deletes a confession (Must be a confession you posted, and only up to 30min after its sent)`)
         .addStringOption(option =>
             option
                 .setName('confession_id')
@@ -20,6 +20,12 @@ module.exports = {
         if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, flags: MessageFlags.Ephemeral  })
         //Check if the user is authorized to delete
         if(interaction.user.id!==confessionDocument[0].author.id) return interaction.editReply({content:`I'm sorry, but you are not allowed to delete the confession with the ID of **${confessionID}** as it was not sent by you.`, flags: MessageFlags.Ephemeral  })
+        //Check if under 30min
+        const time = new Date(confessionDocument[0].document_date);
+        const now = new Date();
+        const diffMs = now - time; // difference in milliseconds
+        const diffMinutes = diffMs / (1000 * 60); // convert ms to minutes
+        if (diffMinutes >= 30) return interaction.editReply({content:`I'm sorry, but you're only allowed to delete confessions up to 30min after its sent.`, flags: MessageFlags.Ephemeral  })
         //Deleting
         try{
             return client.shard.broadcastEval(async (c, { channelId, messageID }) => {
