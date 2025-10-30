@@ -12,7 +12,7 @@ module.exports = {
 		//Database Collection Vars
 		let bot_data = databaseCollections.bot_data;
 		//Updated Date
-		let updatedDate = '9/05/2025'
+		let updatedDate = '10/30/2025'
 		//Memory Math
 		function getMemoryArray (){
 			return client.shard.broadcastEval(async (c) => {
