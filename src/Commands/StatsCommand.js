@@ -41,7 +41,7 @@ module.exports = {
 		let InfoEmb = new EmbedBuilder()
 		.setColor("#C3B1E1")
 		.setTitle("**Utility: Stats**")
-		.setDescription(`Servers: **${guildNumber.reduce((acc, guildCount) => acc + guildCount, 0).toLocaleString()}** \n Total Shards: **${shardCollections.totalShards}** ~ (Current Shard ID: **${updatedShardNumber}**) \n Total Confessions Sent: **${confessionNumber.toLocaleString()}** \n\n Ping: \`${client.ws.ping}ms\` \n Total Memory Usage: \`${memString}\` \n\n Last Updated: **${updatedDate}** \n Date Created: **3/08/2023** \n Version: **${packageFile.version}** \n\n Author: **oribia.dev** \n Website: https://meiibot.xyz \n\n **Uptime**: \`${uptime}\` \n\n`)
+		.setDescription(`Servers: **${guildNumber.reduce((acc, guildCount) => acc + guildCount, 0).toLocaleString()}** \n Total Shards: **${shardCollections.totalShards}** ~ (Current Shard ID: **${updatedShardNumber}**) \n Total Confessions Sent: **${confessionNumber.toLocaleString()}** \n\n Ping: \`${client.ws.ping}ms\` \n Total Memory Usage: \`${memString}\` \n\n Last Updated: **${updatedDate}** \n Date Created: **3/08/2023** \n Version: **${packageFile.version}** \n\n Author: **oribia.dev** \n Website: https://meii.bot \n\n **Uptime**: \`${uptime}\` \n\n`)
 		await interaction.reply({ embeds: [InfoEmb], allowedMentions: { repliedUser: false }})
 	},
 };

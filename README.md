@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://meiibot.xyz/img/Logos/MeiiLogoOffical.png" width="200" alt="Meii Logo">
+ <img src="https://meii.bot/img/Logos/MeiiLogoOffical.png" width="200" alt="Meii Logo">
 </p>
 
 ## Meii

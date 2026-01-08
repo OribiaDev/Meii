@@ -86,7 +86,7 @@ function CommandRefresh(){
 
 //Activity Refresher
 async function activityRefresh(){
-    client.user.setActivity(`/help | meiibot.xyz`, { type: ActivityType.Listening })
+    client.user.setActivity(`/help | meii.bot`, { type: ActivityType.Listening })
     setTimeout(() => {
         //Refresh every 6 hours
         activityRefresh();

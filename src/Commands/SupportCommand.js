@@ -8,7 +8,7 @@ module.exports = {
 		let SupportEmb = new EmbedBuilder()
 		.setColor("#ffdac1")
 		.setTitle("**Utility: Support Server**")
-		.setDescription(`:sparkles:  [Click Me](https://meiibot.xyz/discord) to join the Support Server! :sparkles: `)
+		.setDescription(`:sparkles:  [Click Me](https://meii.bot/discord) to join the Support Server! :sparkles: `)
 		await interaction.reply({ embeds: [SupportEmb], allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
 	},
 };
