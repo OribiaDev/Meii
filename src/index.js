@@ -1,4 +1,4 @@
-//Copyright 2025 Oribia. All Rights Reserved
+//Copyright 2026 Oribia. All Rights Reserved
 //If you see this, meow :3 - OribiaDev
 
 //Imports
