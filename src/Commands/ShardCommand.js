@@ -29,8 +29,8 @@ module.exports = {
             }else{
                 shardnumber = `__Shard ${i}__`;
             }
-            let uptime = moment.duration(uptimeNumbers[i]).format(" D [days], H [hrs], m [mins], s [secs]");
-            shardStringTemp = `${shardnumber}: \n ~ **${guildNumber[i]}** Servers \n ~ Memory Usage: \`${totalMemoryArray[i]}MB\` \n ~ Uptime: \`${uptime}\` \n\n`
+            let uptime = moment.duration(uptimeNumbers[i]).format(" D [days], H [hrs], m [mins]");
+            shardStringTemp = `${shardnumber}: \n ~ **${guildNumber[i]}** Servers | Memory Usage: \`${totalMemoryArray[i]}MB\` | Uptime: \`${uptime}\` \n\n`
             shardString = shardString.concat("", shardStringTemp);
         }
 		//Command
