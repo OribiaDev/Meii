@@ -12,7 +12,7 @@ module.exports = {
 		//Database Collection Vars
 		let bot_data = databaseCollections.bot_data;
 		//Updated Date
-		let updatedDate = '1/8/2026'
+		let updatedDate = '2/23/2026'
 		//Memory Math
 		function getMemoryArray (){
 			return client.shard.broadcastEval(async (c) => {
@@ -41,7 +41,7 @@ module.exports = {
 		let InfoEmb = new EmbedBuilder()
 		.setColor("#C3B1E1")
 		.setTitle("**Utility: Stats**")
-		.setDescription(`Servers: **${guildNumber.reduce((acc, guildCount) => acc + guildCount, 0).toLocaleString()}** \n Total Shards: **${shardCollections.totalShards}** ~ (Current Shard ID: **${updatedShardNumber}**) \n Total Confessions Sent: **${confessionNumber.toLocaleString()}** \n\n Ping: \`${client.ws.ping}ms\` \n Total Memory Usage: \`${memString}\` \n\n Last Updated: **${updatedDate}** \n Date Created: **3/08/2023** \n Version: **${packageFile.version}** \n\n Author: **oribia.dev** \n Website: https://meii.bot \n\n **Uptime**: \`${uptime}\` \n\n`)
+		.setDescription(`Servers: **${guildNumber.reduce((acc, guildCount) => acc + guildCount, 0).toLocaleString()}** \n Total Shards: **${shardCollections.totalShards}** ~ (Current Shard ID: **${updatedShardNumber}**) \n Total Confessions Sent: **${confessionNumber.toLocaleString()}** \n\n Ping: \`${client.ws.ping}ms\` \n Total Memory Usage: \`${memString}\` \n\n Last Updated: **${updatedDate}** \n Date Created: **3/08/2023** \n Version: **${packageFile.version}** \n\n Author: **oribia.dev** \n Website: https://meii.bot \n Status Page: https://status.meii.bot \n\n **Uptime**: \`${uptime}\` \n\n`)
 		await interaction.reply({ embeds: [InfoEmb], allowedMentions: { repliedUser: false }})
 	},
 };
