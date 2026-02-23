@@ -8,6 +8,7 @@ const { Routes } = require('discord-api-types/v9');
 const { MongoClient } = require('mongodb');
 const fs = require('fs');
 const os = require('os');
+const { startHealthServer } = require("./health");
 
 //Config Import
 const { production_server_ip, tokens, database, settings } = require('./Jsons/config.json');
@@ -109,6 +110,10 @@ client.once(Events.ClientReady, async () => {
     //Startup
     client.user.setStatus('dnd');
     client.user.setActivity(`Starting up... please wait`);
+    //Health Server
+    const shardId = client.shard.ids[0];
+    const port = 3000 + shardId; // each shard gets its own port
+    await startHealthServer(shardId, port);
     //Database Connect
     await mongoClient.connect();
     //Startup Functions
