@@ -20,21 +20,20 @@ module.exports = {
                 .setRequired(false)
                 .addChannelTypes(ChannelType.GuildText)),
 	async execute(interaction, db, databaseCollections, client, shardCollections) {
-        if(!interaction) return;
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         //Database Collections
         let server_data = databaseCollections.server_data;
         let bot_data = databaseCollections.bot_data;
         let confession_data = databaseCollections.confession_data;
         //Admin Bans
-        const botDocument = await bot_data.find({ type: 'prod' }).toArray();
+        const botDocument = await bot_data.findOne({ type: 'prod' });
         //Admin Confession Server Ban
         let AdminServerConfessionBanned = new EmbedBuilder()
         .setTitle(`**${interaction.guild.name}: Server Confession Banned**`)
         .setColor("#ff6961")
         .setDescription(`I'm sorry, The server **${interaction.guild.name}** is banned from using the confession feature on Meii.`)
         .setFooter({text:`If you think this is a mistake, please join the support server.`})
-        const serverBansArray = botDocument[0].server_confession_bans || [] 
+        const serverBansArray = botDocument.server_confession_bans || [] 
         let serverBanindex = serverBansArray.indexOf(`${interaction.guild.id}`);
         if (serverBanindex !== -1) return await interaction.editReply({ embeds: [AdminServerConfessionBanned], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
         //Admin Confession User Ban
@@ -43,11 +42,11 @@ module.exports = {
         .setColor("#ff6961")
         .setDescription(`I'm sorry, you are globally banned from using the confession feature on Meii.`)
         .setFooter({text:`If you think this is a mistake, please join the support server.`})
-        const userBansArray = botDocument[0].user_confession_bans || [] 
+        const userBansArray = botDocument.user_confession_bans || [] 
         let userBanindex = userBansArray.indexOf(`${interaction.member.user.id}`);
         if (userBanindex !== -1) return await interaction.editReply({ embeds: [AdminUserConfessionBanned], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
         //Guild Document
-        const guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
+        const guildDocument = await server_data.findOne({ server_id: interaction.guild.id });
         //Database Document Check
         let ConfessionNotSet = new EmbedBuilder()
         .setTitle(`**Confession Channel Not Set**`)
@@ -55,19 +54,19 @@ module.exports = {
         .setDescription(`I'm sorry, the confession channel is not setup for **${interaction.guild.name}**.`)
         .setFooter({text:`Ask a staff member to set it up with /set confession_channel`})
         //No Confess Channel
-        if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return await interaction.editReply({ embeds: [ConfessionNotSet], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})   
+        if(guildDocument?.settings?.confession_channel_ids==undefined) return await interaction.editReply({ embeds: [ConfessionNotSet], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})   
         //Check if user is banned from confessions
         let ConfessionIsBanned = new EmbedBuilder()
         .setTitle(`**${interaction.guild.name}: Confession Banned**`)
         .setColor("#ff6961")
         .setDescription(`I'm sorry, you're banned from using confessions in **${interaction.guild.name}**.`)
         .setFooter({text:`If you think this is a mistake, please contact a staff member.`})
-        const userbans = guildDocument[0].confession_userbans_id || [] //returns empty array if userbans is not present
+        const userbans = guildDocument.confession_userbans_id || [] //returns empty array if userbans is not present
         let index = userbans.indexOf(`${interaction.member.user.id}`);
         if (index !== -1) return await interaction.editReply({ embeds: [ConfessionIsBanned], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
         //Multiple Channel Logic
         let givenChannel = interaction.options.getChannel("channel");
-        let channels = guildDocument[0].settings.confession_channel_ids;
+        let channels = guildDocument.settings.confession_channel_ids;
         //Check if gave channel
         let noChannelGiven = new EmbedBuilder()
         .setTitle(`**${interaction.guild.name}: Multiple Confession Channel Error**`)
@@ -104,7 +103,7 @@ module.exports = {
 
 
         //Attachment Image Check
-        if(attachment != null && guildDocument[0]?.settings?.attachment_toggle === false ) return await interaction.editReply({ content: `I'm sorry, this server does not allow attachments within confessions.`, flags: MessageFlags.Ephemeral  });
+        if(attachment != null && guildDocument?.settings?.attachment_toggle === false ) return await interaction.editReply({ content: `I'm sorry, this server does not allow attachments within confessions.`, flags: MessageFlags.Ephemeral  });
         let contentType = attachment?.contentType;
         if(attachment?.url && !String(contentType).includes('image')) return await interaction.editReply({ content: `I'm sorry, the attachment you attached is not an image. Meii only supports images at this time.`, flags: MessageFlags.Ephemeral  });
          
@@ -118,14 +117,14 @@ module.exports = {
         //Confession Customization
         let defaultValues = { "title": `:love_letter: Anonymous Confession ({id})`, "body": "> {confession}", "color": "{random}"}
         let dataExists = false;
-        if(guildDocument[0]?.customization) dataExists = true;
-        let titleData = dataExists ? guildDocument[0].customization.title : defaultValues.title;
+        if(guildDocument?.customization) dataExists = true;
+        let titleData = dataExists ? guildDocument.customization.title : defaultValues.title;
         let TitleParsed = titleData.replace('{id}', confessionID)
         TitleParsed = TitleParsed.replace('{ID}', confessionID)
-        let bodyData = dataExists? guildDocument[0].customization.body : defaultValues.body;
+        let bodyData = dataExists? guildDocument.customization.body : defaultValues.body;
         let bodyParsed = bodyData.replace('{confession}', confessedmessage)
         bodyParsed = bodyParsed.replace('{CONFESSION}', confessedmessage)
-        let colorData = dataExists ? guildDocument[0].customization.color : defaultValues.color;
+        let colorData = dataExists ? guildDocument.customization.color : defaultValues.color;
         let colorParsed = colorData.replace('{random}', randomHexColor())
         colorParsed = colorParsed.replace('{RANDOM}', randomHexColor())
         //Test if confession is bigger than 4096 Char
@@ -158,7 +157,7 @@ module.exports = {
                 await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}`}});
             }
             //Confession Number Increase
-            let confessionNumber = botDocument[0].confession_number;
+            let confessionNumber = botDocument.confession_number;
             confessionNumber = confessionNumber + 1;
             await bot_data.updateOne({ type: `prod` }, { $set: { confession_number: confessionNumber } });
         }catch( error ){
@@ -166,13 +165,14 @@ module.exports = {
             return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, flags: MessageFlags.Ephemeral  })
         }
         //Vote Chance
-        const voteChance = Math.random() < 0.5 ? `\n\nEnjoying Meii? Vote for Meii [here!](https://top.gg/bot/1082401009206308945/vote)` : ``;
+        const voteChance2 = Math.random() < 0.5 ? `\n\nEnjoying Meii? Consider Voting for Meii [here!](https://top.gg/bot/1082401009206308945/vote)` : `\n\nEnjoying Meii? Consider leaving a review [at top.gg!](https://top.gg/bot/1082401009206308945#reviews)`;
+        const voteChance = Math.random() < 0.2 ? `${voteChance2}` : ``;
         await interaction.editReply({ content: `Your confession has now been added to **${confessionchannel}**  :thumbsup: ${voteChance}`, flags: MessageFlags.SuppressEmbeds  });
         //Check if server has Confession Logging 
-        if(guildDocument[0].settings.confession_log_channel_id==undefined) return
-        if(!client.channels.cache.get(guildDocument[0].settings.confession_log_channel_id)) return
+        if(guildDocument.settings.confession_log_channel_id==undefined) return
+        if(!client.channels.cache.get(guildDocument.settings.confession_log_channel_id)) return
         //Getting the channel
-        let confessionmodchannel = client.channels.cache.get(guildDocument[0].settings.confession_log_channel_id)
+        let confessionmodchannel = client.channels.cache.get(guildDocument.settings.confession_log_channel_id)
         //Permissions Check
         if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return
         if(confessionmodchannel.isThread()){ if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)){return}}
@@ -180,15 +180,15 @@ module.exports = {
         let LogD;
         if(channels.length > 1){
             //If Multiple Channels
-            LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})||`
+            LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})||`
             if(attachment?.url){
-                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**\n${attachment?.url}`
+                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**\n${attachment?.url}`
             }
         }else{
             //If Single Channel
-            LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})||`
+            LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})||`
             if(attachment?.url){
-                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**\n${attachment?.url}`
+                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**\n${attachment?.url}`
             }
         }
         let ConfessionLog = new EmbedBuilder()
