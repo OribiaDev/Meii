@@ -174,7 +174,7 @@ module.exports = {
         //Getting the channel
         let confessionmodchannel = client.channels.cache.get(guildDocument[0].settings.confession_log_channel_id)
         //Permissions Check
-        if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return
+        if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return
         if(confessionmodchannel.isThread()){ if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)){return}}
         //Sending the Confession Log
         let LogD;
@@ -198,8 +198,9 @@ module.exports = {
         .setTimestamp()
         .setFooter({text: "Meii"})
         try{
-            confessionmodchannel.send({ embeds: [ConfessionLog], allowedMentions: {repliedUser: false}})
-        }catch{
+            await confessionmodchannel.send({ embeds: [ConfessionLog], allowedMentions: {repliedUser: false}})
+        }catch (e){
+            console.log(e);
             return
         }    
 	},
