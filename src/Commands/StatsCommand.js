@@ -32,8 +32,8 @@ module.exports = {
 			memString = `${totalMemory}MB`
 		} 
 		//Bot Data
-		const botDocument = await bot_data.find({ type: 'prod' }).toArray();
-		let confessionNumber = botDocument[0].confession_number;
+		const botDocument = await bot_data.findOne({ type: 'prod' });
+		let confessionNumber = botDocument.confession_number;
 		let updatedShardNumber = shardCollections.shardID;
 		let guildNumber = await client.shard.fetchClientValues('guilds.cache.size');
 		//Command
