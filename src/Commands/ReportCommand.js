@@ -13,19 +13,9 @@ module.exports = {
             option
                 .setName('additional_info')
                 .setRequired(true)
-                .setDescription('Additional information that would help with the report. (Context, evidence, etc.)'))
-        .addStringOption(option =>
-            option.setName('report_breaks_tos')
-                .setDescription('Please select Yes if this confession breaks Discord`s or Meii`s TOS.')
-                .setRequired(true)
-                .addChoices(
-                    { name: 'Yes', value: 'true' },
-                    { name: 'No', value: 'false' },
-                )),            
+                .setDescription('Additional information that would help with the report. (Context, evidence, etc.)')),            
 	async execute(interaction, db, databaseCollections, client, shardCollections) {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-        let reporttype = interaction.options.getString('report_breaks_tos');
-        if(reporttype == 'false') return interaction.editReply({content:`I'm sorry, this confession does not break Discord's or Meii's TOS so it will not be reported. If you believe this to be in error, please join the support server.`, flags: MessageFlags.Ephemeral  })
         //Database Collection Vars
         let bot_data = databaseCollections.bot_data;
         let confession_data = databaseCollections.confession_data;
