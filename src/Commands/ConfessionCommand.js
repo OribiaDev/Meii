@@ -25,15 +25,18 @@ module.exports = {
         let server_data = databaseCollections.server_data;
         let bot_data = databaseCollections.bot_data;
         let confession_data = databaseCollections.confession_data;
-        //Admin Bans
-        const botDocument = await bot_data.findOne({ type: 'prod' });
+        //Database Calls
+        const [botDocument, guildDocument] = await Promise.all([
+                bot_data.findOne({ type: 'prod' }),
+                server_data.findOne({ server_id: interaction.guild.id })
+        ]);
         //Admin Confession Server Ban
         let AdminServerConfessionBanned = new EmbedBuilder()
         .setTitle(`**${interaction.guild.name}: Server Confession Banned**`)
         .setColor("#ff6961")
         .setDescription(`I'm sorry, The server **${interaction.guild.name}** is banned from using the confession feature on Meii.`)
         .setFooter({text:`If you think this is a mistake, please join the support server.`})
-        const serverBansArray = botDocument.server_confession_bans || [] 
+        const serverBansArray = botDocument?.server_confession_bans || [] 
         let serverBanindex = serverBansArray.indexOf(`${interaction.guild.id}`);
         if (serverBanindex !== -1) return await interaction.editReply({ embeds: [AdminServerConfessionBanned], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
         //Admin Confession User Ban
@@ -42,11 +45,10 @@ module.exports = {
         .setColor("#ff6961")
         .setDescription(`I'm sorry, you are globally banned from using the confession feature on Meii.`)
         .setFooter({text:`If you think this is a mistake, please join the support server.`})
-        const userBansArray = botDocument.user_confession_bans || [] 
+        const userBansArray = botDocument?.user_confession_bans || [] 
         let userBanindex = userBansArray.indexOf(`${interaction.member.user.id}`);
         if (userBanindex !== -1) return await interaction.editReply({ embeds: [AdminUserConfessionBanned], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
         //Guild Document
-        const guildDocument = await server_data.findOne({ server_id: interaction.guild.id });
         //Database Document Check
         let ConfessionNotSet = new EmbedBuilder()
         .setTitle(`**Confession Channel Not Set**`)
@@ -157,9 +159,7 @@ module.exports = {
                 await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}`}});
             }
             //Confession Number Increase
-            let confessionNumber = botDocument.confession_number;
-            confessionNumber = confessionNumber + 1;
-            await bot_data.updateOne({ type: `prod` }, { $set: { confession_number: confessionNumber } });
+            await bot_data.updateOne({ type: `prod` }, { $inc: { confession_number: 1 } });
         }catch( error ){
             console.log(error)
             return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, flags: MessageFlags.Ephemeral  })
