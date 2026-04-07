@@ -4,7 +4,7 @@
 //Imports
 const { Client, GatewayIntentBits, Partials, Collection, Events, ActivityType, MessageFlags } = require('discord.js');
 const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
+const { Routes } = require('discord-api-types/v10');
 const { MongoClient } = require('mongodb');
 const fs = require('fs');
 const os = require('os');
@@ -58,19 +58,47 @@ function CommandRefresh(){
             client.commands.set(command.name, command); 
         }
     }
+    //Admin Only Commands
+    const adminslashcommands = [];
+    const admincommandFiles = fs.readdirSync('./src/AdminCommands').filter(file => file.endsWith('.js'));
+    //Refresh Command List
+    for (const file of admincommandFiles) {
+        const command = require(`./AdminCommands/${file}`);
+        try {
+            client.commands.set(command.data.name, command);
+            adminslashcommands.push(command.data.toJSON());     
+        } catch {
+            client.commands.set(command.name, command); 
+        }
+    }
+    const adminGuilds = ['1041867319812562955', '1000504347421057054'];
     const rest = new REST({ version: '10' }).setToken(token);
     //Push Slash Commands to Discord API
     (async () => {
         try {
             if(IsDev){
+                //Dev
+                //Admin Commands
+                for (const guildId of adminGuilds) {
+                    await rest.put(
+                        Routes.applicationGuildCommands(tokens.dev_id, guildId),
+                        { body: adminslashcommands },
+                    );
+                }
+                //Global Commands
                 await rest.put(
-                    //Dev Client
                     Routes.applicationCommands(tokens.dev_id),
                     { body: slashcommands },
                 );
             }else{
+                //Production
+                //Admin Commands
                 await rest.put(
-                    //Global Client
+                     Routes.applicationGuildCommands(tokens.production_id, '1041867319812562955'),
+                    { body: adminslashcommands },
+                );
+                //Global Commands
+                await rest.put(
                     Routes.applicationCommands(tokens.production_id),
                     { body: slashcommands },
                 );
