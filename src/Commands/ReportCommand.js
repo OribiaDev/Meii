@@ -3,7 +3,7 @@ const { Events, SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilde
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('report')
-		.setDescription(`Reports a confession`)
+		.setDescription(`Reports a confession to the moderation team of Meii`)
         .addStringOption(option =>
             option
                 .setName('confession_id')
@@ -59,7 +59,7 @@ module.exports = {
             if (!sentArray.includes(true)) {
                 return interaction.editReply({content:`I'm sorry, there seems to have been a problem reporting that confession. Please try again later.`, flags: MessageFlags.Ephemeral  })
             }
-            return interaction.editReply({content:`Thank you, the confession with the ID of **${confession_id}** has now been reported.`, flags: MessageFlags.Ephemeral  })
+            return interaction.editReply({content:`Thank you, the confession with the ID of **${confession_id}** has now been reported to Meii's moderation team.`, flags: MessageFlags.Ephemeral  })
         });
 	},
 };
