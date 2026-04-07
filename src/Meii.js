@@ -45,10 +45,10 @@ client.login(token)
 
 //Command Register 
 function CommandRefresh(){
+    //Global Commands
     const slashcommands = [];
     client.commands = new Collection();
     const commandFiles = fs.readdirSync('./src/Commands').filter(file => file.endsWith('.js'));
-    //Refresh Command List
     for (const file of commandFiles) {
         const command = require(`./Commands/${file}`);
         try {
@@ -61,7 +61,6 @@ function CommandRefresh(){
     //Admin Only Commands
     const adminslashcommands = [];
     const admincommandFiles = fs.readdirSync('./src/AdminCommands').filter(file => file.endsWith('.js'));
-    //Refresh Command List
     for (const file of admincommandFiles) {
         const command = require(`./AdminCommands/${file}`);
         try {
@@ -93,10 +92,12 @@ function CommandRefresh(){
             }else{
                 //Production
                 //Admin Commands
-                await rest.put(
-                     Routes.applicationGuildCommands(tokens.production_id, '1041867319812562955'),
-                    { body: adminslashcommands },
-                );
+                for (const guildId of adminGuilds) {
+                    await rest.put(
+                        Routes.applicationGuildCommands(tokens.production_id, guildId),
+                        { body: adminslashcommands },
+                    );
+                }
                 //Global Commands
                 await rest.put(
                     Routes.applicationCommands(tokens.production_id),
