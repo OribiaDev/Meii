@@ -70,7 +70,6 @@ function CommandRefresh(){
             client.commands.set(command.name, command); 
         }
     }
-    const adminGuilds = ['1041867319812562955', '1000504347421057054'];
     const rest = new REST({ version: '10' }).setToken(token);
     //Push Slash Commands to Discord API
     (async () => {
@@ -78,12 +77,10 @@ function CommandRefresh(){
             if(IsDev){
                 //Dev
                 //Admin Commands
-                for (const guildId of adminGuilds) {
-                    await rest.put(
-                        Routes.applicationGuildCommands(tokens.dev_id, guildId),
-                        { body: adminslashcommands },
-                    );
-                }
+                await rest.put(
+                     Routes.applicationGuildCommands(tokens.dev_id, '1000504347421057054'),
+                    { body: adminslashcommands },
+                );
                 //Global Commands
                 await rest.put(
                     Routes.applicationCommands(tokens.dev_id),
@@ -92,12 +89,10 @@ function CommandRefresh(){
             }else{
                 //Production
                 //Admin Commands
-                for (const guildId of adminGuilds) {
-                    await rest.put(
-                        Routes.applicationGuildCommands(tokens.production_id, guildId),
-                        { body: adminslashcommands },
-                    );
-                }
+                await rest.put(
+                     Routes.applicationGuildCommands(tokens.production_id, '1041867319812562955'),
+                    { body: adminslashcommands },
+                );
                 //Global Commands
                 await rest.put(
                     Routes.applicationCommands(tokens.production_id),
