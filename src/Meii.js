@@ -139,8 +139,8 @@ client.on(Events.InteractionCreate, async interaction => {
         totalShards: totalShards 
     };
     //Check If User Banned
-    const botDocument = await databaseCollections.bot_data.find({ type: 'prod' }).toArray();
-    const userBansArray = botDocument[0].user_bans || [] 
+    const botDocument = await databaseCollections.bot_data.findOne({ type: 'prod' });
+    const userBansArray = botDocument.user_bans || [] 
     let index = userBansArray.indexOf(`${interaction.user.id}`);
     if (index !== -1) return await interaction.reply({content:"I'm sorry, you are banned from using Meii.\n\nIf you think this is a mistake, please join the [support server](https://discord.gg/E23tPPTwSc).", flags: MessageFlags.Ephemeral  })
     //Command Handler
@@ -163,8 +163,8 @@ client.on(Events.GuildCreate, async guild => {
     const db = mongoClient.db(database.name)
     const bot_data = db.collection(database.bot_collection_name)
     //Server Ban Check
-    const botDocument = await bot_data.find({ type: 'prod' }).toArray();
-    const serverBansArray = botDocument[0].server_bans || [] 
+    const botDocument = await bot_data.findOne({ type: 'prod' });
+    const serverBansArray = botDocument.server_bans || [] 
     let index = serverBansArray.indexOf(`${guild.id}`);
     //Leaves server if banned
     if (index !== -1) return await guild.leave();
@@ -176,9 +176,9 @@ client.on(Events.GuildDelete, async guild => {
     const db = mongoClient.db(database.name)
     const server_data = db.collection(database.server_collection_name)
     //Data Deletion 
-    const guildDocument = await server_data.find({ server_id: guild.id }).toArray();
-    if(guildDocument[0]==undefined) return
-    await server_data.deleteOne({ _id: guildDocument[0]._id });
+    const guildDocument = await server_data.findOne({ server_id: guild.id });
+    if(guildDocument==undefined) return
+    await server_data.deleteOne({ _id: guildDocument._id });
     console.log(`(Shard ${shardID}): Deleted Database Document for GuildID: ${guild.id}`)
 });
 
