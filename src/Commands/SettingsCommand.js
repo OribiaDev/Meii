@@ -9,17 +9,17 @@ module.exports = {
         async generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections){
             // Database collections and document logic
             let server_data = databaseCollections.server_data;
-            let guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
-            if (guildDocument[0] == undefined) {
+            let guildDocument = await server_data.findOne({ server_id: interaction.guild.id });
+            if (guildDocument == undefined) {
                 await server_data.insertOne({ "server_id": `${interaction.guild.id}` });
                 console.log(`(Shard ${shardCollections.shardID}): New Database Document Created with GuildID: ${interaction.guild.id}`);
             }
             //Get Vars
-            let preselectedChannelIds = guildDocument[0]?.settings?.confession_channel_ids;
-            let preselectedConfessionChannelIds = guildDocument[0]?.settings?.confession_channel_ids;       
-            let preselectedChannelId = guildDocument[0]?.settings?.confession_log_channel_id;
-            let preselectedConfessionLogChannelId = guildDocument[0]?.settings?.confession_log_channel_id;
-            let attachmentToggle = guildDocument[0]?.settings?.attachment_toggle;  
+            let preselectedChannelIds = guildDocument?.settings?.confession_channel_ids;
+            let preselectedConfessionChannelIds = guildDocument?.settings?.confession_channel_ids;       
+            let preselectedChannelId = guildDocument?.settings?.confession_log_channel_id;
+            let preselectedConfessionLogChannelId = guildDocument?.settings?.confession_log_channel_id;
+            let attachmentToggle = guildDocument?.settings?.attachment_toggle;  
             let confessionchannelcheck = false;
             //Check if Confession Setup
             if(preselectedChannelIds==undefined){
@@ -155,7 +155,7 @@ module.exports = {
             //Component Handler
             const interactionListener = async (interaction) => {
                 let server_data = databaseCollections.server_data;
-                let guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
+                let guildDocument = await server_data.findOne({ server_id: interaction.guild.id });
                 if (!interaction.isMessageComponent()) return;
                 if(interaction.message.interactionMetadata.user.id != interaction.user.id) return;
                 //Buttons
@@ -193,7 +193,7 @@ module.exports = {
                             const { flags, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
                             await interaction.update({ flags: flags, components: components});
                         }else{
-                            if(guildDocument[0]?.settings===undefined){
+                            if(guildDocument?.settings===undefined){
                                 //Add attachment Toggle
                                 await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { settings: { attachment_toggle: true, confession_channel_ids: confessionChannelIDs } } });
                             }else{

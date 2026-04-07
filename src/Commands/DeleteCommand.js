@@ -16,12 +16,12 @@ module.exports = {
         //Given Vars
         const confessionID = interaction.options.getString('confession_id').toUpperCase();
         //Confession Document
-        const confessionDocument = await confession_data.find({ confession_id: confessionID }).toArray();
-        if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, flags: MessageFlags.Ephemeral  })
+        const confessionDocument = await confession_data.findOne({ confession_id: confessionID });
+        if(confessionDocument==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, flags: MessageFlags.Ephemeral  })
         //Check if the user is authorized to delete
-        if(interaction.user.id!==confessionDocument[0].author.id) return interaction.editReply({content:`I'm sorry, but you are not allowed to delete the confession with the ID of **${confessionID}** as it was not sent by you.`, flags: MessageFlags.Ephemeral  })
+        if(interaction.user.id!==confessionDocument.author.id) return interaction.editReply({content:`I'm sorry, but you are not allowed to delete the confession with the ID of **${confessionID}** as it was not sent by you.`, flags: MessageFlags.Ephemeral  })
         //Check if under 30min
-        const time = new Date(confessionDocument[0].document_date);
+        const time = new Date(confessionDocument.document_date);
         const now = new Date();
         const diffMs = now - time; // difference in milliseconds
         const diffMinutes = diffMs / (1000 * 60); // convert ms to minutes
@@ -44,7 +44,7 @@ module.exports = {
                     }
                 }
                 return false;
-            }, { context: { channelId: confessionDocument[0].message.channel_id, messageID: confessionDocument[0].message.id} })
+            }, { context: { channelId: confessionDocument.message.channel_id, messageID: confessionDocument.message.id} })
             .then(sentArray => {
                 // Search for a non falsy value before providing feedback
                 if (!sentArray.includes(true)) {

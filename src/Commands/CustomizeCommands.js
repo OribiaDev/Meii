@@ -66,14 +66,14 @@ module.exports = {
                     ),
             )
 
-        const guildDocument = await databaseCollections.server_data.find({ server_id: interaction.guild.id }).toArray();
+        const guildDocument = await databaseCollections.server_data.findOne({ server_id: interaction.guild.id });
         //Document Not Found
         let serverNotFound = new EmbedBuilder()
         .setTitle(`**Customization: Confessions Not Setup**`)
         .setColor("#ff6961")
         .setDescription(`I'm sorry, this server has not setup confessions.`)
         .setFooter({text:`You can set it up with /settings`})
-        if(guildDocument[0]?.settings?.confession_channel_ids==undefined) return interaction.reply({embeds: [serverNotFound], flags: MessageFlags.Ephemeral  }); 
+        if(guildDocument?.settings?.confession_channel_ids==undefined) return interaction.reply({embeds: [serverNotFound], flags: MessageFlags.Ephemeral  }); 
 
 		await interaction.reply({
 			flags: MessageFlags.IsComponentsV2,
@@ -87,20 +87,20 @@ module.exports = {
             let server_data = databaseCollections.server_data;
             //Command
             if(interaction.user.id !== interaction.message.interaction.user.id) return
-            const guildDocument = await server_data.find({ server_id: interaction.guild.id }).toArray();
+            const guildDocument = await server_data.findOne({ server_id: interaction.guild.id });
             //Variables
             let defaultValues = { "title": "**:love_letter: Anonymous Confession** ({id})", "body": "> {confession}", "color": "{random}"}
             let dataExists = false;
-            if(guildDocument[0]?.customization) dataExists = true;
-            let titleData = guildDocument[0]?.customization?.title;
-            let bodyData = guildDocument[0]?.customization?.body;
-            let colorData = guildDocument[0]?.customization?.color;
+            if(guildDocument?.customization) dataExists = true;
+            let titleData = guildDocument?.customization?.title;
+            let bodyData = guildDocument?.customization?.body;
+            let colorData = guildDocument?.customization?.color;
             let defaultValuesReply = { "title": ":love_letter: Anonymous Reply to {reply_id}", "body": "> {confession}", "color": "{random}"}
             let dataExistsReply = false;
-            if(guildDocument[0]?.customization_reply) dataExistsReply = true;
-            let titleDataReply = guildDocument[0]?.customization_reply?.title;
-            let bodyDataReply = guildDocument[0]?.customization_reply?.body;
-            let colorDataReply = guildDocument[0]?.customization_reply?.color;
+            if(guildDocument?.customization_reply) dataExistsReply = true;
+            let titleDataReply = guildDocument?.customization_reply?.title;
+            let bodyDataReply = guildDocument?.customization_reply?.body;
+            let colorDataReply = guildDocument?.customization_reply?.color;
 
             //Customize Modal
             if (interaction.customId === 'customize-confession') { 

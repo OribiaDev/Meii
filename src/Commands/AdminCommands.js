@@ -117,12 +117,12 @@ module.exports = {
         let bot_data = databaseCollections.bot_data;
         let confession_data = databaseCollections.confession_data;
         //Command
-        const botDocument = await bot_data.find({ type: 'prod' }).toArray();
-        const adminArray = botDocument[0].admins || [] 
+        const botDocument = await bot_data.findOne({ type: 'prod' });
+        const adminArray = botDocument.admins || [] 
         let index = adminArray.indexOf(`${interaction.member.user.id}`);
         if (index == -1) return await interaction.reply({content:"I'm sorry, this command can only be ran by the developers and admins of Meii.", flags: MessageFlags.Ephemeral  })
         const moderationType = interaction.options.getString('moderation_type');
-        if(botDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find the bot data document.`, flags: MessageFlags.Ephemeral  })
+        if(botDocument==undefined) return interaction.reply({content:`I'm sorry, I cannot find the bot data document.`, flags: MessageFlags.Ephemeral  })
         if (interaction.options.getSubcommand() === 'server') {
             //Server
             //Check if User or Confession ID
@@ -134,11 +134,11 @@ module.exports = {
             //Confession ID
             if(id_type=='confessionchoiceid'){
                 //ID Lookup
-                const confessionDocument = await confession_data.find({ confession_id: choiceId }).toArray();
-                if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${choiceId}**.`, flags: MessageFlags.Ephemeral  })
+                const confessionDocument = await confession_data.findOne({ confession_id: choiceId });
+                if(confessionDocument==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${choiceId}**.`, flags: MessageFlags.Ephemeral  })
                 //ID Set
-                serverObject = await client.guilds.fetch(confessionDocument[0].guild.id);
-                givenServerID = confessionDocument[0].guild.id;
+                serverObject = await client.guilds.fetch(confessionDocument.guild.id);
+                givenServerID = confessionDocument.guild.id;
             }
             //Server ID
             if(id_type=='serverchoiceid'){
@@ -147,7 +147,7 @@ module.exports = {
             }
             //Ban
             if(moderationType=='serverban'){
-                let botBansArray = botDocument[0].server_bans || []
+                let botBansArray = botDocument.server_bans || []
                 let index = botBansArray.indexOf(`${givenServerID}`);
                 if (index !== -1) return await interaction.reply({ content:`This server is already banned from using Meii.`, flags: MessageFlags.Ephemeral  })
                 botBansArray.push(`${givenServerID}`)  
@@ -158,7 +158,7 @@ module.exports = {
             }
             //Unban
             if(moderationType=='serverunban'){
-                let botBansArray = botDocument[0].server_bans || []
+                let botBansArray = botDocument.server_bans || []
                 let index = botBansArray.indexOf(`${givenServerID}`);
                 if (index == -1) return await interaction.reply({ content:`This server isn't banned from using Meii.`, flags: MessageFlags.Ephemeral  })
                 botBansArray.splice(index, 1);
@@ -168,7 +168,7 @@ module.exports = {
             }
             //Confession Ban
             if(moderationType=='serverconfessionban'){
-                let confessionBotBansArray = botDocument[0].server_confession_bans || []
+                let confessionBotBansArray = botDocument.server_confession_bans || []
                 let index = confessionBotBansArray.indexOf(`${givenServerID}`);
                 if (index !== -1) return await interaction.reply({ content:`This server is already banned from using confessions.`, flags: MessageFlags.Ephemeral  })
                 confessionBotBansArray.push(`${givenServerID}`)  
@@ -178,7 +178,7 @@ module.exports = {
             }
             //Confession Unban
             if(moderationType=='serverconfessionunban'){
-                let confessionBotBansArray = botDocument[0].server_confession_bans || []
+                let confessionBotBansArray = botDocument.server_confession_bans || []
                 let index = confessionBotBansArray.indexOf(`${givenServerID}`);
                 if (index == -1) return await interaction.reply({ content:`This server isn't banned from using confessions.`, flags: MessageFlags.Ephemeral  })
                 confessionBotBansArray.splice(index, 1);
@@ -201,10 +201,10 @@ module.exports = {
             //Confession ID
             if(id_type=='confessionchoiceid'){
                 //ID Lookup
-                const confessionDocument = await confession_data.find({ confession_id: choiceId }).toArray();
-                if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${choiceId}**.`, flags: MessageFlags.Ephemeral  })
+                const confessionDocument = await confession_data.findOne({ confession_id: choiceId });
+                if(confessionDocument==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${choiceId}**.`, flags: MessageFlags.Ephemeral  })
                 //ID Set
-                givenUserID = confessionDocument[0].author.id;
+                givenUserID = confessionDocument.author.id;
             }
             //User ID
             if(id_type=='userchoiceid'){
@@ -212,7 +212,7 @@ module.exports = {
             }
             //Bot Ban
             if(moderationType=='botban'){
-                let userBansArray = botDocument[0].user_bans || []
+                let userBansArray = botDocument.user_bans || []
                 let index = userBansArray.indexOf(`${givenUserID}`);
                 if (index !== -1) return await interaction.reply({ content:`This user is already banned from using Meii.`, flags: MessageFlags.Ephemeral  })
                 userBansArray.push(`${givenUserID}`)  
@@ -221,7 +221,7 @@ module.exports = {
             }
             //Bot Unban
             if(moderationType=='botunban'){
-                let userBansArray = botDocument[0].user_bans || []
+                let userBansArray = botDocument.user_bans || []
                 let index = userBansArray.indexOf(`${givenUserID}`);
                 if (index == -1) return await interaction.reply({ content:`This user isn't banned from using Meii.`, flags: MessageFlags.Ephemeral  })
                 userBansArray.splice(index, 1);
@@ -230,7 +230,7 @@ module.exports = {
             }
             //Confession Ban
             if(moderationType=='confessionban'){
-                let confessionBansArray = botDocument[0].user_confession_bans || []
+                let confessionBansArray = botDocument.user_confession_bans || []
                 let index = confessionBansArray.indexOf(`${givenUserID}`);
                 if (index !== -1) return await interaction.reply({ content:`This user is already banned from using confessions.`, flags: MessageFlags.Ephemeral  })
                 confessionBansArray.push(`${givenUserID}`)  
@@ -239,7 +239,7 @@ module.exports = {
             }
             //Confession Unban
             if(moderationType=='confessionunban'){
-                let confessionBansArray = botDocument[0].user_confession_bans || []
+                let confessionBansArray = botDocument.user_confession_bans || []
                 let index = confessionBansArray.indexOf(`${givenUserID}`);
                 if (index == -1) return await interaction.reply({ content:`This user isn't banned from using confessions.`, flags: MessageFlags.Ephemeral  })
                 confessionBansArray.splice(index, 1);
@@ -251,7 +251,7 @@ module.exports = {
             const givenUserID = interaction.options.getString('userid');
             //Admin Add
             if(moderationType=='adminadd'){
-                let adminArray = botDocument[0].admins || []
+                let adminArray = botDocument.admins || []
                 let index = adminArray.indexOf(`${givenUserID}`);
                 if (index !== -1) return await interaction.reply({ content:`This user is already an admin of Meii.`, flags: MessageFlags.Ephemeral  })
                 adminArray.push(`${givenUserID}`)  
@@ -260,7 +260,7 @@ module.exports = {
             }
             //Admin Remove
             if(moderationType=='adminremove'){
-                let adminArray = botDocument[0].admins || []
+                let adminArray = botDocument.admins || []
                 let index = adminArray.indexOf(`${givenUserID}`);
                 if (index == -1) return await interaction.reply({ content:`This user isn't an admin of Meii.`, flags: MessageFlags.Ephemeral  })
                 adminArray.splice(index, 1);
@@ -270,8 +270,8 @@ module.exports = {
         } else if (interaction.options.getSubcommand() === 'message'){ 
             //ID Lookup
             const givenConfessionID = interaction.options.getString('confessionid').toUpperCase();
-            const confessionDocument = await confession_data.find({ confession_id: givenConfessionID }).toArray();
-            if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${givenConfessionID}**.`, flags: MessageFlags.Ephemeral  })
+            const confessionDocument = await confession_data.findOne({ confession_id: givenConfessionID });
+            if(confessionDocument==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${givenConfessionID}**.`, flags: MessageFlags.Ephemeral  })
             //Message Remove
             if(moderationType=='confessionremove'){
                 try{
@@ -289,7 +289,7 @@ module.exports = {
                             return false;
                         }
                         return false;
-                    }, { context: { channelId: confessionDocument[0].message.channel_id, messageID: confessionDocument[0].message.id } })
+                    }, { context: { channelId: confessionDocument.message.channel_id, messageID: confessionDocument.message.id } })
                         .then(sentArray => {
                             // Search for a non falsy value before providing feedback
                             if (!sentArray.includes(true)) {
@@ -306,8 +306,8 @@ module.exports = {
         } else if (interaction.options.getSubcommand() == 'confession'){
             //ID Lookup
             const givenConfessionID = interaction.options.getString('confessionid').toUpperCase();
-            const confessionDocument = await confession_data.find({ confession_id: givenConfessionID }).toArray();
-            if(confessionDocument[0]==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${givenConfessionID}**.`, flags: MessageFlags.Ephemeral  })
+            const confessionDocument = await confession_data.findOne({ confession_id: givenConfessionID });
+            if(confessionDocument==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${givenConfessionID}**.`, flags: MessageFlags.Ephemeral  })
            //Buttons
            //Confession Delete Button
             const confessionDeleteButton = new ButtonBuilder()
@@ -349,7 +349,7 @@ module.exports = {
                                     return false;
                                 }
                                 return false;
-                            }, { context: { channelId: confessionDocument[0].message.channel_id, messageID: confessionDocument[0].message.id } })
+                            }, { context: { channelId: confessionDocument.message.channel_id, messageID: confessionDocument.message.id } })
                                 .then(sentArray => {
                                     // Search for a non falsy value before providing feedback
                                     if (!sentArray.includes(true)) {
@@ -366,8 +366,8 @@ module.exports = {
                     }
                     //Confession Ban Button
                     if (interaction.customId === 'confessions-ban') {   
-                        let confessionBansArray = botDocument[0].user_confession_bans || []
-                        let confession_author_id = confessionDocument[0].author.id;
+                        let confessionBansArray = botDocument.user_confession_bans || []
+                        let confession_author_id = confessionDocument.author.id;
                         let index = confessionBansArray.indexOf(`${confession_author_id}`);
                         if (index !== -1) return await interaction.reply({ content:`This user is already banned from using confessions.`, flags: MessageFlags.Ephemeral  })
                         confessionBansArray.push(`${confession_author_id}`)  

@@ -33,27 +33,27 @@ module.exports = {
         const confessionID = interaction.options.getString('confession_id').toUpperCase();
         let additionalInfo = interaction.options.getString('additional_info');
         //Confession Document
-        const confessionDocument = await confession_data.find({ confession_id: confessionID }).toArray();
-        if(confessionDocument[0]==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, flags: MessageFlags.Ephemeral  })
+        const confessionDocument = await confession_data.findOne({ confession_id: confessionID });
+        if(confessionDocument==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${confessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, flags: MessageFlags.Ephemeral  })
         //Confession Channel Lookup
-        const botDocument = await bot_data.find({ type: 'prod' }).toArray();
-        const confession_report_channel_id = botDocument[0].report_channel_id;
+        const botDocument = await bot_data.findOne({ type: 'prod' });
+        const confession_report_channel_id = botDocument.report_channel_id;
         //Database
-        let confession_text = confessionDocument[0].confession_text;
-        let confession_id = confessionDocument[0].confession_id;
-        let confession_attachment = confessionDocument[0].confession_attachment;
-        let confession_date = confessionDocument[0].document_date;
-        let confession_author = confessionDocument[0].author.username;
-        let confession_author_id = confessionDocument[0].author.id;
-        let guild_name = confessionDocument[0].guild.name;
-        let guild_id = confessionDocument[0].guild.id;
+        let confession_text = confessionDocument.confession_text;
+        let confession_id = confessionDocument.confession_id;
+        let confession_attachment = confessionDocument.confession_attachment;
+        let confession_date = confessionDocument.document_date;
+        let confession_author = confessionDocument.author.username;
+        let confession_author_id = confessionDocument.author.id;
+        let guild_name = confessionDocument.guild.name;
+        let guild_id = confessionDocument.guild.id;
         let report_author = interaction.member.user.username;
         let report_author_id = interaction.member.user.id;
         //Report Embed
         let reportEmbed = new EmbedBuilder()
         .setTitle(`Confession Report: ${confessionID}`)
         .setColor(`#ff6961`)
-        .setDescription(`**Confession (${confession_id})**\n> ${confession_text}${confessionDocument[0].confession_attachment ? `\n\n**Attachment**\n${confession_attachment}\n\n` : '\n\n'}**Date**\n${confession_date}\n\n**Author**\n${confession_author} (${confession_author_id})\n\n**Guild**\n${guild_name} (${guild_id})\n\n**Report Author**\n${report_author} (${report_author_id})\n\n${confessionDocument[0].message.isReply ? `**Is Reply**\n${confessionDocument[0].message.isReply}\n\n` : ''}**Additional Info**\n${additionalInfo}`)
+        .setDescription(`**Confession (${confession_id})**\n> ${confession_text}${confessionDocument.confession_attachment ? `\n\n**Attachment**\n${confession_attachment}\n\n` : '\n\n'}**Date**\n${confession_date}\n\n**Author**\n${confession_author} (${confession_author_id})\n\n**Guild**\n${guild_name} (${guild_id})\n\n**Report Author**\n${report_author} (${report_author_id})\n\n${confessionDocument.message.isReply ? `**Is Reply**\n${confessionDocument.message.isReply}\n\n` : ''}**Additional Info**\n${additionalInfo}`)
         .setTimestamp()
 
         return client.shard.broadcastEval(async (c, { channelId, reportEmbed }) => {
