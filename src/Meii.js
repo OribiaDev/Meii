@@ -141,7 +141,7 @@ client.once(Events.ClientReady, async () => {
     //Database Connect
     await mongoClient.connect();
     //Startup Functions
-    CommandRefresh();
+    if (shardID === 0) CommandRefresh();
     await activityRefresh();
     //Startup Completed
     client.user.setStatus("online");
