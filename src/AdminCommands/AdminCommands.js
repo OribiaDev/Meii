@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, MessageFlags, Events } = require('discord.js')
 
 module.exports = {
-	data: new SlashCommandBuilder()
+	data: new SlashCommandBuilder() 
 		.setName('admin')
 		.setDescription(`Bot Admin Controls`)
         .addSubcommand(subcommand =>
@@ -12,7 +12,7 @@ module.exports = {
                     option.setName('moderation_type')
                         .setDescription('Types of moderation')
                         .setRequired(true)
-                        .addChoices(
+                        .addChoices( 
                             { name: 'Ban', value: 'serverban' },
                             { name: 'Unban', value: 'serverunban' },
                             { name: 'Confession Ban', value: 'serverconfessionban' },
@@ -111,7 +111,16 @@ module.exports = {
                     option
                         .setName('confessionid')
                         .setRequired(true)
-                        .setDescription('The ID of the confession'))),
+                        .setDescription('The ID of the confession')))
+            .addSubcommand(subcommand =>
+            subcommand
+                .setName('retrieve')
+                .setDescription('Retrieve confession data')
+                .addStringOption(option =>
+                    option
+                        .setName('confessionid')
+                        .setRequired(true)
+                        .setDescription('The ID of the confession'))), 
 	async execute(interaction, db, databaseCollections, client) {
         //Database Collections
         let bot_data = databaseCollections.bot_data;
@@ -413,6 +422,28 @@ module.exports = {
                 .setTimestamp()
                 await interaction.reply({ embeds: [channelProblemEmbed]})
             }
+         } else if(interaction.options.getSubcommand() == 'retrieve'){
+            //Document Lookup
+            const givenConfessionID = interaction.options.getString('confessionid').toUpperCase();
+            const confessionDocument = await confession_data.findOne({ confession_id: givenConfessionID });
+            if(confessionDocument==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${givenConfessionID}**.`, flags: MessageFlags.Ephemeral  })
+            //Get Values
+            let confession_text = confessionDocument.confession_text;
+            let confession_id = confessionDocument.confession_id;
+            let confession_attachment = confessionDocument.confession_attachment;
+            let confession_date_raw = new Date(confessionDocument.document_date)
+            let confession_date = confession_date_raw.toLocaleString("en-US", { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/New_York", timeZoneName: "short"});
+            let confession_author = confessionDocument.author.username;
+            let confession_author_id = confessionDocument.author.id;
+            let guild_name = confessionDocument.guild.name;
+            let guild_id = confessionDocument.guild.id;
+            //Retrieve Embed
+            let retrieveEmbed = new EmbedBuilder()
+            .setTitle(`Retrieved Confession: ${confession_id}`)
+            .setColor(`#C3B1E1`)
+            .setDescription(`**Confession (${confession_id})**\n> ${confession_text}${confessionDocument.confession_attachment ? `\n\n**Attachment**\n${confession_attachment}\n\n` : '\n\n'}**Date**\n${confession_date}\n\n**Author**\n${confession_author} (${confession_author_id})\n\n**Guild**\n${guild_name} (${guild_id})\n\n${confessionDocument.message.isReply ? `**Is Reply**\n${confessionDocument.message.isReply}` : ''}`)
+
+            await interaction.reply({ embeds: [retrieveEmbed]})
          }
 	},
 }; 
