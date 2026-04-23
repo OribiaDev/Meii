@@ -44,7 +44,7 @@ module.exports = {
 		            textDisplay => textDisplay
 			        .setContent('## **Utility: Settings**'),
                     textDisplay => textDisplay
-			        .setContent('Please use the dropdown menu and buttons below to configure Meii. Make sure Meii has permission to send messages, or these wont work!'),
+			        .setContent('Please use the dropdown menu and buttons below to configure Meii. Make sure Meii has the permissions "send messages", "view channel", and "embed links" or these wont work!'),
 	            )
                 .addSeparatorComponents(
                     separator => separator,
