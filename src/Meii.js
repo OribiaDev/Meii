@@ -1,6 +1,15 @@
 //Copyright 2026 Oribia. All Rights Reserved
 //If you see this, have a great day :3 - OribiaDev
 
+//Bug?
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+
 //Imports
 const { Client, GatewayIntentBits, Partials, Collection, Events, ActivityType, MessageFlags } = require('discord.js');
 const { REST } = require('@discordjs/rest');
@@ -218,6 +227,3 @@ client.on("error", function (error) {
     );
 })
 
-client.on('unhandledRejection', error => {
-	console.error(`Unhandled promise rejection (Shard ${shardID}): ${error}`);
-});
