@@ -15,17 +15,32 @@ module.exports = {
         if(YeetUser.id==interaction.member.id) return await interaction.editReply({ content: `p-pls- n-no- ${interaction.member.displayName}`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
         let YeetUserID = YeetUser.id
         const yeetgif = new EmbedBuilder()
-        fetch(`https://api.waifu.pics/sfw/yeet`)
-        .then(async (res) => {
-            if(!res.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
-            const responseBody = await res.text();
-            json = JSON.parse(responseBody);
-            let image = json.url;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds
+        try {
+            //https://api.waifu.pics/sfw/yeet
+            const res = await fetch("https://nekos.best/api/v2/yeet", {signal: controller.signal});
+            clearTimeout(timeout);
+            if (!res.ok) {
+                return await interaction.editReply({
+                    content: "I'm sorry, the API is currently offline.",
+                    flags: MessageFlags.Ephemeral
+                });
+            }
+            const json = await res.json();
+            let image = json.results[0].url;
             yeetgif.setTitle(`:smiling_imp: ${interaction.member.displayName} yeeted ${interaction.guild.members.cache.get(YeetUserID).displayName}! :smiling_imp: `)
             yeetgif.setImage(String(image))
             yeetgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             yeetgif.setTimestamp()
             await interaction.editReply({ embeds: [yeetgif], allowedMentions: {repliedUser: true, users: [YeetUserID]}, content: `${interaction.guild.members.cache.get(YeetUserID)}`}) 
-        });
+        } catch (err) {
+            clearTimeout(timeout);
+            console.error(err);
+            await interaction.editReply({
+                content: "I'm sorry, the API is currently offline (timeout or network error).",
+                flags: MessageFlags.Ephemeral
+            });
+        }
 	},
 };

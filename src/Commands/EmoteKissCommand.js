@@ -15,17 +15,33 @@ module.exports = {
         if(KissUser.id==interaction.member.id) return await interaction.editReply({ content: `Do you need a kiss ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
         let KissUserID = KissUser.id
         const KissGif = new EmbedBuilder()
-        fetch(`https://api.waifu.pics/sfw/kiss`)
-        .then(async (res) => {
-            if(!res.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
-            const responseBody = await res.text();
-            json = JSON.parse(responseBody);
-            let image = json.url;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds
+        try {
+            //https://api.waifu.pics/sfw/kiss
+            const res = await fetch("https://nekos.best/api/v2/kiss", {signal: controller.signal});
+            clearTimeout(timeout);
+            if (!res.ok) {
+                return await interaction.editReply({
+                    content: "I'm sorry, the API is currently offline.",
+                    flags: MessageFlags.Ephemeral
+                });
+            }
+            const json = await res.json();
+            let image = json.results[0].url;
             KissGif.setTitle(`:sparkling_heart: ${interaction.member.displayName} kissed ${interaction.guild.members.cache.get(KissUserID).displayName}! :sparkling_heart: `)
             KissGif.setImage(String(image))
             KissGif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             KissGif.setTimestamp()
             await interaction.editReply({ embeds: [KissGif], allowedMentions: {repliedUser: true, users: [KissUserID]}, content: `${interaction.guild.members.cache.get(KissUserID)}`})     
-        });	
+        } catch (err) {
+            clearTimeout(timeout);
+            console.error(err);
+            await interaction.editReply({
+                content: "I'm sorry, the API is currently offline (timeout or network error).",
+                flags: MessageFlags.Ephemeral
+            });
+        }
 	},
 };
+

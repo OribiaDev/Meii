@@ -15,18 +15,33 @@ module.exports = {
         if(HugUser.id==interaction.member.id) return await interaction.editReply({ content: `Do you need a hug ${interaction.member.displayName}..?`, allowedMentions: { repliedUser: false }, flags: MessageFlags.Ephemeral  })
         let HugUserID = HugUser.id
         const HugGif = new EmbedBuilder()
-        fetch(`https://api.waifu.pics/sfw/hug`)
-        .then(async (res) => {
-            if(!res.ok) return await interaction.editReply({ content:"I'm sorry, the API is currently offline. Please try again later.", flags: MessageFlags.Ephemeral  });
-            const responseBody = await res.text();
-            json = JSON.parse(responseBody);
-            let image = json.url;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds
+        try {
+            //https://api.waifu.pics/sfw/hug
+            const res = await fetch("https://nekos.best/api/v2/hug", {signal: controller.signal});
+            clearTimeout(timeout);
+            if (!res.ok) {
+                return await interaction.editReply({
+                    content: "I'm sorry, the API is currently offline.",
+                    flags: MessageFlags.Ephemeral
+                });
+            }
+            const json = await res.json();
+            let image = json.results[0].url;
             HugGif.setTitle(`:hugging:  ${interaction.member.displayName} hugged ${interaction.guild.members.cache.get(HugUserID).displayName}! :hugging: `)
             HugGif.setImage(String(image))
             HugGif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             HugGif.setTimestamp()
             await interaction.editReply({ embeds: [HugGif], allowedMentions: {repliedUser: true, users: [HugUserID]}, content: `${interaction.guild.members.cache.get(HugUserID)}`})
-            
-        });
+        } catch (err) {
+            clearTimeout(timeout);
+            console.error(err);
+            await interaction.editReply({
+                content: "I'm sorry, the API is currently offline (timeout or network error).",
+                flags: MessageFlags.Ephemeral
+            });
+        }
 	},
 };
+
