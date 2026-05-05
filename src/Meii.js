@@ -112,10 +112,6 @@ function CommandRefresh(){
             console.error(error);
         }
     })();
-    setTimeout(() => {
-        //Refresh every 6 hours
-        CommandRefresh();
-      }, 60000 * 360);
 }
 
 //Activity Refresher
@@ -173,7 +169,7 @@ client.on(Events.InteractionCreate, async interaction => {
     };
     //Command Handler
     if (!interaction.isCommand()) return;
-    if(!interaction.guild) return interaction.reply({content:"Im sorry, this command can only be ran in a server!", flags: MessageFlags.Ephemeral  })
+    if(!interaction.guild) return interaction.reply({content:"Im sorry, this command can only be ran in a server.", flags: MessageFlags.Ephemeral  })
     //Existing Database Command Handler       
     const { commandName } = interaction;
     if (!client.commands.has(commandName)) return;
