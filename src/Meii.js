@@ -171,11 +171,6 @@ client.on(Events.InteractionCreate, async interaction => {
         shardID: shardID,
         totalShards: totalShards 
     };
-    //Check If User Banned
-    const botDocument = await databaseCollections.bot_data.findOne({ type: 'prod' });
-    const userBansArray = botDocument.user_bans || [] 
-    let index = userBansArray.indexOf(`${interaction.user.id}`);
-    if (index !== -1) return await interaction.reply({content:"I'm sorry, you are banned from using Meii.\n\nIf you think this is a mistake, please join the [support server](https://discord.gg/E23tPPTwSc).", flags: MessageFlags.Ephemeral  })
     //Command Handler
     if (!interaction.isCommand()) return;
     if(!interaction.guild) return interaction.reply({content:"Im sorry, this command can only be ran in a server!", flags: MessageFlags.Ephemeral  })

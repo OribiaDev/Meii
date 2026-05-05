@@ -41,8 +41,6 @@ module.exports = {
                         .setDescription('Types of moderation')
                         .setRequired(true)
                         .addChoices(
-                            { name: 'Bot Ban', value: 'botban' },
-                            { name: 'Bot Unban', value: 'botunban' },
                             { name: 'Confession Ban', value: 'confessionban' },
                             { name: 'Confession Unban', value: 'confessionunban' },
                         ))
@@ -218,24 +216,6 @@ module.exports = {
             //User ID
             if(id_type=='userchoiceid'){
                 givenUserID = choiceId;
-            }
-            //Bot Ban
-            if(moderationType=='botban'){
-                let userBansArray = botDocument.user_bans || []
-                let index = userBansArray.indexOf(`${givenUserID}`);
-                if (index !== -1) return await interaction.reply({ content:`This user is already banned from using Meii.`, flags: MessageFlags.Ephemeral  })
-                userBansArray.push(`${givenUserID}`)  
-                await bot_data.updateOne({ type: `prod` }, { $set: { user_bans: userBansArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now banned from using Meii.` })
-            }
-            //Bot Unban
-            if(moderationType=='botunban'){
-                let userBansArray = botDocument.user_bans || []
-                let index = userBansArray.indexOf(`${givenUserID}`);
-                if (index == -1) return await interaction.reply({ content:`This user isn't banned from using Meii.`, flags: MessageFlags.Ephemeral  })
-                userBansArray.splice(index, 1);
-                await bot_data.updateOne({ type: `prod` }, { $set: { user_bans: userBansArray } });
-                return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now unbanned from using Meii.` })
             }
             //Confession Ban
             if(moderationType=='confessionban'){
