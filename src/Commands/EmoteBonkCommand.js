@@ -17,7 +17,6 @@ module.exports = {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds
         try {
-            //https://api.waifu.pics/sfw/bonk
             const res = await fetch("https://nekos.best/api/v2/bonk", {signal: controller.signal});
             clearTimeout(timeout);
             if (!res.ok) {
