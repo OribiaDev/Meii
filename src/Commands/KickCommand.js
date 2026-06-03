@@ -17,8 +17,8 @@ module.exports = {
 		//Permissions Check
 		if(!interaction.guild.members.me.permissions.has(PermissionFlagsBits.KickMembers)) return await interaction.reply({ content: `I'm sorry, I do not have enough permissions.\nI need.. \`Kick Members\``, flags: MessageFlags.Ephemeral  }).catch(() => {return});
 		//Get Target User
-		let targetUser = interaction.options.getMember('user');
-		if(targetUser.id==client.user.id) return await interaction.reply({content:"You can't kick me silly~!", flags: MessageFlags.Ephemeral  })
+		const targetUser = interaction.options.getUser('user');
+		if(targetUser.id==client.user.id) return await interaction.reply({content:"You can't kick me silly! **_I always come back_**", flags: MessageFlags.Ephemeral  })
 		//Target User Permissions Check
 		if(!targetUser.kickable) return await interaction.reply({ content:"I'm unable to kick this person as they either have the \`Kick Members\` permission or they have a higher role than me.", flags: MessageFlags.Ephemeral  });
 		//Reason Check
