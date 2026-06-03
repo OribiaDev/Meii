@@ -18,8 +18,7 @@ module.exports = {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds
         try {
-            //NO API CHANGE; NO VALID ALTERNATIVE
-            const res = await fetch("https://api.waifu.pics/sfw/lick", {signal: controller.signal});
+            const res = await fetch("https://api.otakugifs.xyz/gif?reaction=lick", {signal: controller.signal});
             clearTimeout(timeout);
             if (!res.ok) {
                 return await interaction.editReply({
@@ -28,7 +27,6 @@ module.exports = {
                 });
             }
             const json = await res.json();
-            //let image = json.results[0].url;
             let image = json.url;
             lickgif.setTitle(`:tongue:  ${interaction.member.displayName} licked ${interaction.guild.members.cache.get(LickUserID).displayName}! :tongue:   `)
             lickgif.setImage(String(image))
