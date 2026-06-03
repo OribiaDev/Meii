@@ -28,6 +28,7 @@ module.exports = {
 			const responseBody = await res.text();
 			json = JSON.parse(responseBody);
 			let animalemb = new EmbedBuilder()
+			.setDescription(json.fact)
 			.setImage(json.image)
 			.setFooter({text:`Requested by ${interaction.member.user.username}`})
 			.setTimestamp()
