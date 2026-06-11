@@ -17,7 +17,12 @@ module.exports = {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds
         try {
-            const res = await fetch("https://nekos.best/api/v2/bite", {signal: controller.signal});
+            const res = await fetch("https://nekos.best/api/v2/bite/", {
+                signal: controller.signal,
+                headers: {
+                    "User-Agent": "Meii/1.20 (https://meii.bot)"
+                }
+            });
             clearTimeout(timeout);
             if (!res.ok) {
                 return await interaction.editReply({

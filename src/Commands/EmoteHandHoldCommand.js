@@ -18,7 +18,12 @@ module.exports = {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds
         try {
-            const res = await fetch("https://nekos.best/api/v2/handhold", {signal: controller.signal});
+            const res = await fetch("https://nekos.best/api/v2/handhold/", {
+                signal: controller.signal,
+                headers: {
+                    "User-Agent": "Meii/1.20 (https://meii.bot)"
+                }
+            });
             clearTimeout(timeout);
             if (!res.ok) {
                 return await interaction.editReply({
@@ -28,7 +33,7 @@ module.exports = {
             }
             const json = await res.json();
             let image = json.results[0].url;
-            holdgif.setTitle(`:people_holding_hands:  ${interaction.member.displayName} held ${interaction.guild.members.cache.get(HoldUserID).displayName}'s hand! :people_holding_hands:  `)
+            holdgif.setTitle(`:people_holding_hands:  ${interaction.member.displayName} is holding ${interaction.guild.members.cache.get(HoldUserID).displayName}'s hands! :people_holding_hands:  `)
             holdgif.setImage(String(image))
             holdgif.setFooter({text:`Requested by ${interaction.member.user.username}`})
             holdgif.setTimestamp()
