@@ -15,6 +15,7 @@
         "server_collection_name": "DATABASE_SERVER_COLLECTION_NAME",
         "bot_collection_name": "DATABASE_BOT_COLLECTION_NAME",
         "confession_collection_name": "DATABASE_CONFESSION_COLLECTION_NAME",
+        "temp_confession_collection_name": "DATABASE_TEMP_CONFESSION_COLLECTION_NAME",
         "url": "DATABASE_CONNECTION_STRING",
         "url_docker" : "DATABASE_CONNECTION_STRING_WITH_DOCKER_IP"
     }
