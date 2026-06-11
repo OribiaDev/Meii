@@ -82,8 +82,10 @@ module.exports = {
                 }else {
                     await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${tempconfessionDocument.author.username}`, "id": `${tempconfessionDocument.author.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}`}});
                 }
-                //Confession Number Increase
-                await bot_data.updateOne({ type: `prod` }, { $inc: { confession_number: 1 } });
+            //Delete temp document
+            await temp_confession_data.deleteOne({ confession_id: confessionID});
+            //Confession Number Increase
+            await bot_data.updateOne({ type: `prod` }, { $inc: { confession_number: 1 } });
             }catch( error ){
                 return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, flags: MessageFlags.Ephemeral  })
             }
@@ -109,7 +111,6 @@ module.exports = {
             if(attachment?.url){
                 LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Author**\n||${tempconfessionDocument.author.username}  (${LogMember})|| \n\n**Image**\n${attachment?.url}`
             }
-
             let ConfessionLog = new EmbedBuilder()
             .setTitle(`:love_letter: **Anonymous Confession**`)
             .setColor(randomHexColor())
@@ -119,11 +120,8 @@ module.exports = {
             try{
                 await confessionmodchannel.send({ embeds: [ConfessionLog], allowedMentions: {repliedUser: false}})
             }catch (e){
-                console.log(e);
                 return
             }   
-            //Delete Temp Data
-            await temp_confession_data.deleteOne({ confession_id: confessionID});
 
         }else if(choice=='deny'){
         //Deny
