@@ -27,7 +27,7 @@ module.exports = {
         let confession_data = databaseCollections.confession_data;
         let temp_confession_data = databaseCollections.temp_confession_data;
         //Get Vars
-        const id = interaction.options.getString('confession_id');
+        const id = interaction.options.getString('confession_id').toUpperCase();;
         const choice = interaction.options.getString('approve_deny');
         //Check ID
         const tempconfessionDocument = await temp_confession_data.findOne({ confession_id: id });
