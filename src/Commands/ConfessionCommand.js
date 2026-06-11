@@ -25,6 +25,7 @@ module.exports = {
         let server_data = databaseCollections.server_data;
         let bot_data = databaseCollections.bot_data;
         let confession_data = databaseCollections.confession_data;
+        let temp_confession_data = databaseCollections.temp_confession_data;
         //Database Calls
         const [botDocument, guildDocument] = await Promise.all([
                 bot_data.findOne({ type: 'prod' }),
@@ -139,6 +140,52 @@ module.exports = {
         //Test if Hex Code is valid
         var hexRegex = /^#(?:[0-9a-fA-F]{3}){1,2}$/
         if(!hexRegex.test(colorParsed)) colorParsed = randomHexColor();
+        //Review System
+        //Check if server has Review setup
+        if(guildDocument?.settings?.confession_review_channel_id){
+            if(!client.channels.cache.get(guildDocument.settings.confession_review_channel_id)) return
+            //Getting the channel
+            let reviewChannel = client.channels.cache.get(guildDocument.settings.confession_review_channel_id)
+            //Permissions Check
+            if(!reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return
+            if(reviewChannel.isThread()){ if(!reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)){return}}
+            //Check Multiple Channels
+            let reviewd;
+            if(channels.length > 1){
+                //If Multiple Channels
+                reviewd = `**Please use the /review command to approve or deny this confession** \n\n **Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}`
+                if(attachment?.url){
+                    reviewd = `**Please use the /review command to approve or deny this confession** \n\n**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
+                }
+            }else{
+                //If Single Channel
+                reviewd = `**Please use the /review command to approve or deny this confession** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}`
+                if(attachment?.url){
+                    reviewd = `**Please use the /review command to approve or deny this confession** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
+                }
+            }
+            let ReviewEmbed = new EmbedBuilder()
+                .setTitle(`**Anonymous Confession Review**`)
+                .setColor('#FFA500')
+                .setDescription(reviewd)
+                .setTimestamp()
+                .setFooter({text: `/review ${confessionID} {approve/deny}`})
+            try{
+                await reviewChannel.send({ embeds: [ReviewEmbed], allowedMentions: {repliedUser: false}})
+                if(attachment?.url){
+                    await temp_confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`, "confession_attachment": `${attachment.url}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}`}, "message": {  "channel_id": `${confessionchannel.id}`} });
+                }else {
+                    await temp_confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}`}, "message": { "channel_id": `${confessionchannel.id}`}});
+                }
+                //Vote Chance
+                const voteChance2 = Math.random() < 0.5 ? `\n\nEnjoying Meii? Consider Voting for Meii [here!](https://top.gg/bot/1082401009206308945/vote)` : `\n\nEnjoying Meii? Consider leaving a review [at top.gg!](https://top.gg/bot/1082401009206308945#reviews)`;
+                const voteChance = Math.random() < 0.2 ? `${voteChance2}` : ``;
+                return await interaction.editReply({ content: `Your confession has now been sent for review, and if approved will be sent publicly! :thumbsup: ${voteChance}`, flags: MessageFlags.SuppressEmbeds  });
+            }catch (e){
+                console.log(e);
+                return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, flags: MessageFlags.Ephemeral  })
+            }    
+        }
         try{
             //Confession Checks
             if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Send Messages in Threads\`, and \`Embed Links\``, flags: MessageFlags.Ephemeral  }) }

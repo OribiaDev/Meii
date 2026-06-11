@@ -20,6 +20,8 @@ module.exports = {
             let preselectedChannelId = guildDocument?.settings?.confession_log_channel_id;
             let preselectedConfessionLogChannelId = guildDocument?.settings?.confession_log_channel_id;
             let attachmentToggle = guildDocument?.settings?.attachment_toggle;  
+            let preselectedReviewChannelId = guildDocument?.settings?.confession_review_channel_id;
+            let preselectedConfessionReviewChannelId = guildDocument?.settings?.confession_review_channel_id;
             let confessionchannelcheck = false;
             //Check if Confession Setup
             if(preselectedChannelIds==undefined){
@@ -35,6 +37,13 @@ module.exports = {
                 preselectedConfessionLogChannelId=[];
             }else{
                 preselectedChannelId = `<#${preselectedChannelId}>`
+            }
+            //Check if Approval Setup
+            if(preselectedReviewChannelId==undefined){
+                preselectedReviewChannelId="**Channel Not Setup**"
+                preselectedConfessionReviewChannelId=[];
+            }else{
+                preselectedReviewChannelId = `<#${preselectedReviewChannelId}>`
             }
             //Create Container 
             const settingsContainer = new ContainerBuilder()
@@ -54,7 +63,7 @@ module.exports = {
 		            textDisplay => textDisplay
 			        .setContent(' ### **Confession Channel(s)**'),
                     textDisplay => textDisplay
-			        .setContent('Use the dropdown menu to select or remove one or more confession channels. If you select multiple channels, there will be an option at the end of the confession command to select which channel you want to use.'),
+			        .setContent('Use the dropdown menu to select or remove one or more confession channels. If multiple channels are selected, users will be able to choose which channel to post to when submitting a confession.'),
 	            )
                 .addTextDisplayComponents(
                     textDisplay => textDisplay
@@ -106,12 +115,41 @@ module.exports = {
                 .addSeparatorComponents(
                     separator => separator,
                 )
+                //Confession Review
+                .addTextDisplayComponents(
+		            textDisplay => textDisplay
+			        .setContent(' ### **Confession Review Channel**'),
+                    textDisplay => textDisplay
+			        .setContent('Use the dropdown menu to select a channel for confession review. Confessions will be sent to this channel first, where they can be approved or denied before being posted publicly.')
+	            )
+                .addTextDisplayComponents(
+                    textDisplay => textDisplay
+                        .setContent(preselectedReviewChannelId),
+	            )
+                .addActionRowComponents(
+                    actionRow => actionRow
+                        .setComponents(
+                            new ChannelSelectMenuBuilder()
+                                .setCustomId('confession_review_select')
+                                .setDefaultChannels(preselectedConfessionReviewChannelId)
+                                .setPlaceholder('Select a channel.')
+                                .setMinValues(0)
+                                .setMaxValues(1)
+                                .setDisabled(confessionchannelcheck)
+                                .addChannelTypes(
+                                    ChannelType.GuildText
+                                ),
+                        ),
+                )
+                .addSeparatorComponents(
+                    separator => separator,
+                )
                 //Attachment Toggles
                 .addTextDisplayComponents(
 		            textDisplay => textDisplay
 			        .setContent(' ### **Confession Attachments**'), 
                     textDisplay => textDisplay
-			        .setContent('Use the buttons below to toggle the use of attachments in confessions. Please note attatchments are **enabled by default**.'),
+			        .setContent('Use the buttons below to toggle the use of attachments in confessions. Please note attachments are **enabled by default**.'),
 	            )
                 .addActionRowComponents(
                     actionRow => actionRow
@@ -214,6 +252,20 @@ module.exports = {
                         }else{
                             let confessionChannelID = interaction.values.toString();
                             await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { 'settings.confession_log_channel_id': confessionChannelID } });
+                            const { flags, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
+                            await interaction.update({ flags: flags, components: components});
+                        }
+                    }
+                    if(interaction.customId === 'confession_review_select'){
+                        let approvalChannelID = interaction.values;
+                        //Check if nothing is selected
+                        if(!approvalChannelID || approvalChannelID.length === 0){
+                            await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $unset: { 'settings.confession_review_channel_id': ' '} });
+                            const { flags, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
+                            await interaction.update({ flags: flags, components: components});
+                        }else{
+                            let approvalChannelID = interaction.values.toString();
+                            await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $set: { 'settings.confession_review_channel_id': approvalChannelID } });
                             const { flags, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
                             await interaction.update({ flags: flags, components: components});
                         }
