@@ -50,6 +50,7 @@ module.exports = {
                 if (!sentArray.includes(true)) {
                     return interaction.editReply({content:`I'm sorry, I cannot find this confession. Has it already been deleted?`, flags: MessageFlags.Ephemeral  })
                 }
+                confession_data.deleteOne({ confession_id: confessionID});
                 return interaction.editReply({content:`The confession with the ID of **${confessionID}** has been successfully removed.`, flags: MessageFlags.Ephemeral  })
             });
         } catch (error) {
