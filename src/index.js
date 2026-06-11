@@ -47,6 +47,21 @@ async function ConfessionDatabasePurge(){
     console.log(`Successfully purged (${result.deletedCount}) confession document(s).`)
 }
 
+//Temp Confession Database Purge
+async function TempConfessionDatabasePurge(){
+    console.log('Attempting to purge the temp confession database..')
+    //Database Variables
+    const db = mongoClient.db(database.name)
+    const temp_confession_data = db.collection(database.temp_confession_collection_name)
+    //Calculate the date 30 days ago
+    const desiredDate = new Date();
+    desiredDate.setDate(desiredDate.getDate() - 30);
+    //Delete the documents
+    const result = await temp_confession_data.deleteMany({ document_date: { $lt: desiredDate } });
+    console.log(`Successfully purged (${result.deletedCount}) temp confession document(s).`)
+}
+
+
 //Sharding Manager 
 const manager = new ShardingManager('./src/Meii.js', { 
     token: token,  
@@ -109,6 +124,8 @@ async function MeiiStartup(){
     console.log('Connected successfully to the database.\n');
     schedule.scheduleJob('0 0 * * *', () => { ConfessionDatabasePurge(); }) // Ran everyday at midnight
     console.log('Successfully started the confession purge schedule.')
+    schedule.scheduleJob('0 0 * * *', () => { TempConfessionDatabasePurge(); }) // Ran everyday at midnight
+    console.log('Successfully started the temp confession purge schedule.')
     console.log('\nAttempting to start shards...')
     try{
         manager.spawn();
