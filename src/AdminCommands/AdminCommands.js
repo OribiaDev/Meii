@@ -381,6 +381,7 @@ module.exports = {
             let replyMessage = await interaction.reply({ embeds: [quickMenuEmbed], components: [buttonRow], allowedMentions: {repliedUser: false}})
             setTimeout(async () => {
             try {
+                client.removeListener(Events.InteractionCreate, interactionListener);
                 const disabledRow = new ActionRowBuilder().addComponents(
                     confessionDeleteButton.setDisabled(true),
                     confessionBanButton.setDisabled(true),
