@@ -207,48 +207,49 @@ module.exports = {
             }
             //Confession Number Increase
             await bot_data.updateOne({ type: `prod` }, { $inc: { confession_number: 1 } });
+            //Vote Chance
+            const voteChance2 = Math.random() < 0.5 ? `\n\nEnjoying Meii? Consider Voting for Meii [here!](https://top.gg/bot/1082401009206308945/vote)` : `\n\nEnjoying Meii? Consider leaving a review [at top.gg!](https://top.gg/bot/1082401009206308945#reviews)`;
+            const voteChance = Math.random() < 0.2 ? `${voteChance2}` : ``;
+            await interaction.editReply({ content: `Your confession has now been added to **${confessionchannel}**  :thumbsup: ${voteChance}`, flags: MessageFlags.SuppressEmbeds  });
+            //Check if server has Confession Logging 
+            if(guildDocument.settings.confession_log_channel_id==undefined) return
+            if(!client.channels.cache.get(guildDocument.settings.confession_log_channel_id)) return
+            //Getting the channel
+            let confessionmodchannel = client.channels.cache.get(guildDocument.settings.confession_log_channel_id)
+            //Permissions Check
+            if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return
+            if(confessionmodchannel.isThread()){ if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)){return}}
+            //Get message link
+            const messageLink = sentConfession.url;
+            //Sending the Confession Log
+            let LogD;
+            if(channels.length > 1){
+                //If Multiple Channels
+                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID** (click to jump to confession)\n[${confessionID}](${messageLink})\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})||`
+                if(attachment?.url){
+                    LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID** (click to jump to confession)\n[${confessionID}](${messageLink})\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**\n${attachment?.url}`
+                }
+            }else{
+                //If Single Channel
+                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID** (click to jump to confession)\n[${confessionID}](${messageLink})\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})||`
+                if(attachment?.url){
+                    LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID** (click to jump to confession)\n[${confessionID}](${messageLink})\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**\n${attachment?.url}`
+                }
+            }
+            let ConfessionLog = new EmbedBuilder()
+            .setTitle(`:love_letter: **Anonymous Confession Log**`)
+            .setColor(randomHexColor())
+            .setDescription(LogD)
+            .setTimestamp()
+            .setFooter({text: "Meii"})
+            try{
+                await confessionmodchannel.send({ embeds: [ConfessionLog], allowedMentions: {repliedUser: false}})
+            }catch (e){
+                return
+            } 
         }catch( error ){
             console.log(error)
             return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, flags: MessageFlags.Ephemeral  })
-        }
-        //Vote Chance
-        const voteChance2 = Math.random() < 0.5 ? `\n\nEnjoying Meii? Consider Voting for Meii [here!](https://top.gg/bot/1082401009206308945/vote)` : `\n\nEnjoying Meii? Consider leaving a review [at top.gg!](https://top.gg/bot/1082401009206308945#reviews)`;
-        const voteChance = Math.random() < 0.2 ? `${voteChance2}` : ``;
-        await interaction.editReply({ content: `Your confession has now been added to **${confessionchannel}**  :thumbsup: ${voteChance}`, flags: MessageFlags.SuppressEmbeds  });
-        //Check if server has Confession Logging 
-        if(guildDocument.settings.confession_log_channel_id==undefined) return
-        if(!client.channels.cache.get(guildDocument.settings.confession_log_channel_id)) return
-        //Getting the channel
-        let confessionmodchannel = client.channels.cache.get(guildDocument.settings.confession_log_channel_id)
-        //Permissions Check
-        if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return
-        if(confessionmodchannel.isThread()){ if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)){return}}
-        //Sending the Confession Log
-        let LogD;
-        if(channels.length > 1){
-            //If Multiple Channels
-            LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})||`
-            if(attachment?.url){
-                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**\n${attachment?.url}`
-            }
-        }else{
-            //If Single Channel
-            LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})||`
-            if(attachment?.url){
-                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**\n${attachment?.url}`
-            }
-        }
-        let ConfessionLog = new EmbedBuilder()
-        .setTitle(`:love_letter: **Anonymous Confession**`)
-        .setColor(randomHexColor())
-        .setDescription(LogD)
-        .setTimestamp()
-        .setFooter({text: "Meii"})
-        try{
-            await confessionmodchannel.send({ embeds: [ConfessionLog], allowedMentions: {repliedUser: false}})
-        }catch (e){
-            console.log(e);
-            return
-        }    
+        }   
 	},
 };
