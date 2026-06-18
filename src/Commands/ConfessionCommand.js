@@ -189,7 +189,7 @@ module.exports = {
                             .setTitle(`${TitleParsed}`)
                             .setColor(`${colorParsed}`)
                             .setDescription(`${bodyParsed}`)
-                            .setImage(attachment)
+                            .setImage(attachment?.url)
                             .setFooter({text: `✨  If this confession breaks TOS or is overtly hateful, you can report it with "/report ${confessionID}"`})
                             const sentConfession = await confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}}) 
                             //Get message ID
