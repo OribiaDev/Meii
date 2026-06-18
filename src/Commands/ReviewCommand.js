@@ -112,7 +112,7 @@ module.exports = {
                 LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Author**\n||${tempconfessionDocument.author.username}  (${LogMember})|| \n\n**Image**\n${attachment?.url}`
             }
             let ConfessionLog = new EmbedBuilder()
-            .setTitle(`:love_letter: **Anonymous Confession**`)
+            .setTitle(`:love_letter: **Anonymous Confession Log**`)
             .setColor(randomHexColor())
             .setDescription(LogD)
             .setTimestamp()
