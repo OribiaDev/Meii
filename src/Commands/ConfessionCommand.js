@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChannelType, MessageFlags } = require('discord.js')
+const { Events, SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChannelType, MessageFlags, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js')
 const randomHexColor = require('random-hex-color')
 
 module.exports = {
@@ -149,19 +149,119 @@ module.exports = {
             //Permissions Check
             if(!reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return
             if(reviewChannel.isThread()){ if(!reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)){return}}
+            
+            //Buttons
+            //Approve Button
+            const confessionApproveButton = new ButtonBuilder()
+            .setCustomId('confession-approve')
+            .setLabel('Approve')
+            .setStyle(ButtonStyle.Success);
+    
+            //Deny Button
+            const confessionDenyButton = new ButtonBuilder()
+            .setCustomId('confessions-deny')
+            .setLabel('Deny')
+            .setStyle(ButtonStyle.Danger);
+             
+            //create button action row
+            const buttonRow = new ActionRowBuilder().addComponents(confessionApproveButton, confessionDenyButton)
+            const interactionListener = async (interaction) => {
+                if (!interaction.isMessageComponent()) return;
+                if(interaction.isButton()){
+
+                    //Approve Button
+                    if (interaction.customId === 'confession-approve') { 
+                        try{
+                            //Get Temp Document 
+                            const tempconfessionDocument = await temp_confession_data.findOne({ confession_id: confessionID });
+                            //Confession Checks
+                            if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.update({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Send Messages in Threads\`, and \`Embed Links\``, flags: MessageFlags.Ephemeral , components: [], embeds:[] }) }
+                            if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.update({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, and \`Embed Links\``, flags: MessageFlags.Ephemeral , components: [], embeds:[] })
+                            let Confession = new EmbedBuilder()
+                            .setTitle(`${TitleParsed}`)
+                            .setColor(`${colorParsed}`)
+                            .setDescription(`${bodyParsed}`)
+                            .setImage(attachment)
+                            .setFooter({text: `✨  If this confession breaks TOS or is overtly hateful, you can report it with "/report ${confessionID}"`})
+                            const sentConfession = await confessionchannel.send({ embeds: [Confession], allowedMentions: {repliedUser: false}}) 
+                            //Get message ID
+                            const confessionMessageId = sentConfession.id;
+                            //Log confession data
+                            if(attachment){
+                                await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`, "confession_attachment": `${tempconfessionDocument.confession_attachment}`,"author": { "username": `${tempconfessionDocument.author.username}`, "id": `${tempconfessionDocument.author.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}`}});
+                            }else {
+                                await confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${tempconfessionDocument.author.username}`, "id": `${tempconfessionDocument.author.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}` }, "message": { "id": `${confessionMessageId}`, "channel_id": `${confessionchannel.id}`}});
+                            }
+                            //Delete temp document
+                            await temp_confession_data.deleteOne({ confession_id: confessionID});
+                            //Confession Number Increase
+                            await bot_data.updateOne({ type: `prod` }, { $inc: { confession_number: 1 } });
+                            //Remove Listener 
+                            client.removeListener(Events.InteractionCreate, interactionListener);
+                            await interaction.update({ content: `The confession with the ID of **${confessionID}** has now been approved and added to **${confessionchannel}**  :thumbsup:` , components: [], embeds:[]});
+                            //Check if server has Confession Logging 
+                            if(guildDocument.settings.confession_log_channel_id==undefined) return
+                            if(!client.channels.cache.get(guildDocument.settings.confession_log_channel_id)) return
+                            //Getting the channel
+                            let confessionmodchannel = client.channels.cache.get(guildDocument.settings.confession_log_channel_id)
+                            //Permissions Check
+                            if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return
+                            if(confessionmodchannel.isThread()){ if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)){return}}
+                            //Get member object
+                            let LogMember;
+                            try{
+                                LogMember = await interaction.guild.members.fetch(tempconfessionDocument.author.id);
+                            } catch{
+                                LogMember = tempconfessionDocument.author.id;
+                            }
+                            //Sending the Confession Log
+                            let LogD;
+                            //Get message link
+                            const messageLink = sentConfession.url;
+                            LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID** (click to jump to confession)\n[${confessionID}](${messageLink})\n\n**Author**\n||${tempconfessionDocument.author.username}  (${LogMember})||`
+                            if(attachment?.url){
+                                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID** (click to jump to confession)\n[${confessionID}](${messageLink})\n\n**Author**\n||${tempconfessionDocument.author.username}  (${LogMember})|| \n\n**Image**\n${attachment?.url}`
+                            }
+                            let ConfessionLog = new EmbedBuilder()
+                            .setTitle(`:love_letter: **Anonymous Confession Log**`)
+                            .setColor(randomHexColor())
+                            .setDescription(LogD)
+                            .setTimestamp()
+                            .setFooter({text: "Meii"})
+                            try{
+                                await confessionmodchannel.send({ embeds: [ConfessionLog], allowedMentions: {repliedUser: false}})
+                            }catch (e){
+                                return
+                            }   
+                        }catch( error ){
+                            console.log(error)
+                            return await interaction.update({content: `I'm sorry, there has been an error. Please try again.`, flags: MessageFlags.Ephemeral , components: [], embeds:[] })
+                        }
+                    }
+                    //Deny Button
+                    if (interaction.customId === 'confessions-deny') {   
+                        await temp_confession_data.deleteOne({ confession_id: confessionID});
+                        await interaction.update({ content:`The confession with the ID of **${confessionID}** has now been denied and deleted.`, components: [], embeds:[] })
+                        client.removeListener(Events.InteractionCreate, interactionListener);
+                    }
+                }
+            };
+    
+            client.on(Events.InteractionCreate, interactionListener);
+    
             //Check Multiple Channels
             let reviewd;
             if(channels.length > 1){
                 //If Multiple Channels
-                reviewd = `**Please use the /review command to approve or deny this confession** \n\n **Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}`
+                reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n **Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}`
                 if(attachment?.url){
-                    reviewd = `**Please use the /review command to approve or deny this confession** \n\n**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
+                    reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
                 }
             }else{
                 //If Single Channel
-                reviewd = `**Please use the /review command to approve or deny this confession** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}`
+                reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}`
                 if(attachment?.url){
-                    reviewd = `**Please use the /review command to approve or deny this confession** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
+                    reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
                 }
             }
             let ReviewEmbed = new EmbedBuilder()
@@ -171,7 +271,20 @@ module.exports = {
                 .setTimestamp()
                 .setFooter({text: `/review ${confessionID} {approve/deny}`})
             try{
-                await reviewChannel.send({ embeds: [ReviewEmbed], allowedMentions: {repliedUser: false}})
+                let reviewmessage = await reviewChannel.send({ embeds: [ReviewEmbed], components: [buttonRow], allowedMentions: {repliedUser: false}})
+                setTimeout(async () => {
+                client.removeListener(Events.InteractionCreate, interactionListener);
+                try {
+                    const disabledRow = new ActionRowBuilder().addComponents(
+                        confessionApproveButton.setDisabled(true),
+                        confessionDenyButton.setDisabled(true)
+                    );
+                        await reviewmessage.edit({ components: [disabledRow] });
+                    } catch (e) {
+                        return;
+                    }
+                }, 86_400_000);
+
                 if(attachment?.url){
                     await temp_confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`, "confession_attachment": `${attachment.url}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}`}, "message": {  "channel_id": `${confessionchannel.id}`} });
                 }else {
