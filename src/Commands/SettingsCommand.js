@@ -195,7 +195,7 @@ module.exports = {
                 let server_data = databaseCollections.server_data;
                 let guildDocument = await server_data.findOne({ server_id: interaction.guild.id });
                 if (!interaction.isMessageComponent()) return;
-                if(interaction.message.interactionMetadata.user.id != interaction.user.id) return;
+                if (interaction.message.interactionMetadata?.user?.id !== interaction.user.id) return;
                 //Buttons
                 if(interaction.isButton()){
                     //Confession Attachment Enable Button Handler
