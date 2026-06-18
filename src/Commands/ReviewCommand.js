@@ -98,6 +98,8 @@ module.exports = {
                     let confessionNumber = botDocument.confession_number;
                     confessionNumber = confessionNumber + 1;
                     await bot_data.updateOne({ type: `prod` }, { $set: { confession_number: confessionNumber } });
+                    //Delete temp document
+                    await temp_confession_data.deleteOne({ confession_id: confessionID});
                     await interaction.editReply({ content: `The confession with the ID of **${confessionID}** has now been approved and added to **${confessionchannel}**  :thumbsup:` });
                     //Check if server has Confession Logging 
                     if(guildDocument?.settings?.confession_log_channel_id==undefined) return
