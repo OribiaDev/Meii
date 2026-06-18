@@ -98,11 +98,19 @@ module.exports = {
         if(attachment?.url && !String(contentType).includes('image')) return await interaction.editReply({ content: `I'm sorry, the attachment you attatched is not an image. Meii only supports images at this time.`, flags: MessageFlags.Ephemeral  });
         //Random ID Generator for moderation
         let confessionID = '';
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        for (let i = 0; i < 4; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            confessionID += characters.charAt(randomIndex);
-        }
+        let existingID;
+        do {
+            confessionID = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            for (let i = 0; i < 4; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                confessionID += characters.charAt(randomIndex);
+            }
+            [existingConfession, existingTempConfession] = await Promise.all([
+                confession_data.findOne({ confession_id: confessionID }),
+                temp_confession_data.findOne({ confession_id: confessionID })
+            ]);
+        } while (existingConfession || existingTempConfession);
         //Confession Customization
         let defaultValues = { "title": `:love_letter: Anonymous Reply to {reply_id} ({id})`, "body": "> {confession}", "color": "{random}"}
         let dataExists = false; 
