@@ -273,7 +273,7 @@ module.exports = {
                         textDisplay => textDisplay
                         .setContent('## **Customization: Customization Reset**'),
                         textDisplay => textDisplay
-                        .setContent('our customizations have been reset. You can redo them by using `/customize`.'),
+                        .setContent('Your customizations have been reset. You can redo them by using `/customize`.'),
                     )                
                 await interaction.update({flags: MessageFlags.IsComponentsV2, components: [resetConfirmContainer]});
                 client.removeListener(Events.InteractionCreate, interactionListener);
