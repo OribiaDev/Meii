@@ -62,7 +62,7 @@ module.exports = {
                 let channels = guildDocument.settings.confession_channel_ids;
 
                 //Confession Reply Customization
-                let defaultValues = { "title": `:love_letter: Anonymous Reply to {reply_id}`, "body": "> {confession}", "color": "{random}"}
+                let defaultValues = { "title": `:love_letter: Anonymous Reply to {reply_id} ({id})`, "body": "> {confession}", "color": "{random}"}
                 let dataExists = false; 
                 if(guildDocument?.customization_reply) dataExists = true;
                 let titleData = dataExists ? guildDocument.customization_reply.title : defaultValues.title;
@@ -100,7 +100,7 @@ module.exports = {
                     await bot_data.updateOne({ type: `prod` }, { $set: { confession_number: confessionNumber } });
                     //Delete temp document
                     await temp_confession_data.deleteOne({ confession_id: confessionID});
-                    await interaction.editReply({ content: `The confession with the ID of **${confessionID}** has now been approved and added to **${confessionchannel}**  :thumbsup:` });
+                    await interaction.editReply({ content: `The confession reply with the ID of **${confessionID}** has now been approved and added to **${confessionchannel}**  :thumbsup:` });
                     //Check if server has Confession Logging 
                     if(guildDocument?.settings?.confession_log_channel_id==undefined) return
                     if(!client.channels.cache.get(guildDocument?.settings?.confession_log_channel_id)) return
