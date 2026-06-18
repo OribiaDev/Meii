@@ -25,6 +25,7 @@ module.exports = {
         let server_data = databaseCollections.server_data;
         let bot_data = databaseCollections.bot_data;
         let confession_data = databaseCollections.confession_data;
+        let temp_confession_data = databaseCollections.temp_confession_data;
         //Get confession document
         const givenconfessionID = interaction.options.getString('confession_id').toUpperCase();
         const confessionDocument = await confession_data.findOne({ confession_id: givenconfessionID });
@@ -138,6 +139,53 @@ module.exports = {
                     //Get Message
                     try{
                         const confessionMessage = await confessionchannel.messages.fetch(confessionDocument.message.id);  
+                        //Check if Review channel
+                        if(guildDocument?.settings?.confession_review_channel_id){
+                            if(!client.channels.cache.get(guildDocument.settings.confession_review_channel_id)) return
+                            //Getting the channel
+                            let reviewChannel = client.channels.cache.get(guildDocument.settings.confession_review_channel_id)
+                            //Permissions Check
+                            if(!reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return
+                            if(reviewChannel.isThread()){ if(!reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)){return}}
+                            //Get message link
+                            const messageLink = `https://discord.com/channels/${confessionDocument.guild.id}/${confessionDocument.message.channel_id}/${confessionDocument.message.id}`;
+                            //Check Multiple Channels
+                            let reviewd;
+                            if(channels.length > 1){
+                                //If Multiple Channels
+                                reviewd = `**Please use the /review command to approve or deny this confession reply** \n\n **Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**ID of the confession its replying to** (click to jump to confession)\n[${givenconfessionID}](${messageLink})`
+                                if(attachment?.url){
+                                    reviewd = `**Please use the /review command to approve or deny this confession reply** \n\n**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**ID of the confession its replying to** (click to jump to confession)\n[${givenconfessionID}](${messageLink})\n\n**Image**\n${attachment?.url}`
+                                }
+                            }else{
+                                //If Single Channel
+                                reviewd = `**Please use the /review command to approve or deny this confession reply** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**ID of the confession its replying to** (click to jump to confession)\n[${givenconfessionID}](${messageLink})`
+                                if(attachment?.url){
+                                    reviewd = `**Please use the /review command to approve or deny this confession reply** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**ID of the confession its replying to** (click to jump to confession)\n[${givenconfessionID}](${messageLink})\n\n**Image**\n${attachment?.url}`
+                                }
+                            }
+                            let ReviewEmbed = new EmbedBuilder()
+                                .setTitle(`**Anonymous Confession Reply Review**`)
+                                .setColor('#FFA500')
+                                .setDescription(reviewd)
+                                .setTimestamp()
+                                .setFooter({text: `/review ${confessionID} {approve/deny}`})
+                            try{
+                                await reviewChannel.send({ embeds: [ReviewEmbed], allowedMentions: {repliedUser: false}})
+                                if(attachment?.url){
+                                    await temp_confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`, "confession_attachment": `${attachment.url}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}`}, "message": {  "channel_id": `${confessionchannel.id}`, "isReply": `${givenconfessionID}`} });
+                                }else {
+                                    await temp_confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}`}, "message": { "channel_id": `${confessionchannel.id}`, "isReply": `${givenconfessionID}` }});
+                                }
+                                //Vote Chance
+                                const voteChance2 = Math.random() < 0.5 ? `\n\nEnjoying Meii? Consider Voting for Meii [here!](https://top.gg/bot/1082401009206308945/vote)` : `\n\nEnjoying Meii? Consider leaving a review [at top.gg!](https://top.gg/bot/1082401009206308945#reviews)`;
+                                const voteChance = Math.random() < 0.2 ? `${voteChance2}` : ``;
+                                return await interaction.editReply({ content: `Your confession reply has now been sent for review, and if approved will be sent publicly! :thumbsup: ${voteChance}`, flags: MessageFlags.SuppressEmbeds  });
+                            }catch (e){
+                                console.log(e);
+                                return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, flags: MessageFlags.Ephemeral  })
+                            }    
+                        }
                         try{
                             //Replying to Confession
                             //Sending Confession
@@ -159,7 +207,10 @@ module.exports = {
                             let confessionNumber = botDocument.confession_number;
                             confessionNumber = confessionNumber + 1;
                             await bot_data.updateOne({ type: `prod` }, { $set: { confession_number: confessionNumber } });
-                            await interaction.editReply({ content: `Your reply has now been added to **${confessionchannel}**  :thumbsup:`, flags: MessageFlags.Ephemeral  });
+                            //Vote Chance
+                            const voteChance2 = Math.random() < 0.5 ? `\n\nEnjoying Meii? Consider Voting for Meii [here!](https://top.gg/bot/1082401009206308945/vote)` : `\n\nEnjoying Meii? Consider leaving a review [at top.gg!](https://top.gg/bot/1082401009206308945#reviews)`;
+                            const voteChance = Math.random() < 0.2 ? `${voteChance2}` : ``;
+                            await interaction.editReply({ content: `Your reply has now been added to **${confessionchannel}**  :thumbsup: ${voteChance}`, flags: MessageFlags.Ephemeral  });
                             //Check if server has Confession Logging 
                             if(guildDocument?.settings?.confession_log_channel_id==undefined) return
                             if(!client.channels.cache.get(guildDocument?.settings?.confession_log_channel_id)) return
@@ -168,23 +219,25 @@ module.exports = {
                             //Permissions Check
                             if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks) || !confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel)) return
                             if(confessionmodchannel.isThread()){ if(!confessionmodchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)){return}}
+                            //Get message link
+                            const messageLink = sentConfession.url;
                             //Sending the Confession Log
                             let LogD;
                             if(channels.length > 1){
                                 //If Multiple Channels
-                                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})||`
+                                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID** (click to jump to confession)\n[${confessionID}](${messageLink})\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})||`
                                 if(attachment?.url){
-                                    LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**\n${attachment?.url}`
+                                    LogD = `**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID** (click to jump to confession)\n[${confessionID}](${messageLink})\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**\n${attachment?.url}`
                                 }
                             }else{
                                 //If Single Channel
-                                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})||`
+                                LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID** (click to jump to confession)\n[${confessionID}](${messageLink})\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})||`
                                 if(attachment?.url){
-                                    LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**\n${attachment?.url}`
+                                    LogD = `**Message**\n"${confessedmessage}"\n\n**Confession ID** (click to jump to confession)\n[${confessionID}](${messageLink})\n\n**User**\n||${interaction.member.user.username}  (${interaction.member})|| \n\n**Image**\n${attachment?.url}`
                                 }
                             }
                             let ConfessionLog = new EmbedBuilder()
-                            .setTitle(`:love_letter: **Anonymous Reply to ${givenconfessionID}**`)
+                            .setTitle(`:love_letter: **Anonymous Reply Log to ${givenconfessionID}**`)
                             .setColor(randomHexColor())
                             .setDescription(LogD)
                             .setTimestamp()
