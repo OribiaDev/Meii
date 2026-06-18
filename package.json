@@ -1,6 +1,6 @@
 {
   "name": "meii",
-  "version": "1.21",
+  "version": "1.22",
   "description": "",
   "main": "./src/index.js",
   "dependencies": {
@@ -19,7 +19,7 @@
     "defer-to-connect": "^2.0.1",
     "delayed-stream": "^1.0.0",
     "describe": "^1.2.0",
-    "discord-api-types": "^0.38.48",
+    "discord-api-types": "^0.38.49",
     "discord.js": "^14.26.4",
     "discordjs-logger": "^5.1.0",
     "end-of-stream": "^1.4.5",
