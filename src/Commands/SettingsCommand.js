@@ -189,13 +189,17 @@ module.exports = {
 
         async execute(interaction, db, databaseCollections, client, shardCollections) {
             const { flags, components } = await this.generateSettingsEmbed(interaction, db, databaseCollections, client, shardCollections);
-            await interaction.reply({ flags: flags, components: components});
-            //Component Handler
-            const interactionListener = async (interaction) => {
+            const reply = await interaction.reply({ flags, components, withResponse: true, });
+            const message = await interaction.fetchReply();
+            const interactionOwnerID = interaction.user.id;
+            const settingsCollector  = message.createMessageComponentCollector({
+                time: 300000,
+            });
+            settingsCollector .on("collect", async interaction => {
                 let server_data = databaseCollections.server_data;
                 let guildDocument = await server_data.findOne({ server_id: interaction.guild.id });
                 if (!interaction.isMessageComponent()) return;
-                if (interaction.message.interactionMetadata?.user?.id !== interaction.user.id) return;
+                if (interaction.user.id !== interactionOwnerID) return;
                 //Buttons
                 if(interaction.isButton()){
                     //Confession Attachment Enable Button Handler
@@ -215,8 +219,7 @@ module.exports = {
                         const CancelTextDisplay = new TextDisplayBuilder()
 	                        .setContent('Completed :)');
                         await interaction.update({ flags: MessageFlags.IsComponentsV2, components: [CancelTextDisplay]});
-                        client.removeListener(Events.InteractionCreate, interactionListener);
-                        clearTimeout(autoRemoveTimeout);
+                        settingsCollector.stop();
                         return
                     }
                 }
@@ -272,14 +275,7 @@ module.exports = {
                     }
 
                 }
-            };
-            
-            client.on(Events.InteractionCreate, interactionListener);
-
-            const autoRemoveTimeout = setTimeout(() => {
-                client.removeListener(Events.InteractionCreate, interactionListener);
-            }, 300000); // 5 minutes in milliseconds
-
+            });
 	},
 
 };
