@@ -82,7 +82,7 @@ module.exports = {
         
         const interactionListener = async (interaction) => {
             if (!interaction.isMessageComponent()) return;
-            if(interaction.message.interactionMetadata.user.id != interaction.user.id) return;
+            if (interaction.message.interactionMetadata?.user?.id !== interaction.user.id) return;
             //Database Collections
             let server_data = databaseCollections.server_data;
             //Command
