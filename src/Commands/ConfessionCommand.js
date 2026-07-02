@@ -173,9 +173,34 @@ module.exports = {
              
             //create button action row
             const buttonRow = new ActionRowBuilder().addComponents(confessionApproveButton, confessionDenyButton)
-            const interactionListener = async (interaction) => {
-                if (!interaction.isMessageComponent()) return;
-                if(interaction.isButton()){
+
+            //Check Multiple Channels
+            let reviewd;
+            if(channels.length > 1){
+                //If Multiple Channels
+                reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n **Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}`
+                if(attachment?.url){
+                    reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
+                }
+            }else{
+                //If Single Channel
+                reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}`
+                if(attachment?.url){
+                    reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
+                }
+            }
+            let ReviewEmbed = new EmbedBuilder()
+                .setTitle(`**Anonymous Confession Review**`)
+                .setColor('#FFA500')
+                .setDescription(reviewd)
+                .setTimestamp()
+                .setFooter({text: `/review ${confessionID} {approve/deny}`})
+            try{
+                let reviewmessage = await reviewChannel.send({ embeds: [ReviewEmbed], components: [buttonRow], allowedMentions: {repliedUser: false}})
+
+                const reviewCollector = reviewmessage.createMessageComponentCollector({time: 86_400_000 });
+                reviewCollector.on("collect", async interaction => {
+                    if (!interaction.isButton()) return;
 
                     //Approve Button
                     if (interaction.customId === 'confession-approve') { 
@@ -185,6 +210,7 @@ module.exports = {
                             //Confession Checks
                             if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.update({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Send Messages in Threads\`, and \`Embed Links\``, flags: MessageFlags.Ephemeral , components: [], embeds:[] }) }
                             if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.update({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, and \`Embed Links\``, flags: MessageFlags.Ephemeral , components: [], embeds:[] })
+                            
                             let Confession = new EmbedBuilder()
                             .setTitle(`${TitleParsed}`)
                             .setColor(`${colorParsed}`)
@@ -204,8 +230,8 @@ module.exports = {
                             await temp_confession_data.deleteOne({ confession_id: confessionID});
                             //Confession Number Increase
                             await bot_data.updateOne({ type: `prod` }, { $inc: { confession_number: 1 } });
-                            //Remove Listener 
-                            client.removeListener(Events.InteractionCreate, interactionListener);
+                            //Remove Collector 
+                            reviewCollector.stop();
                             await interaction.update({ content: `The confession with the ID of **${confessionID}** has now been approved and added to **${confessionchannel}**  :thumbsup:` , components: [], embeds:[]});
                             //Check if server has Confession Logging 
                             if(guildDocument.settings.confession_log_channel_id==undefined) return
@@ -246,52 +272,26 @@ module.exports = {
                             return await interaction.update({content: `I'm sorry, there has been an error. Please try again.`, flags: MessageFlags.Ephemeral , components: [], embeds:[] })
                         }
                     }
-                    //Deny Button
+
                     if (interaction.customId === 'confessions-deny') {   
                         await temp_confession_data.deleteOne({ confession_id: confessionID});
                         await interaction.update({ content:`The confession with the ID of **${confessionID}** has now been denied and deleted.`, components: [], embeds:[] })
-                        client.removeListener(Events.InteractionCreate, interactionListener);
+                        reviewCollector.stop();
                     }
-                }
-            };
-    
-            client.on(Events.InteractionCreate, interactionListener);
-    
-            //Check Multiple Channels
-            let reviewd;
-            if(channels.length > 1){
-                //If Multiple Channels
-                reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n **Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}`
-                if(attachment?.url){
-                    reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
-                }
-            }else{
-                //If Single Channel
-                reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}`
-                if(attachment?.url){
-                    reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
-                }
-            }
-            let ReviewEmbed = new EmbedBuilder()
-                .setTitle(`**Anonymous Confession Review**`)
-                .setColor('#FFA500')
-                .setDescription(reviewd)
-                .setTimestamp()
-                .setFooter({text: `/review ${confessionID} {approve/deny}`})
-            try{
-                let reviewmessage = await reviewChannel.send({ embeds: [ReviewEmbed], components: [buttonRow], allowedMentions: {repliedUser: false}})
-                setTimeout(async () => {
-                client.removeListener(Events.InteractionCreate, interactionListener);
-                try {
+                });
+                reviewCollector.on("end", async () => {
                     const disabledRow = new ActionRowBuilder().addComponents(
-                        confessionApproveButton.setDisabled(true),
-                        confessionDenyButton.setDisabled(true)
+                        ButtonBuilder.from(confessionApproveButton).setDisabled(true),
+                        ButtonBuilder.from(confessionDenyButton).setDisabled(true),
                     );
-                        await reviewmessage.edit({ components: [disabledRow] });
-                    } catch (e) {
-                        return;
-                    }
-                }, 86_400_000);
+
+                    try {
+                        await reviewmessage.edit({
+                            components: [disabledRow],
+                        });
+                    } catch {}
+                });
+
 
                 if(attachment?.url){
                     await temp_confession_data.insertOne({ "document_date": new Date(), "confession_id": `${confessionID}`, "confession_text": `${confessedmessage}`, "confession_attachment": `${attachment.url}`,"author": { "username": `${interaction.member.user.username}`, "id": `${interaction.member.user.id}` }, "guild": { "name": `${interaction.guild.name}`, "id": `${interaction.guild.id}`}, "message": {  "channel_id": `${confessionchannel.id}`} });
