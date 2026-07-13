@@ -120,6 +120,8 @@ module.exports = {
                 const randomIndex = Math.floor(Math.random() * characters.length);
                 confessionID += characters.charAt(randomIndex);
             }
+            let existingConfession;
+            let existingTempConfession;
             [existingConfession, existingTempConfession] = await Promise.all([
                 confession_data.findOne({ confession_id: confessionID }),
                 temp_confession_data.findOne({ confession_id: confessionID })
@@ -208,8 +210,8 @@ module.exports = {
                             //Get Temp Document 
                             const tempconfessionDocument = await temp_confession_data.findOne({ confession_id: confessionID });
                             //Confession Checks
-                            if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.update({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Send Messages in Threads\`, and \`Embed Links\``, flags: MessageFlags.Ephemeral , components: [], embeds:[] }) }
-                            if(!confessionchannel.isThread()){if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, and \`Embed Links\``, flags: MessageFlags.Ephemeral  })}
+                            if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Send Messages in Threads\`, and \`Embed Links\``, flags: MessageFlags.Ephemeral , components: [], embeds:[] }) }
+                            if(!confessionchannel.isThread()){if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.reply({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, and \`Embed Links\``, flags: MessageFlags.Ephemeral  })}
                             let Confession = new EmbedBuilder()
                             .setTitle(`${TitleParsed}`)
                             .setColor(`${colorParsed}`)
