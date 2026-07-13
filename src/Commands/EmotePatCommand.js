@@ -17,12 +17,7 @@ module.exports = {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds
         try {
-            const res = await fetch("https://nekos.best/api/v2/pat/", {
-                signal: controller.signal,
-                headers: {
-                    "User-Agent": "Meii/1.20 (https://meii.bot)"
-                }
-            });
+            const res = await fetch("https://api.sukigifs.xyz/pat");
             clearTimeout(timeout);
             if (!res.ok) {
                 return await interaction.editReply({
@@ -31,7 +26,7 @@ module.exports = {
                 });
             }
             const json = await res.json();
-            let image = json.results[0].url;
+            let image = json.url;
             patgif.setTitle(`:palm_down_hand:  ${interaction.member.displayName} gave head pats to ${interaction.guild.members.cache.get(PatUserID).displayName}! :palm_down_hand:   `)
             patgif.setImage(String(image))
             patgif.setFooter({text:`Requested by ${interaction.member.user.username}`})

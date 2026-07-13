@@ -18,12 +18,7 @@ module.exports = {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds
         try {
-            const res = await fetch("https://nekos.best/api/v2/cuddle/", {
-                signal: controller.signal,
-                headers: {
-                    "User-Agent": "Meii/1.20 (https://meii.bot)"
-                }
-            });
+            const res = await fetch("https://api.sukigifs.xyz/cuddle");
             clearTimeout(timeout);
             if (!res.ok) {
                 return await interaction.editReply({
@@ -32,7 +27,7 @@ module.exports = {
                 });
             }
             const json = await res.json();
-            let image = json.results[0].url;
+            let image = json.url;
             Cuddlegif.setTitle(`:people_hugging: ${interaction.member.displayName} cuddled ${interaction.guild.members.cache.get(CuddleUserID).displayName}! :people_hugging: `)
             Cuddlegif.setImage(String(image))
             Cuddlegif.setFooter({text:`Requested by ${interaction.member.user.username}`})

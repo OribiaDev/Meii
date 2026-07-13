@@ -18,7 +18,7 @@ module.exports = {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds
         try {
-            const res = await fetch("https://api.otakugifs.xyz/gif?reaction=lick", {signal: controller.signal});
+            const res = await fetch("https://api.sukigifs.xyz/lick");
             clearTimeout(timeout);
             if (!res.ok) {
                 return await interaction.editReply({

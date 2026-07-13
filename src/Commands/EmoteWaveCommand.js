@@ -17,12 +17,7 @@ module.exports = {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds
         try {
-            const res = await fetch("https://nekos.best/api/v2/wave/", {
-                signal: controller.signal,
-                headers: {
-                    "User-Agent": "Meii/1.20 (https://meii.bot)"
-                }
-            });
+            const res = await fetch("https://api.sukigifs.xyz/wave");
             clearTimeout(timeout);
             if (!res.ok) {
                 return await interaction.editReply({
@@ -31,7 +26,7 @@ module.exports = {
                 });
             }
             const json = await res.json();
-            let image = json.results[0].url;
+            let image = json.url;
             wavegif.setTitle(`:wave:  ${interaction.member.displayName} waved at ${interaction.guild.members.cache.get(WaveUserID).displayName}! :wave:   `)
             wavegif.setImage(String(image))
             wavegif.setFooter({text:`Requested by ${interaction.member.user.username}`})

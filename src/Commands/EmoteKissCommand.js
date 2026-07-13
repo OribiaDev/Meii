@@ -18,12 +18,7 @@ module.exports = {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds
         try {
-            const res = await fetch("https://nekos.best/api/v2/kiss/", {
-                signal: controller.signal,
-                headers: {
-                    "User-Agent": "Meii/1.20 (https://meii.bot)"
-                }
-            });
+            const res = await fetch("https://api.sukigifs.xyz/kiss");
             clearTimeout(timeout);
             if (!res.ok) {
                 return await interaction.editReply({
@@ -32,7 +27,7 @@ module.exports = {
                 });
             }
             const json = await res.json();
-            let image = json.results[0].url;
+            let image = json.url;
             KissGif.setTitle(`:sparkling_heart: ${interaction.member.displayName} kissed ${interaction.guild.members.cache.get(KissUserID).displayName}! :sparkling_heart: `)
             KissGif.setImage(String(image))
             KissGif.setFooter({text:`Requested by ${interaction.member.user.username}`})

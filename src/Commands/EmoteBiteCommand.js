@@ -17,12 +17,7 @@ module.exports = {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds
         try {
-            const res = await fetch("https://nekos.best/api/v2/bite/", {
-                signal: controller.signal,
-                headers: {
-                    "User-Agent": "Meii/1.20 (https://meii.bot)"
-                }
-            });
+            const res = await fetch("https://api.sukigifs.xyz/bite");
             clearTimeout(timeout);
             if (!res.ok) {
                 return await interaction.editReply({
@@ -31,7 +26,7 @@ module.exports = {
                 });
             }
             const json = await res.json();
-            let image = json.results[0].url;
+            let image = json.url;
             bitegif.setTitle(`:woozy_face:  ${interaction.member.displayName} bit ${interaction.guild.members.cache.get(BiteUserID).displayName}! :woozy_face:  `)
             bitegif.setImage(String(image))
             bitegif.setFooter({text:`Requested by ${interaction.member.user.username}`})
