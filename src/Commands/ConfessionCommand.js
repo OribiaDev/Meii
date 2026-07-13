@@ -202,9 +202,9 @@ module.exports = {
                 const reviewCollector = reviewmessage.createMessageComponentCollector({time: 86_400_000 });
                 reviewCollector.on("collect", async interaction => {
                     if (!interaction.isButton()) return;
-                    await interaction.deferUpdate();
                     //Approve Button
                     if (interaction.customId === 'confession-approve') { 
+                        await interaction.deferUpdate();
                         try{
                             //Get Temp Document 
                             const tempconfessionDocument = await temp_confession_data.findOne({ confession_id: confessionID });
@@ -231,8 +231,8 @@ module.exports = {
                             //Confession Number Increase
                             await bot_data.updateOne({ type: `prod` }, { $inc: { confession_number: 1 } });
                             //Remove Collector 
-                            reviewCollector.stop();
-                            await interaction.update({ content: `The confession with the ID of **${confessionID}** has now been approved and added to **${confessionchannel}**  :thumbsup:` , components: [], embeds:[]});
+                            reviewCollector.stop('end');
+                            await interaction.editReply({ content: `The confession with the ID of **${confessionID}** has now been approved and added to **${confessionchannel}**  :thumbsup:` , components: [], embeds:[]});
                             //Check if server has Confession Logging 
                             if(guildDocument.settings.confession_log_channel_id==undefined) return
                             if(!client.channels.cache.get(guildDocument.settings.confession_log_channel_id)) return
@@ -269,17 +269,18 @@ module.exports = {
                             }   
                         }catch( error ){
                             console.log(error)
-                            return await interaction.update({content: `I'm sorry, there has been an error. Please try again.`, flags: MessageFlags.Ephemeral , components: [], embeds:[] })
+                            return await interaction.editReply({content: `I'm sorry, there has been an error. Please try again.`, flags: MessageFlags.Ephemeral , components: [], embeds:[] })
                         }
                     }
 
                     if (interaction.customId === 'confessions-deny') {   
                         await temp_confession_data.deleteOne({ confession_id: confessionID});
-                        await interaction.update({ content:`The confession with the ID of **${confessionID}** has now been denied and deleted.`, components: [], embeds:[] })
-                        reviewCollector.stop();
+                        reviewCollector.stop('end');
+                        await interaction.update({ content:`The confession with the ID of **${confessionID}** has now been denied and deleted.`, components: [], embeds:[]})
                     }
                 });
-                reviewCollector.on("end", async () => {
+                reviewCollector.on("end", async (_, reason) => {
+                    if(reason == 'end') return
                     const disabledRow = new ActionRowBuilder().addComponents(
                         ButtonBuilder.from(confessionApproveButton).setDisabled(true),
                         ButtonBuilder.from(confessionDenyButton).setDisabled(true),
