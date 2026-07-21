@@ -174,20 +174,37 @@ module.exports = {
              
             //create button action row
             const buttonRow = new ActionRowBuilder().addComponents(confessionApproveButton, confessionDenyButton)
-
             //Check Multiple Channels
             let reviewd;
             if(channels.length > 1){
-                //If Multiple Channels
-                reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n **Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}`
-                if(attachment?.url){
-                    reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
+                //Check if logging
+                if(guildDocument.settings.confession_log_channel_id==undefined){
+                    //No Logging
+                    reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n **Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}`
+                    if(attachment?.url){
+                        reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
+                    }
+                }else{
+                    //Has Logging
+                    reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n **Message**\n"${confessedmessage}"\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})||\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}`
+                    if(attachment?.url){
+                        reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})||\n\n**Confession Channel**\n${confessionchannel}\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
+                    }
                 }
             }else{
-                //If Single Channel
-                reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}`
-                if(attachment?.url){
-                    reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
+                //Check if logging
+                if(guildDocument.settings.confession_log_channel_id==undefined){
+                    //No Logging
+                    reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}`
+                    if(attachment?.url){
+                        reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
+                    }
+                }else{
+                    //Has Logging
+                    reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})||\n\n**Confession ID**\n${confessionID}`
+                    if(attachment?.url){
+                        reviewd = `**Please use the buttons below. If they can't be used, use the /review command to approve or deny this confession.** \n\n**Message**\n"${confessedmessage}"\n\n**Author**\n||${interaction.member.user.username}  (${interaction.member})||\n\n**Confession ID**\n${confessionID}\n\n**Image**\n${attachment?.url}`
+                    }
                 }
             }
             let ReviewEmbed = new EmbedBuilder()
