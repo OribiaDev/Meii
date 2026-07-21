@@ -139,13 +139,13 @@ module.exports = {
         let colorData = dataExists ? guildDocument.customization.color : defaultValues.color;
         let colorParsed = colorData.replace('{random}', randomHexColor())
         colorParsed = colorParsed.replace('{RANDOM}', randomHexColor())
-        //Test if confession is bigger than 4096 Char
+        //Test if confession is bigger than 3600 Char
         let confessionTooLong = new EmbedBuilder()
         .setTitle(`**${interaction.guild.name}: Confession Too Long**`)
         .setColor('#ff6961')
-        .setDescription(`I'm sorry, your confession is too long.\nThe limit is **4096** characters, currently its **${bodyParsed.length}** characters.`)
+        .setDescription(`I'm sorry, your confession is too long.\nThe limit is **3600** characters, currently its **${bodyParsed.length}** characters.`)
         .setFooter({text:`Please shorten and try again!`})
-        if(4096 < bodyParsed.length) return await interaction.editReply({ embeds: [confessionTooLong], flags: MessageFlags.Ephemeral })
+        if(3600 < bodyParsed.length) return await interaction.editReply({ embeds: [confessionTooLong], flags: MessageFlags.Ephemeral })
         //Test if Hex Code is valid
         var hexRegex = /^#(?:[0-9a-fA-F]{3}){1,2}$/
         if(!hexRegex.test(colorParsed)) colorParsed = randomHexColor();
