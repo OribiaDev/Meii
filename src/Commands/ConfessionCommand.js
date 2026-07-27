@@ -156,8 +156,8 @@ module.exports = {
             //Getting the channel
             let reviewChannel = client.channels.cache.get(guildDocument.settings.confession_review_channel_id)
             //Permissions Check
-            if(!reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return
-            if(reviewChannel.isThread()){ if(!reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)){return}}
+            if(!reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in the confession review channel.\nI need... \`Send Messages\`, \`View Channel\`, and \`Embed Links\``, flags: MessageFlags.Ephemeral , components: [], embeds:[] })
+            if(reviewChannel.isThread()){ if(!reviewChannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads)){return await interaction.editReply({ content: `I'm sorry, I don't have enough permissions in the confession review channel.\nI need... \`Send Messages\`, \`View Channel\`, \`Send Messages in Threads\`, and \`Embed Links\``, flags: MessageFlags.Ephemeral , components: [], embeds:[] })}}
             
             //Buttons
             //Approve Button
