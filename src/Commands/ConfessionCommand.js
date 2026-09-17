@@ -225,6 +225,11 @@ module.exports = {
                         try{
                             //Get Temp Document 
                             const tempconfessionDocument = await temp_confession_data.findOne({ confession_id: confessionID });
+                            // Guard against a race with a concurrent approve/deny (temp document already consumed/removed)
+                            if (tempconfessionDocument == undefined) {
+                                reviewCollector.stop('end');
+                                return await interaction.editReply({ content: `I'm sorry, this confession has already been reviewed.`, components: [], embeds: [] });
+                            }
                             //Confession Checks
                             if(confessionchannel.isThread()){ if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessagesInThreads) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.channel.send({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, \`Send Messages in Threads\`, and \`Embed Links\``, flags: MessageFlags.Ephemeral , components: [], embeds:[] }) }
                             if(!confessionchannel.isThread()){if(!confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) || !confessionchannel.permissionsFor(client.user).has(PermissionFlagsBits.EmbedLinks)) return await interaction.channel.send({ content: `I'm sorry, I don't have enough permissions in <#${confessionchannel.id}>.\nI need... \`Send Messages\`, \`View Channel\`, and \`Embed Links\``, flags: MessageFlags.Ephemeral  })}
