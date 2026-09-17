@@ -6,34 +6,6 @@ module.exports = {
 		.setDescription(`Bot Admin Controls`)
         .addSubcommand(subcommand =>
             subcommand
-                .setName('server')
-                .setDescription('Server Bot Moderation')
-                .addStringOption(option =>
-                    option.setName('moderation_type')
-                        .setDescription('Types of moderation')
-                        .setRequired(true)
-                        .addChoices( 
-                            { name: 'Ban', value: 'serverban' },
-                            { name: 'Unban', value: 'serverunban' },
-                            { name: 'Confession Ban', value: 'serverconfessionban' },
-                            { name: 'Confession Unban', value: 'serverconfessionunban' },
-                            { name: 'Leave', value: 'serverleave' },
-                        ))
-                .addStringOption(option =>
-                    option.setName('id_type')
-                        .setDescription('Types of IDs')
-                        .setRequired(true)
-                        .addChoices(
-                            { name: 'Server ID', value: 'serverchoiceid' },
-                            { name: 'Confession ID', value: 'confessionchoiceid' },
-                        ))
-                .addStringOption(option =>
-                    option
-                        .setName('choiceid')
-                        .setRequired(true)
-                        .setDescription('The ID of your previous choice')))
-        .addSubcommand(subcommand =>
-            subcommand
                 .setName('user')
                 .setDescription('User Bot Moderation')
                 .addStringOption(option =>
@@ -59,8 +31,8 @@ module.exports = {
                         .setDescription('The ID of your previous choice')))
         .addSubcommand(subcommand =>
             subcommand
-                .setName('bot')
-                .setDescription('Bot Moderation')
+                .setName('staff')
+                .setDescription('Admin Staff Operations')
                 .addStringOption(option =>
                     option.setName('moderation_type')
                         .setDescription('Types of moderation')
@@ -77,23 +49,12 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('confession')
-                .setDescription('Quick Confession Moderation')
+                .setDescription('Quick Confession Moderation Menu')
                 .addStringOption(option =>
                     option
                         .setName('confessionid')
                         .setRequired(true)
                         .setDescription('The ID of the confession')))
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('quickreply')
-                .setDescription('Quick replys to common messages')
-                .addStringOption(option =>
-                    option.setName('reply_preset')
-                        .setDescription('type of preset message')
-                        .setRequired(true)
-                        .addChoices(
-                            { name: 'Confession Channel Problems', value: 'channelproblems' },
-                        )))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('message')
@@ -104,16 +65,8 @@ module.exports = {
                         .setRequired(true)
                         .addChoices(
                             { name: 'Confession Remove', value: 'confessionremove' },
+                            { name: 'Confession Retrieve', value: 'confessionretrieve' },
                         ))
-                .addStringOption(option =>
-                    option
-                        .setName('confessionid')
-                        .setRequired(true)
-                        .setDescription('The ID of the confession')))
-            .addSubcommand(subcommand =>
-            subcommand
-                .setName('retrieve')
-                .setDescription('Retrieve confession data')
                 .addStringOption(option =>
                     option
                         .setName('confessionid')
@@ -130,76 +83,7 @@ module.exports = {
         if (index == -1) return await interaction.reply({content:"I'm sorry, this command can only be ran by the developers and admins of Meii.", flags: MessageFlags.Ephemeral  })
         const moderationType = interaction.options.getString('moderation_type');
         if(botDocument==undefined) return interaction.reply({content:`I'm sorry, I cannot find the bot data document.`, flags: MessageFlags.Ephemeral  })
-        if (interaction.options.getSubcommand() === 'server') {
-            //Server
-            //Check if User or Confession ID
-            const moderationType = interaction.options.getString('moderation_type');
-            const id_type = interaction.options.getString('id_type');
-            const choiceId = interaction.options.getString('choiceid').toUpperCase();
-            let givenServerID = undefined;
-            let serverObject = undefined;
-            //Confession ID
-            if(id_type=='confessionchoiceid'){
-                //ID Lookup
-                const confessionDocument = await confession_data.findOne({ confession_id: choiceId });
-                if(confessionDocument==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${choiceId}**.`, flags: MessageFlags.Ephemeral  })
-                //ID Set
-                serverObject = await client.guilds.fetch(confessionDocument.guild.id);
-                givenServerID = confessionDocument.guild.id;
-            }
-            //Server ID
-            if(id_type=='serverchoiceid'){
-                givenServerID = interaction.options.getString('choiceid'); 
-                serverObject = await client.guilds.fetch(givenServerID);
-            }
-            //Ban
-            if(moderationType=='serverban'){
-                let botBansArray = botDocument.server_bans || []
-                let index = botBansArray.indexOf(`${givenServerID}`);
-                if (index !== -1) return await interaction.reply({ content:`This server is already banned from using Meii.`, flags: MessageFlags.Ephemeral  })
-                botBansArray.push(`${givenServerID}`)  
-                await bot_data.updateOne({ type: `prod` }, { $set: { server_bans: botBansArray } });
-                if(serverObject==undefined) return await interaction.reply({content:`The server with the ID of \`${givenServerID}\` is now banned from using Meii.`, flags: MessageFlags.Ephemeral  })        
-                await serverObject.leave();
-                return interaction.reply({content:`\`${serverObject.name} (${serverObject.id})\` is now banned from using Meii.`, flags: MessageFlags.Ephemeral  })
-            }
-            //Unban
-            if(moderationType=='serverunban'){
-                let botBansArray = botDocument.server_bans || []
-                let index = botBansArray.indexOf(`${givenServerID}`);
-                if (index == -1) return await interaction.reply({ content:`This server isn't banned from using Meii.`, flags: MessageFlags.Ephemeral  })
-                botBansArray.splice(index, 1);
-                await bot_data.updateOne({ type: `prod` }, { $set: { server_bans: botBansArray } });
-                if(serverObject==undefined) return interaction.reply({content:`The server with the the ID of \`${givenServerID}\` is now unbanned from using Meii.`, flags: MessageFlags.Ephemeral  })
-                return interaction.reply({content:`\`${serverObject.name} (${serverObject.id})\` is now unbanned from using Meii.`, flags: MessageFlags.Ephemeral  })
-            }
-            //Confession Ban
-            if(moderationType=='serverconfessionban'){
-                let confessionBotBansArray = botDocument.server_confession_bans || []
-                let index = confessionBotBansArray.indexOf(`${givenServerID}`);
-                if (index !== -1) return await interaction.reply({ content:`This server is already banned from using confessions.`, flags: MessageFlags.Ephemeral  })
-                confessionBotBansArray.push(`${givenServerID}`)  
-                await bot_data.updateOne({ type: `prod` }, { $set: { server_confession_bans: confessionBotBansArray } });
-                if(serverObject==undefined) return await interaction.reply({content:`The server with the ID of \`${givenServerID}\` is now banned from using confessions.`, flags: MessageFlags.Ephemeral  })        
-                return interaction.reply({content:`\`${serverObject.name} (${serverObject.id})\` is now banned from using confessions.`, flags: MessageFlags.Ephemeral  })
-            }
-            //Confession Unban
-            if(moderationType=='serverconfessionunban'){
-                let confessionBotBansArray = botDocument.server_confession_bans || []
-                let index = confessionBotBansArray.indexOf(`${givenServerID}`);
-                if (index == -1) return await interaction.reply({ content:`This server isn't banned from using confessions.`, flags: MessageFlags.Ephemeral  })
-                confessionBotBansArray.splice(index, 1);
-                await bot_data.updateOne({ type: `prod` }, { $set: { server_confession_bans: confessionBotBansArray } });
-                if(serverObject==undefined) return interaction.reply({content:`The server with the the ID of \`${givenServerID}\` is now unbanned from using confessions.`, flags: MessageFlags.Ephemeral  })
-                return interaction.reply({content:`\`${serverObject.name} (${serverObject.id})\` is now unbanned from using confessions.`, flags: MessageFlags.Ephemeral  })
-            }
-            //Leave
-            if(moderationType=='serverleave'){
-                if(serverObject==undefined) return interaction.reply({content:`I cannot find a server with that ID.`, flags: MessageFlags.Ephemeral  })
-                await serverObject.leave();
-                return interaction.reply({content:`Meii has now left \`${serverObject.name} (${serverObject.id})\`.` })
-            }
-        } else if (interaction.options.getSubcommand() === 'user'){ 
+        if (interaction.options.getSubcommand() === 'user'){ 
             //Check if User or Confession ID
             const moderationType = interaction.options.getString('moderation_type');
             const id_type = interaction.options.getString('id_type');
@@ -235,8 +119,8 @@ module.exports = {
                 await bot_data.updateOne({ type: `prod` }, { $set: { user_confession_bans: confessionBansArray } });
                 return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now unbanned from using confessions.` })
             }
-        } else if (interaction.options.getSubcommand() === 'bot'){ 
-            //Bot
+        } else if (interaction.options.getSubcommand() === 'staff'){ 
+            //staff
             const givenUserID = interaction.options.getString('userid');
             //Admin Add
             if(moderationType=='adminadd'){
@@ -291,6 +175,29 @@ module.exports = {
                     interaction.reply({content:`I'm sorry, there has been a error editing this confession.`, flags: MessageFlags.Ephemeral  })
                     return;
                 }
+            }
+            if(moderationType=='confessionretrieve'){
+                //Document Lookup
+                const givenConfessionID = interaction.options.getString('confessionid').toUpperCase();
+                const confessionDocument = await confession_data.findOne({ confession_id: givenConfessionID });
+                if(confessionDocument==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${givenConfessionID}**.`, flags: MessageFlags.Ephemeral  })
+                //Get Values
+                let confession_text = confessionDocument.confession_text;
+                let confession_id = confessionDocument.confession_id;
+                let confession_attachment = confessionDocument.confession_attachment;
+                let confession_date_raw = new Date(confessionDocument.document_date)
+                let confession_date = confession_date_raw.toLocaleString("en-US", { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/New_York", timeZoneName: "short"});
+                let confession_author = confessionDocument.author.username;
+                let confession_author_id = confessionDocument.author.id;
+                let guild_name = confessionDocument.guild.name;
+                let guild_id = confessionDocument.guild.id;
+                //Retrieve Embed
+                let retrieveEmbed = new EmbedBuilder()
+                .setTitle(`Retrieved Confession: ${confession_id}`)
+                .setColor(`#C3B1E1`)
+                .setDescription(`**Confession (${confession_id})**\n> ${confession_text}${confessionDocument.confession_attachment ? `\n\n**Attachment**\n${confession_attachment}\n\n` : '\n\n'}**Date**\n${confession_date}\n\n**Author**\n${confession_author} (${confession_author_id})\n\n**Guild**\n${guild_name} (${guild_id})\n\n${confessionDocument.message.isReply ? `**Is Reply**\n${confessionDocument.message.isReply}` : ''}`)
+
+                await interaction.reply({ embeds: [retrieveEmbed]})
             }
         } else if (interaction.options.getSubcommand() == 'confession'){
             //ID Lookup
@@ -392,39 +299,6 @@ module.exports = {
                     return;
                 }
             }, 60_000);
-        } else if(interaction.options.getSubcommand() == 'quickreply'){
-            //Quick Replys
-            const replyPreset = interaction.options.getString('reply_preset');
-            if(replyPreset === "channelproblems"){
-                let channelProblemEmbed = new EmbedBuilder()
-                .setTitle(`Channel not showing up in the settings command:`)
-                .setColor(`#ff6961`)
-                .setDescription(`Please follow these solutions, if they don't work please feel free to reply and let me know! \n\n **__Fix 1:__**\nTry moving the channel(s) you're wanting to use to the very top of your channel list.\n\n  **__Fix 2:__** \n Due to discords limit on dropdown menus there can only be a maximum of 25 channels listed. To fix this please change the permissions on all your channels so that Meii **only** has access to the channel(s) you're wanting to use. \n\n **__Fix 3:__** \n Meii only shows channels that have the necessary permissions. Please make sure Meii has the permissions \`Send Messages\`, \`View Channel\`, and \`Embed Links\` on the channel(s) you're wanting to use. \n\n`)
-                .setTimestamp()
-                await interaction.reply({ embeds: [channelProblemEmbed]})
-            }
-         } else if(interaction.options.getSubcommand() == 'retrieve'){
-            //Document Lookup
-            const givenConfessionID = interaction.options.getString('confessionid').toUpperCase();
-            const confessionDocument = await confession_data.findOne({ confession_id: givenConfessionID });
-            if(confessionDocument==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${givenConfessionID}**.`, flags: MessageFlags.Ephemeral  })
-            //Get Values
-            let confession_text = confessionDocument.confession_text;
-            let confession_id = confessionDocument.confession_id;
-            let confession_attachment = confessionDocument.confession_attachment;
-            let confession_date_raw = new Date(confessionDocument.document_date)
-            let confession_date = confession_date_raw.toLocaleString("en-US", { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/New_York", timeZoneName: "short"});
-            let confession_author = confessionDocument.author.username;
-            let confession_author_id = confessionDocument.author.id;
-            let guild_name = confessionDocument.guild.name;
-            let guild_id = confessionDocument.guild.id;
-            //Retrieve Embed
-            let retrieveEmbed = new EmbedBuilder()
-            .setTitle(`Retrieved Confession: ${confession_id}`)
-            .setColor(`#C3B1E1`)
-            .setDescription(`**Confession (${confession_id})**\n> ${confession_text}${confessionDocument.confession_attachment ? `\n\n**Attachment**\n${confession_attachment}\n\n` : '\n\n'}**Date**\n${confession_date}\n\n**Author**\n${confession_author} (${confession_author_id})\n\n**Guild**\n${guild_name} (${guild_id})\n\n${confessionDocument.message.isReply ? `**Is Reply**\n${confessionDocument.message.isReply}` : ''}`)
-
-            await interaction.reply({ embeds: [retrieveEmbed]})
-         }
+        }
 	},
 }; 

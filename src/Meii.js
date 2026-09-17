@@ -187,19 +187,6 @@ client.on(Events.InteractionCreate, async interaction => {
     }   
 });
 
-//Guild Join Function
-client.on(Events.GuildCreate, async guild => {
-    //Database Variables
-    const db = mongoClient.db(database.name)
-    const bot_data = db.collection(database.bot_collection_name)
-    //Server Ban Check
-    const botDocument = await bot_data.findOne({ type: 'prod' });
-    const serverBansArray = botDocument.server_bans || [] 
-    let index = serverBansArray.indexOf(`${guild.id}`);
-    //Leaves server if banned
-    if (index !== -1) return await guild.leave();
-});
-
 //Guild Leave Function
 client.on(Events.GuildDelete, async guild => {
     //Database Variables
