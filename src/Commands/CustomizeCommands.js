@@ -1,4 +1,4 @@
-const {  TextDisplayBuilder, ContainerBuilder, Events, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, MessageFlags } = require('discord.js')
+const {  TextDisplayBuilder, ContainerBuilder, Events, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, MessageFlags, LabelBuilder  } = require('discord.js')
  
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -113,29 +113,31 @@ module.exports = {
                 if(titleString==undefined) titleString = defaultValues.title;
                 const titleInput = new TextInputBuilder()
                 .setCustomId('titleinput')
-                .setLabel("Title | {id}")
                 .setValue(titleString)
                 .setStyle(TextInputStyle.Short);
+                const titleLabel = new LabelBuilder()
+                .setLabel("Title | {id}")
+                .setTextInputComponent(titleInput);
                 //Body
                 let bodyString = dataExists ? bodyData : defaultValues.body;
                 const bodyInput = new TextInputBuilder()
                 .setCustomId('bodyinput')
-                .setLabel("Body | {confession}")
                 .setValue(bodyString)
                 .setStyle(TextInputStyle.Short);
+                const bodyLabel = new LabelBuilder()
+                .setLabel("Body | {confession}")
+                .setTextInputComponent(bodyInput);
                 //Color
                 let colorString = dataExists ? colorData : defaultValues.color;
                 const colorInput = new TextInputBuilder()
                 .setCustomId('colorInput')
-                .setLabel("Color (#hex-code) | {random}")
                 .setValue(colorString)
                 .setStyle(TextInputStyle.Short);
-                //Action Rows
-                const titleActionRow = new ActionRowBuilder().addComponents(titleInput);
-                const bodyActionRow = new ActionRowBuilder().addComponents(bodyInput);
-                const colorActionRow = new ActionRowBuilder().addComponents(colorInput);
+                const colorLabel = new LabelBuilder()
+                .setLabel("Color (#hex-code) | {random}")
+                .setTextInputComponent(colorInput);
                 //Add to Modal
-                ccModal.addComponents(titleActionRow, bodyActionRow, colorActionRow);
+                ccModal.addLabelComponents(titleLabel, bodyLabel, colorLabel);
                 await interaction.showModal(ccModal);
                 //Customize Modal Collector
                 const filter = (interaction) => interaction.customId === `ccModal-${interaction.user.id}`;
@@ -162,40 +164,48 @@ module.exports = {
                     return
                 }).catch((e) => {
                     return
-                }); 
-            }else if(interaction.customId === 'customize-reply'){
+                });
+            } else if(interaction.customId === 'customize-reply'){
                 //Customize Relpy Embed Button
                 //Modal
                 const ReplyModal = new ModalBuilder()
-                .setCustomId(`ReplyModal-${interaction.user.id}`)
-                .setTitle('Confession Reply Customization');
+                    .setCustomId(`ReplyModal-${interaction.user.id}`)
+                    .setTitle('Confession Reply Customization');
                 //Title
                 let titleString = dataExistsReply ? titleDataReply : defaultValuesReply.title;
+
                 const titleInput = new TextInputBuilder()
-                .setCustomId('titleinput')
-                .setLabel("Title | {reply_id} {id}")
-                .setValue(titleString)
-                .setStyle(TextInputStyle.Short);
+                    .setCustomId('titleinput')
+                    .setValue(titleString)
+                    .setStyle(TextInputStyle.Short);
+
+                const titleLabel = new LabelBuilder()
+                    .setLabel("Title | {reply_id} {id}")
+                    .setTextInputComponent(titleInput);
+
                 //Body
                 let bodyString = dataExistsReply ? bodyDataReply : defaultValuesReply.body;
                 const bodyInput = new TextInputBuilder()
-                .setCustomId('bodyinput')
-                .setLabel("Body | {confession}")
-                .setValue(bodyString)
-                .setStyle(TextInputStyle.Short);
+                    .setCustomId('bodyinput')
+                    .setValue(bodyString)
+                    .setStyle(TextInputStyle.Short);
+                const bodyLabel = new LabelBuilder()
+                    .setLabel("Body | {confession}")
+                    .setTextInputComponent(bodyInput);
+
                 //Color
                 let colorString = dataExistsReply ? colorDataReply : defaultValuesReply.color;
                 const colorInput = new TextInputBuilder()
-                .setCustomId('colorInput')
-                .setLabel("Color (#hex-code) | {random}")
-                .setValue(colorString)
-                .setStyle(TextInputStyle.Short);
-                //Action Rows
-                const titleActionRow = new ActionRowBuilder().addComponents(titleInput);
-                const bodyActionRow = new ActionRowBuilder().addComponents(bodyInput);
-                const colorActionRow = new ActionRowBuilder().addComponents(colorInput);
+                    .setCustomId('colorInput')
+                    .setValue(colorString)
+                    .setStyle(TextInputStyle.Short);
+                const colorLabel = new LabelBuilder()
+                    .setLabel("Color (#hex-code) | {random}")
+                    .setTextInputComponent(colorInput);
+
+                
                 //Add to Modal
-                ReplyModal.addComponents(titleActionRow, bodyActionRow, colorActionRow);
+                ReplyModal.addLabelComponents(titleLabel, bodyLabel, colorLabel);
                 await interaction.showModal(ReplyModal);
                 //Customize Modal Collector
                 const filter = (interaction) => interaction.customId === `ReplyModal-${interaction.user.id}`;
@@ -225,6 +235,8 @@ module.exports = {
                     clearTimeout(autoRemoveTimeout);
                     return
                 });
+
+
             }else if(interaction.customId === 'customize-reset'){
                 //Reset Button
                 const resetContainer = new ContainerBuilder()
