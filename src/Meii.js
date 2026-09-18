@@ -162,7 +162,8 @@ client.on(Events.InteractionCreate, async interaction => {
         server_data: db.collection(database.server_collection_name),
         bot_data: db.collection(database.bot_collection_name),
         confession_data: db.collection(database.confession_collection_name),
-        temp_confession_data: db.collection(database.temp_confession_collection_name)
+        temp_confession_data: db.collection(database.temp_confession_collection_name),
+        user_data: db.collection(database.user_data_collection_name)
     };
     var shardCollections = {
         shardID: shardID,

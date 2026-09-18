@@ -61,6 +61,19 @@ async function TempConfessionDatabasePurge(){
     console.log(`Successfully purged (${result.deletedCount}) temp confession document(s).`)
 }
 
+//Moderation Database Purge
+async function userDatabasePurge() {
+    console.log('Attempting to purge the user database..')
+    // Database Variables
+    const db = mongoClient.db(database.name)
+    const user_data = db.collection(database.user_data_collection_name)
+    // Delete documents without ban_info AND warnings
+    const result = await user_data.deleteMany({
+        ban_info: { $exists: false },
+        warnings: { $exists: false }
+    });
+    console.log(`Successfully purged (${result.deletedCount}) user document(s).`)
+}
 
 //Sharding Manager 
 const manager = new ShardingManager('./src/Meii.js', { 
@@ -126,6 +139,8 @@ async function MeiiStartup(){
     console.log('Successfully started the confession purge schedule.')
     schedule.scheduleJob('0 0 * * *', () => { TempConfessionDatabasePurge(); }) // Ran everyday at midnight
     console.log('Successfully started the temp confession purge schedule.')
+    schedule.scheduleJob('0 0 * * *', () => { userDatabasePurge(); }) // Ran everyday at midnight
+    console.log('Successfully started the user database purge schedule.')
     console.log('\nAttempting to start shards...')
     try{
         manager.spawn();

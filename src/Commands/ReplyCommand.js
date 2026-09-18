@@ -26,35 +26,27 @@ module.exports = {
         let bot_data = databaseCollections.bot_data;
         let confession_data = databaseCollections.confession_data;
         let temp_confession_data = databaseCollections.temp_confession_data;
+        let user_data = databaseCollections.user_data;
+        //Database Calls
+        const [ guildDocument, userDocument ] = await Promise.all([
+                server_data.findOne({ server_id: interaction.guild.id }),
+                user_data.findOne({ user_id: interaction.user.id })
+        ]);
         //Get confession document
         const givenconfessionID = interaction.options.getString('confession_id').toUpperCase();
         const confessionDocument = await confession_data.findOne({ confession_id: givenconfessionID });
         if(confessionDocument==undefined) return interaction.editReply({content:`I'm sorry, I cannot find a confession with the ID of **${givenconfessionID}**.\nPlease make sure the confession ID (found at the footer or title of the confession) is correct.`, flags: MessageFlags.Ephemeral  })
         //Get Guild from Document
         guildObject = client.guilds.cache.get(confessionDocument.guild.id);
-        if(guildObject==undefined) return await interaction.editReply({content:`I'm sorry, I cannot find the guild thats associated with the confession ID of \`${givenconfessionID}\`.`, flags: MessageFlags.Ephemeral  })   
-        //Admin Bans
-        const botDocument = await bot_data.findOne({ type: 'prod' });
-        //Admin Confession Server Ban
-        let AdminServerConfessionBanned = new EmbedBuilder()
-        .setTitle(`**${guildObject.name}: Server Confession Banned**`)
-        .setColor("#ff6961")
-        .setDescription(`I'm sorry, The server **${guildObject.name}** is banned from using the confession feature on Meii.`)
-        .setFooter({text:`If you think this is a mistake, please join the support server.`})
-        const serverBansArray = botDocument.server_confession_bans || [] 
-        let serverBanindex = serverBansArray.indexOf(`${guildObject.id}`);
-        if (serverBanindex !== -1) return await interaction.editReply({ embeds: [AdminServerConfessionBanned], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
+        if(guildObject==undefined) return await interaction.editReply({content:`I'm sorry, I cannot find the guild thats associated with the confession ID of \`${givenconfessionID}\`.`, flags: MessageFlags.Ephemeral  })    
         //Admin Confession User Ban
         let AdminUserConfessionBanned = new EmbedBuilder()
         .setTitle(`**${interaction.member.user.username} : Confession Banned**`)
         .setColor("#ff6961")
-        .setDescription(`I'm sorry, you are globally banned from using the confession feature on Meii.`)
-        .setFooter({text:`If you think this is a mistake, please join the support server.`})
-        const userBansArray = botDocument.user_confession_bans || [] 
-        let userBanindex = userBansArray.indexOf(`${interaction.member.user.id}`);
-        if (userBanindex !== -1) return await interaction.editReply({ embeds: [AdminUserConfessionBanned], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
+        .setDescription(`I'm sorry, you are globally banned from using the confession feature on Meii. \n\n **Reason:** \n > "${userDocument?.ban_info?.banReason}" \n`)
+        .setFooter({text:`If you think this is a mistake, please join the support server and open a ticket.`})
+        if (userDocument?.ban_info?.isBanned) return await interaction.editReply({ embeds: [AdminUserConfessionBanned], flags: MessageFlags.Ephemeral , allowedMentions: {repliedUser: false}})
         //Guild Document
-        const guildDocument = await server_data.findOne({ server_id: guildObject.id });
         //Database Document Check
         let ConfessionNotSet = new EmbedBuilder()
         .setTitle(`**Confession Channel Not Set**`)
