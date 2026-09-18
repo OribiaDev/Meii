@@ -10,7 +10,7 @@ module.exports = {
                 .setDescription('User Bot Moderation')
                 .addStringOption(option =>
                     option.setName('moderation_type')
-                        .setDescription('Types of moderation')
+                        .setDescription('Options for moderation')
                         .setRequired(true)
                         .addChoices(
                             { name: 'Warn', value: 'warn' },
@@ -61,6 +61,15 @@ module.exports = {
                         .setName('confessionid')
                         .setRequired(true)
                         .setDescription('The ID of the confession')))
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('lookup')
+                .setDescription('Lookup moderation info for a user')
+                .addStringOption(option =>
+                    option
+                        .setName('userid')
+                        .setRequired(true)
+                        .setDescription('The ID of the user')))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('message')
@@ -145,9 +154,7 @@ module.exports = {
             //Confession Unban
             if(moderationType=='confessionunban'){
                 let userDocument = await user_data.findOne({ user_id: givenUserID });
-                if (userDocument == undefined || !userDocument?.ban_info?.isBanned){
-                    return await interaction.reply({ content:`This user isn't banned from using confessions.`, flags: MessageFlags.Ephemeral  })
-                }
+                if(!userDocument?.ban_info?.isBanned) return await interaction.reply({ content:`This user is not banned from using confessions.`, flags: MessageFlags.Ephemeral  })
                 await user_data.updateOne({ user_id: `${givenUserID}` }, { $unset: { 'ban_info': ' '} });
                 //Send DMc
                 try {
@@ -182,6 +189,26 @@ module.exports = {
                 await bot_data.updateOne({ type: `prod` }, { $set: { admins: adminArray } });
                 return interaction.reply({content:`The user with the ID of \`${givenUserID}\` is now removed as an admin of Meii.` })
             }
+        } else if (interaction.options.getSubcommand() === 'lookup'){ 
+            //Lookup
+            const givenUserID = interaction.options.getString('userid');
+            let userDocument = await user_data.findOne({ user_id: givenUserID });
+            if (userDocument == undefined) return await interaction.reply({ content:`This user has no moderation action logged.`, flags: MessageFlags.Ephemeral  })
+            
+            let isBanned = userDocument?.ban_info?.isBanned ? true : false;
+            let banReason = userDocument?.ban_info?.banReason ? userDocument?.ban_info?.banReason : "N/A";
+            let banDate = userDocument?.ban_info?.date ? `<t:${Math.floor(new Date(userDocument?.ban_info?.date).getTime() / 1000)}:f>` : "N/A";
+            let banModerator = userDocument?.ban_info?.moderator ? `<@${userDocument?.ban_info?.moderator}>` : "N/A";
+            let warningsText = userDocument?.warnings?.length ? userDocument.warnings.map((warning, index) => `**Warning ${index + 1}:**\n> **Reason:** ${warning.reason}\n> **Moderator:** <@${warning.moderator}>\n> **Date:** <t:${Math.floor(new Date(warning.date).getTime() / 1000)}:f>`).join('\n') : 'This user has no prior warnings.';
+
+            //Lookup Embed
+            let lookupEmbed = new EmbedBuilder()
+            .setTitle(`User Moderation Lookup`)
+            .setColor(`#C3B1E1`)
+            .setDescription(`**User ID**\n${givenUserID}\n\n**Ban Info:**\n> **Is Banned:** ${isBanned}\n> **Ban Reason:** ${banReason}\n> **Date:** ${banDate}\n> **Moderator**: ${banModerator}\n\n**Warnings:**\n${warningsText}`)
+            .setTimestamp()
+            return interaction.reply({ embeds: [lookupEmbed] })
+
         } else if (interaction.options.getSubcommand() === 'message'){ 
             //ID Lookup
             const givenConfessionID = interaction.options.getString('confessionid').toUpperCase();
@@ -223,28 +250,29 @@ module.exports = {
             const givenConfessionID = interaction.options.getString('confessionid').toUpperCase();
             const confessionDocument = await confession_data.findOne({ confession_id: givenConfessionID });
             if(confessionDocument==undefined) return interaction.reply({content:`I'm sorry, I cannot find a confession with the ID of **${givenConfessionID}**.`, flags: MessageFlags.Ephemeral  })
-           //Buttons
+            const moderatorId = interaction.user.id;
+            //Buttons
            //Confession Delete Button
             const confessionDeleteButton = new ButtonBuilder()
-            .setCustomId('confession-delete')
+            .setCustomId(`confession-delete-${moderatorId}-${givenConfessionID}`)
             .setLabel('Delete/Edit Confession')
             .setStyle(ButtonStyle.Primary);
     
             //Confession Ban Button
             const confessionBanButton = new ButtonBuilder()
-            .setCustomId('confessions-ban')
+            .setCustomId(`confessions-ban-${moderatorId}-${givenConfessionID}`)
             .setLabel('Confession Ban')
             .setStyle(ButtonStyle.Secondary);
 
             //Confession Ban Button
             const warnButton = new ButtonBuilder()
-            .setCustomId('confessions-warn')
+            .setCustomId(`confessions-warn-${moderatorId}-${givenConfessionID}`)
             .setLabel('Warn')
             .setStyle(ButtonStyle.Secondary);
             
             //Dismiss Button
             const confessionDismiss = new ButtonBuilder()
-            .setCustomId('confessions-dismiss')
+            .setCustomId(`confessions-dismiss-${moderatorId}-${givenConfessionID}`)
             .setLabel('Dismiss')
             .setStyle(ButtonStyle.Danger);
     
@@ -253,8 +281,16 @@ module.exports = {
             const interactionListener = async (interaction) => {
                 if (!interaction.isMessageComponent()) return;
                 if(interaction.isButton()){
+                    //Button ID Checks
+                    if (interaction.customId !== `confession-delete-${moderatorId}-${givenConfessionID}` && interaction.customId !== `confessions-ban-${moderatorId}-${givenConfessionID}` && interaction.customId !== `confessions-warn-${moderatorId}-${givenConfessionID}` && interaction.customId !== `confessions-dismiss-${moderatorId}-${givenConfessionID}` ) return;
+                    if (interaction.user.id !== moderatorId) {
+                        return interaction.reply({
+                            content: `This moderation menu isn't for you.`,
+                            flags: MessageFlags.Ephemeral
+                        });
+                    }
                     //Confession Delete Button
-                    if (interaction.customId === 'confession-delete') { 
+                    if (interaction.customId === `confession-delete-${moderatorId}-${givenConfessionID}`) { 
                         try{
                             return client.shard.broadcastEval(async (c, { channelId, messageID }) => {
                                 const channel = c.channels.cache.get(channelId);
@@ -286,13 +322,13 @@ module.exports = {
     
                     }
                     //Confession Ban Button
-                    if (interaction.customId === 'confessions-ban') {   
+                    if (interaction.customId === `confessions-ban-${moderatorId}-${givenConfessionID}`) {   
                         let confession_author_id = confessionDocument.author.id;
                         let userDocument = await user_data.findOne({ user_id: confession_author_id });
                         if(userDocument?.ban_info?.isBanned) return await interaction.reply({ content:`This user is already banned from using confessions.`, flags: MessageFlags.Ephemeral  })
                         //Modal
                         const banModal = new ModalBuilder()
-                        .setCustomId(`banModal-${interaction.user.id}`)
+                        .setCustomId(`banModal-${moderatorId}-${givenConfessionID}`)
                         .setTitle(`Confession Ban`);
                         //Reason
                         const reasonInput = new TextInputBuilder()
@@ -307,7 +343,7 @@ module.exports = {
                         banModal.addLabelComponents(reasonLabel);
                         await interaction.showModal(banModal);
 
-                        const filter = (interaction) => interaction.customId === `banModal-${interaction.user.id}`;
+                        const filter = (interaction) => interaction.customId === `banModal-${moderatorId}-${givenConfessionID}`;
 
                         interaction.awaitModalSubmit({filter, time: 900000}).then(async (modalInteraction) => {
                             const reasonText = modalInteraction.fields.getTextInputValue('reasonInput');
@@ -329,11 +365,11 @@ module.exports = {
                         });                     
                     }
                     //Warn Button
-                    if (interaction.customId === 'confessions-warn') { 
+                    if (interaction.customId === `confessions-warn-${moderatorId}-${givenConfessionID}`) { 
                         let confession_author_id = confessionDocument.author.id;
                         //Modal
                         const warnModal = new ModalBuilder()
-                        .setCustomId(`warnModal-${interaction.user.id}`)
+                        .setCustomId(`warnModal-${moderatorId}-${givenConfessionID}`)
                         .setTitle(`Warn User`);
                         //Reason
                         const reasonInput = new TextInputBuilder()
@@ -348,9 +384,9 @@ module.exports = {
                         warnModal.addLabelComponents(reasonLabel);
                         await interaction.showModal(warnModal);
 
-                        const filter = (interaction) => interaction.customId === `warnModal-${interaction.user.id}`;
+                        const filter = (interaction) => interaction.customId === `warnModal-${moderatorId}-${givenConfessionID}`;
 
-                        interaction.awaitModalSubmit({filter, time: 900000}).then(async (modalInteraction) => {
+                        interaction.awaitModalSubmit({filter, time: 180_000}).then(async (modalInteraction) => {
                             const reasonText = modalInteraction.fields.getTextInputValue('reasonInput');
                             await user_data.updateOne({ user_id: `${confession_author_id}` }, {$push: {warnings: {reason: `${reasonText}`, date: new Date(), moderator: `${interaction.user.id}`}}},{ upsert: true });
                             //Send DM
@@ -371,7 +407,7 @@ module.exports = {
                         });    
                     }
                     //Dismiss Button
-                    if (interaction.customId === 'confessions-dismiss') { 
+                    if (interaction.customId === `confessions-dismiss-${moderatorId}-${givenConfessionID}`) { 
                         client.removeListener(Events.InteractionCreate, interactionListener);
                         await interaction.update({ content:`Dismissed.`, components: [], embeds:[] })
                     }
@@ -399,7 +435,7 @@ module.exports = {
                 } catch (e) {
                     return;
                 }
-            }, 60_000);
+            }, 180_000);
         }
 	},
 }; 
