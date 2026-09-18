@@ -269,15 +269,14 @@ module.exports = {
                 //Cancel Button
                 const CancelTextDisplay = new TextDisplayBuilder()
                     .setContent('Canceled.');
-                await interaction.update({ flags: MessageFlags.IsComponentsV2, components: [CancelTextDisplay], ephermal: true});
+                await interaction.update({ flags: MessageFlags.IsComponentsV2, components: [CancelTextDisplay] });
                 client.removeListener(Events.InteractionCreate, interactionListener);
                 clearTimeout(autoRemoveTimeout);
                 return
             }else if(interaction.customId === 'customize-resetConfirm'){
                 //Confirm Reset Button
                 //Reset in document
-                await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $unset: { customization: "" } });
-                await server_data.updateOne({ server_id: `${interaction.guild.id}` }, { $unset: { customization_reply: "" } });
+                await server_data.updateOne({ server_id: interaction.guild.id }, { $unset: { customization: "", customization_reply: "" } });
                 //Tell User it has been reset
                 const resetConfirmContainer = new ContainerBuilder()
                     .setAccentColor(0x77DD77)
